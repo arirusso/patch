@@ -38,12 +38,12 @@ module ControlHub
         value = message.to_a[0].to_f
         # format the output
         hash = {}
-        @controls.each do |key, schema|
+        @controls.each do |key, namespace|
           key = key.to_sym
           hash[key] ||= {}
-          mapping = schema.find { |mapping| mapping[:osc][:address] == message.address }
-          hash[key][:index] = schema.index(mapping)
-          hash[key][:value] = process_value(value, mapping)
+          mapping = namespace.find { |mapping| mapping[:osc][:address] == message.address }
+          hash[key][:index] = namespace.index(mapping)
+          hash[key][:value] = get_value(mapping[:osc], value)
         end
         # bounce the message back to update the ui or whatever
         if !@client.nil?
@@ -60,8 +60,8 @@ module ControlHub
 
       private
 
-      def process_value(value, mapping)
-        scale = mapping[:osc][:scale]
+      def get_value(mapping, value)
+        scale = mapping[:scale]
         if scale.nil?
           value
         else

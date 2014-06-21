@@ -24,17 +24,21 @@ module ControlHub
         message = event[:message]
         index = (message.index - 1)
         hash = { :index => {}, :value => {} }
-        @control.each do |key, schema| 
-          mapping = schema.find { |mapping| mapping[:index] == index }
-          hash[:value][key] = if !mapping[:midi][:scale].nil?
-            Scale.transform(message.value).from(0..127).to(mapping[:midi][:scale])
-          else
-            message.value
-          end
+        @control.each do |key, namespace| 
+          mapping = namespace.find { |mapping| mapping[:index] == index }
+          hash[:value][key] = get_value(mapping[:midi], message)
           hash[:index][key] = mapping[:index]
         end
         yield(hash) if block_given?
         hash
+      end
+
+      def get_value(mapping, message)
+        if !mapping[:scale].nil?
+          Scale.transform(message.value).from(0..127).to(mapping[:scale])
+        else
+          message.value
+        end
       end
 
       def process_values(message)
