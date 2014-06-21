@@ -1,6 +1,6 @@
 module ControlHub
 
-  module Listener
+  module Input
 
     # Receive MIDI messages and do something with them
     class MIDI

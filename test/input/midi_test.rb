@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::Listener::MIDITest < Test::Unit::TestCase
+class ControlHub::Input::MIDITest < Test::Unit::TestCase
 
   include ControlHub
 
@@ -10,7 +10,7 @@ class ControlHub::Listener::MIDITest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @midi = ControlHub::Listener::MIDI.new(@config)
+      @midi = ControlHub::Input::MIDI.new(@config)
     end
 
     context "#initialize" do
@@ -37,7 +37,7 @@ class ControlHub::Listener::MIDITest < Test::Unit::TestCase
     context "#listen" do
 
       should "start listener" do
-        MIDIEye::Listener.any_instance.expects(:run)
+        ::MIDIEye::Listener.any_instance.expects(:run)
         @midi.listen
       end
 

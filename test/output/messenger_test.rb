@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::Controller::MessengerTest < Test::Unit::TestCase
+class ControlHub::Output::MessengerTest < Test::Unit::TestCase
 
   include ControlHub
 
@@ -8,7 +8,7 @@ class ControlHub::Controller::MessengerTest < Test::Unit::TestCase
 
     setup do
       @socket = Object.new
-      @messenger = Controller::Messenger.new(@socket)
+      @messenger = Output::Messenger.new(@socket)
     end
 
     context "#in" do
@@ -69,7 +69,7 @@ class ControlHub::Controller::MessengerTest < Test::Unit::TestCase
       end
 
       should "return nil if fails" do
-        messenger = Controller::Messenger.new(nil)
+        messenger = Output::Messenger.new(nil)
         result = messenger.out(@message)
         assert_nil result
       end

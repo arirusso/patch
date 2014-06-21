@@ -1,6 +1,6 @@
 module ControlHub
 
-  module Controller
+  module Output
 
     # Handles sending and receiving messages to/from the socket
     class Messenger

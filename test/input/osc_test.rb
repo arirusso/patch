@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::Listener::OSCTest < Test::Unit::TestCase
+class ControlHub::Input::OSCTest < Test::Unit::TestCase
 
   include ControlHub
 
@@ -10,7 +10,7 @@ class ControlHub::Listener::OSCTest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @osc = ControlHub::Listener::OSC.new(@config)
+      @osc = ControlHub::Input::OSC.new(@config)
     end
 
     context "#initialize" do

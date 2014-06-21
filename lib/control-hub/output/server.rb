@@ -1,6 +1,6 @@
 module ControlHub
 
-  module Controller
+  module Output
 
     class Server
 
@@ -19,14 +19,17 @@ module ControlHub
 
       def start
         Thread.abort_on_exception = true
-        EM::WebSocket.run(@config) do |ws|
-          @socket = ws
-          @messenger = Messenger.new(@socket, :debug => @debug)
-          configure
-        end
+        EM::WebSocket.run(@config) { |ws| enable(ws) }
       end
 
       private
+
+      # Enable this server after initializing an EM::Websocket
+      def enable(ws)
+        @socket = ws
+        @messenger = Messenger.new(@socket, :debug => @debug)
+        configure
+      end
 
       def configure
         @socket.onopen do |handshake|

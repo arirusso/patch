@@ -1,6 +1,6 @@
 module ControlHub
 
-  module Listener
+  module Input
 
     # Receive OSC messages and do something with them
     class OSC

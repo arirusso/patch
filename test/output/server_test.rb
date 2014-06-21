@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::Controller::ServerTest < Test::Unit::TestCase
+class ControlHub::Output::ServerTest < Test::Unit::TestCase
 
   include ControlHub
 
@@ -10,20 +10,19 @@ class ControlHub::Controller::ServerTest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @server = Controller::Server.new(@config)
+      @server = ControlHub::Output::Server.new(@config)
     end
 
-    context "#start" do
+    context "#enable" do
 
       setup do
         @server.expects(:configure).once
-        EM::WebSocket.stubs(:run).yields(Object.new)
+        @server.send(:enable, nil)
       end
       
       should "populate messenger" do
-        @server.start
         assert_not_nil @server.messenger
-        assert_equal ControlHub::Controller::Messenger, @server.messenger.class
+        assert_equal ControlHub::Output::Messenger, @server.messenger.class
       end
 
     end
@@ -41,7 +40,7 @@ class ControlHub::Controller::ServerTest < Test::Unit::TestCase
       end
 
       should "send when messenger is available" do
-        @server.start
+        @server.send(:enable, nil)
         @server.messenger.expects(:out).once
         assert_nothing_raised(Exception) { @server.act(:hi => "hello") }
       end

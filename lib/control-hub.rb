@@ -11,13 +11,13 @@ require "socket"
 require "yaml"
 
 # modules
-require "control-hub/controller"
-require "control-hub/listener"
+require "control-hub/input"
+require "control-hub/output"
 
 # classes
 require "control-hub/config"
 require "control-hub/debug"
-require "control-hub/instance"
+require "control-hub/hub"
 
 # patches
 require "control-hub/patch"
