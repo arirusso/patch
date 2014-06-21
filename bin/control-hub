@@ -8,10 +8,10 @@ network_config = ARGV.first
 options = {}
 
 args = OptionParser.new do |opts|
-  opts.banner = "Usage: control-hub [network config] [options]"
+  opts.banner = "Usage: control-hub [io config file] [options]"
 
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
-    options[:verbose] = v
+  opts.on("-c", "--control [FILE]", "Use control spec") do |file|
+    options[:control] = file
   end
 end
 args.parse!
@@ -21,7 +21,7 @@ if network_config.nil?
   exit 0
 end
 
-control = File.join(__dir__, "../test/config/control.yml")
+control = File.new(options[:control]) unless options[:control].nil?
 
 hub = ControlHub.new(:io => File.new(network_config), :control => control)
 hub.add :midi
