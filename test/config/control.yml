@@ -1,0 +1,109 @@
+:WebcamMesh:
+
+    - :name: Zoom
+      :index: 0
+      :key: zoom
+      :midi:
+        :channel: 0
+        :scale: !ruby/range 0.1..5.0
+      :osc:
+        :address: /1/rotaryA
+        :scale:
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0.1..5.0
+
+    - :name: Mesh Opacity
+      :index: 1
+      :key: mOpac
+      :osc:
+        :address: /1/rotaryB
+        :scale:
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0.1..0.3
+
+    - :name: Grid Opacity
+      :index: 2
+      :key: wfOpac
+      :osc:
+        :address: /1/rotaryC
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..0.3
+
+    - :name: Contrast
+      :index: 3
+      :key: contrast
+      :osc:
+        :address: /1/rotaryD
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..5.0
+
+    - :name: Saturation
+      :index: 4
+      :key: saturation
+      :osc:
+        :address: /faderM
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..2.0
+
+    - :name: Z Depth
+      :index: 5
+      :key: zDepth
+      :osc:
+        :address: /1/faderA
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..1000
+
+    - :name: Noise Strength
+      :index: 6
+      :key: noiseStrength
+      :osc:
+        :address: /1/faderB
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..600
+
+    - :name: Noise Speed
+      :index: 7
+      :key: noiseSpeed
+      :osc:
+        :address: /1/faderC
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..0.05
+
+    - :name: Noise Scale
+      :index: 8
+      :key: noiseScale
+      :osc:
+        :address: /1/faderD
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..0.1
+
+    - :name: Invert Z
+      :index: 9
+      :key: invertZ
+      :osc:
+        :address: /1/toggleA_1
+
+    - :name: Rotation X
+      :index: 10
+      :key: rotation_x
+      :osc:
+        :address: /1/rotX
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..1000
+
+    - :name: Rotation Y
+      :index: 11
+      :key: rotation_y
+      :osc:
+        :address: /1/rotY
+        :scale: 
+          :from: !ruby/range 0..1
+          :to: !ruby/range 0..750
