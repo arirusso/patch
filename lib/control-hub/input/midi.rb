@@ -21,7 +21,12 @@ module ControlHub
       private
 
       def handle_event_received(event, options = {}, &block)
-        message = event[:message]
+        output = get_output(event[:message])
+        yield(output) if block_given?
+        output
+      end
+
+      def get_output(message)
         index = (message.index - 1)
         hash = { :index => {}, :value => {} }
         @control.each do |key, namespace| 
@@ -29,7 +34,6 @@ module ControlHub
           hash[:value][key] = get_value(mapping[:midi], message)
           hash[:index][key] = mapping[:index]
         end
-        yield(hash) if block_given?
         hash
       end
 

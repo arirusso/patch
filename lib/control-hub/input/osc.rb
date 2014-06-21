@@ -34,9 +34,18 @@ module ControlHub
       # @param [Hash] options
       # @option options [ControlHub::Scale] :scale A scale for the value
       def handle_message_received(message, &block)
+        output = get_output(message)        
+        bounceback(message)
+        # yield to custom behavior
+        yield(output) if block_given?
+        output
+      end
+
+      private
+
+      def get_output(message)
         # parse the message
         value = message.to_a[0].to_f
-        # format the output
         hash = {}
         @controls.each do |key, namespace|
           key = key.to_sym
@@ -45,7 +54,11 @@ module ControlHub
           hash[key][:index] = namespace.index(mapping)
           hash[key][:value] = get_value(mapping[:osc], value)
         end
-        # bounce the message back to update the ui or whatever
+        hash
+      end
+
+      # bounce the message back to update the ui or whatever
+      def bounceback(message)
         if !@client.nil?
           begin
             @client.send(message)
@@ -53,12 +66,7 @@ module ControlHub
             @debug.exception(e)
           end
         end
-        # yield to custom behavior
-        yield(hash) if block_given?
-        hash
       end
-
-      private
 
       def get_value(mapping, value)
         scale = mapping[:scale]
