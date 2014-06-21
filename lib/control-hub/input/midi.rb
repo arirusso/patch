@@ -29,10 +29,10 @@ module ControlHub
       def get_output(message)
         index = (message.index - 1)
         hash = { :index => {}, :value => {} }
-        @control.each do |key, namespace| 
-          mapping = namespace.find { |mapping| mapping[:index] == index }
-          hash[:value][key] = get_value(mapping[:midi], message)
-          hash[:index][key] = mapping[:index]
+        @control.each do |namespace, schema| 
+          mapping = schema.find { |mapping| mapping[:index] == index }
+          hash[:value][namespace] = get_value(mapping[:midi], message)
+          hash[:index][namespace] = mapping[:index]
         end
         hash
       end

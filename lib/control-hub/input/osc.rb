@@ -47,12 +47,12 @@ module ControlHub
         # parse the message
         value = message.to_a[0].to_f
         hash = {}
-        @controls.each do |key, namespace|
-          key = key.to_sym
-          hash[key] ||= {}
-          mapping = namespace.find { |mapping| mapping[:osc][:address] == message.address }
-          hash[key][:index] = namespace.index(mapping)
-          hash[key][:value] = get_value(mapping[:osc], value)
+        @controls.each do |namespace, schema|
+          namespace = namespace.to_sym
+          hash[namespace] ||= {}
+          mapping = schema.find { |mapping| mapping[:osc][:address] == message.address }
+          hash[namespace][:index] = schema.index(mapping)
+          hash[namespace][:value] = get_value(mapping[:osc], value)
         end
         hash
       end
