@@ -3,13 +3,13 @@ module ControlHub
   # An application object; connects the inputs and output
   class Hub
 
-    attr_reader :config, :output, :inputs
+    attr_reader :config, :inputs, :output
 
     def initialize(options = {})
       @debug = Debug.new($>)
+      @inputs = []
       @threads = []
       populate_config(options[:control], options[:io])
-      populate_inputs
       populate_output
     end
 
@@ -19,24 +19,33 @@ module ControlHub
         @output.start
         @inputs.each do |input|
           @threads << Thread.new do
-            input.listen { |control| @controller.act(control) }
+            input.listen { |control| @output.act(control) }
           end
         end
         @threads.each { |thread| thread.abort_on_exception = true }
       end
     end
 
+    def add(type)
+      klass = case type
+      when :midi then ControlHub::Input::MIDI
+      when :osc then ControlHub::Input::OSC
+      end
+      @inputs << klass.new(@config, :debug => @debug) if @config.send("#{type.to_s}?")
+    end
+
+    def midi_inputs
+      @inputs.select { |input| input.kind_of?(ControlHub::Input::MIDI) }
+    end
+
+    def osc_inputs
+      @inputs.select { |input| input.kind_of?(ControlHub::Input::OSC) }
+    end
+
     private
 
     def populate_output
       @output = Output.new(@config, :debug => @debug)
-    end
-
-    def populate_inputs
-      @inputs ||= []
-      @inputs << ControlHub::Input::MIDI.new(@config, :debug => @debug) if @config.midi?
-      @inputs << ControlHub::Input::OSC.new(@config, :debug => @debug) if @config.osc?
-      @inputs
     end
 
     def populate_config(control_path, io_path)

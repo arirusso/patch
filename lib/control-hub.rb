@@ -26,9 +26,13 @@ module ControlHub
 
   VERSION = "0.1"
 
+  def self.new(*a)
+    Hub.new(*a)
+  end
+
   def self.listen(*a)
-    @instance = Instance.new(*a)
-    @instance.listen
+    @hub = new(*a)
+    @hub.listen
   end
 
 end
