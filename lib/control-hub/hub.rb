@@ -49,8 +49,6 @@ module ControlHub
     end
 
     def populate_config(control_path, io_path)
-      control_path ||= File.join(__dir__, "../../config/control.yml")
-      io_path ||= File.join(__dir__, "../../config/io.yml")
       @config = Config.new(:control => control_path, :io => io_path)
     end
 

@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+
+require "optparse"
+require "control-hub"
+
+network_config = ARGV.first
+options = {}
+
+args = OptionParser.new do |opts|
+  opts.banner = "Usage: control-hub [network config] [options]"
+
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+end
+args.parse!
+
+if network_config.nil?
+  puts args.help
+  exit 0
+end
+
+control = File.join(__dir__, "../test/config/control.yml")
+
+hub = ControlHub.new(:io => File.new(network_config), :control => control)
+hub.add :midi
+hub.add :osc
+hub.listen

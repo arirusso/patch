@@ -78,7 +78,7 @@ module ControlHub
       # Configure the server connection
       def configure_server(server_config)
         if (@server = ::OSC::EMServer.new(server_config[:port]))
-          ip = Socket.ip_address_list.map(&:inspect_sockaddr)
+          ip = Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
           puts "Server ips are: #{ip}"
         end
       end
