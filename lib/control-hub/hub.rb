@@ -31,7 +31,7 @@ module ControlHub
       when :midi then ControlHub::Input::MIDI
       when :osc then ControlHub::Input::OSC
       end
-      @inputs << klass.new(@config, :debug => @debug) if @config.send("#{type.to_s}?")
+      @inputs << klass.new(@config, :debug => @debug)
     end
 
     def midi_inputs
