@@ -25,6 +25,6 @@ end
 control = File.new(options[:control]) unless options[:control].nil?
 
 hub = ControlHub.new(:io => File.new(network_config), :control => control)
-hub.add :midi if config.midi?
-hub.add :osc if config.osc?
+hub.add :midi if hub.config.midi?
+hub.add :osc if hub.config.osc?
 hub.listen
