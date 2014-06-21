@@ -14,6 +14,7 @@ args = OptionParser.new do |opts|
     options[:control] = file
   end
 end
+
 args.parse!
 
 if network_config.nil?
@@ -24,6 +25,6 @@ end
 control = File.new(options[:control]) unless options[:control].nil?
 
 hub = ControlHub.new(:io => File.new(network_config), :control => control)
-hub.add :midi
-hub.add :osc
+hub.add :midi if config.midi?
+hub.add :osc if config.osc?
 hub.listen
