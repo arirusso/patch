@@ -3,6 +3,7 @@ source "https://rubygems.org"
 group :test do 
   gem "mocha"
   gem "rake"
+  gem "rake-minify"
   gem "shoulda-context"
 end
 
