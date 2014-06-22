@@ -2,6 +2,10 @@ module ControlHub
 
   class Config
 
+    include Input::MIDI::Config
+    include Input::OSC::Config
+    include Output::Websocket::Config
+
     attr_reader :control, :control_file, :io, :io_file
 
     def initialize(options = {})
@@ -13,25 +17,33 @@ module ControlHub
       !@control.nil?
     end
 
-    def midi?
-      !@io.nil? && !@io[:midi].nil? && control? && !midi_controls.empty?
+    def input?
+      nodes?(:input)
     end
 
-    def osc?
-      !@io.nil? && !@io[:osc].nil? && control? && !osc_controls.empty?
+    def node_class(direction, type)
+      send("#{type}_#{direction}_class")
     end
 
-    def midi_controls
-      @midi_controls ||= controls_for(:midi)
+    def output?
+      nodes?(:output)
     end
 
-    def osc_controls
-      @osc_controls ||= controls_for(:osc)
+    def nodes(direction, options = {})
+      if nodes?(direction)
+        if options[:type].nil?
+          @io[direction]
+        else
+          @io[direction].select { |node| node[:type] == options[:type].to_s } 
+        end
+      end
     end
 
-    private
+    def nodes?(direction)
+      !@io.nil? && !@io[direction].nil? && !@io[direction].empty?
+    end
 
-    def controls_for(type)
+    def controls(type)
       controls = {}
       if control?
         @control.each do |key, schema|
@@ -40,6 +52,8 @@ module ControlHub
       end
       controls
     end
+
+    private
 
     def populate_config(key, options = {})
       file_var = case options[key]

@@ -71,7 +71,8 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
             ]
           }
           @io_hash = {
-            :controller=> {
+            :output=> {
+              :type=>"websocket",
               :host=>"localhost", 
               :port=>9006
             }
@@ -91,10 +92,11 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
 
         setup do
           @io_hash = {
-            :controller=> {
-            :host=>"localhost", 
-            :port=>9006
-          }
+            :output=> {
+              :type=>"websocket",
+              :host=>"localhost", 
+              :port=>9006
+            }
           }
           @config = ControlHub::Config.new(:control => @control, :io => @io_hash)
         end
@@ -143,8 +145,8 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
         @config = ControlHub::Config.new(:control => @control, :io => @io)
         assert_not_nil @config.midi_controls
         assert_not_empty @config.midi_controls
-        assert_not_nil @config.midi_controls[:WebcamMesh]
-        assert_not_nil @config.midi_controls[:WebcamMesh].first[:midi][:channel]
+        assert_not_nil @config.midi_controls[:something]
+        assert_not_nil @config.midi_controls[:something].first[:midi][:channel]
       end
     end
 
@@ -154,8 +156,8 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
         @config = ControlHub::Config.new(:control => @control, :io => @io)
         assert_not_nil @config.osc_controls
         assert_not_empty @config.osc_controls
-        assert_not_nil @config.osc_controls[:WebcamMesh]
-        assert_not_nil @config.osc_controls[:WebcamMesh].first[:osc][:address]
+        assert_not_nil @config.osc_controls[:something]
+        assert_not_nil @config.osc_controls[:something].first[:osc][:address]
       end
 
     end

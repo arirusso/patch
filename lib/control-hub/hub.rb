@@ -10,7 +10,8 @@ module ControlHub
       @inputs = []
       @threads = []
       populate_config(options[:control], options[:io])
-      populate_output
+      populate_inputs
+      populate_outputs
     end
 
     def listen  
@@ -19,7 +20,11 @@ module ControlHub
         @output.start
         @inputs.each do |input|
           @threads << Thread.new do
-            input.listen { |control| @output.act(control) }
+            input.listen do |message| 
+              @outputs.each do |output| 
+                output.act(message)
+              end
+            end
           end
         end
         @threads.each { |thread| thread.abort_on_exception = true }
@@ -27,25 +32,38 @@ module ControlHub
     end
 
     def add(type)
-      klass = case type
-      when :midi then ControlHub::Input::MIDI
-      when :osc then ControlHub::Input::OSC
+      inputs = case type
+      when :midi then get_midi_inputs
+      when :osc then get_osc_inputs
       end
-      @inputs << klass.new(@config, :debug => @debug)
+      @inputs += inputs unless inputs.nil?
+      input
     end
 
     def midi_inputs
-      @inputs.select { |input| input.kind_of?(ControlHub::Input::MIDI) }
+      @inputs.select { |input| input.kind_of?(ControlHub::Input::MIDI::Listener) }
     end
 
     def osc_inputs
-      @inputs.select { |input| input.kind_of?(ControlHub::Input::OSC) }
+      @inputs.select { |input| input.kind_of?(ControlHub::Input::OSC::Listener) }
     end
 
     private
 
-    def populate_output
-      @output = Output.new(@config, :debug => @debug)
+    def populate_inputs
+      @inputs ||= []
+      @inputs += @config.nodes(:input).map do |input|
+        klass = config.node_class(:input, input[:type])
+        klass.new(input, @config.controls(input[:type]), :debug => @debug)
+      end
+    end
+
+    def populate_outputs
+      @outputs ||= []
+      @outputs += @config.nodes(:output).map do |output|
+        klass = config.node_class(:output, output[:type])
+        klass.new(output, :debug => @debug)
+      end
     end
 
     def populate_config(control_path, io_path)

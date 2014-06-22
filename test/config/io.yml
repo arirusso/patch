@@ -1,15 +1,13 @@
-:controller:
-  :host: localhost
-  :port: 9006
-:midi:
-  :input:
+:output:
+  - :type: websocket
+    :host: localhost
+    :port: 9006
+:input:
+  - :type: midi
     :name: Apple Inc. IAC Driver
-:repl:
-  :host: localhost
-  :port: 9007
-:osc:
-  :server:
-    :port: 8000
-  :client:
-    :host: 192.168.1.118
-    :port: 9000
+  - :type: osc
+    :server:
+      :port: 8000
+    :client:
+      :host: 192.168.1.118
+      :port: 9000

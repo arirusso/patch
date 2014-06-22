@@ -10,14 +10,15 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @midi = ControlHub::Input::MIDI.new(@config)
+      @midi = ControlHub::Input::MIDI.new(@config.midi_inputs.first, @config.midi_controls)
     end
 
     context "#initialize" do
 
       setup do
-        assert_not_nil @config.io[:midi][:input]
-        assert_not_nil @config.io[:midi][:input][:name]
+        assert_not_nil @config.midi_inputs
+        assert_not_empty @config.midi_inputs
+        assert_not_nil @config.midi_inputs.first[:name]
       end
 
       should "have midi input" do
@@ -64,7 +65,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
         assert_equal Hash, @result.class
         assert_not_nil @result[:index]
         assert_not_nil @result[:value]
-        assert_equal @message.index - 1, @result[:index][:WebcamMesh]
+        assert_equal @message.index - 1, @result[:index][:something]
       end
 
       should "yield hash" do
@@ -75,7 +76,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
           assert_equal Hash, @result.class
           assert_not_nil @result[:index]
           assert_not_nil @result[:value]
-          assert_equal @message.index - 1, @result[:index][:WebcamMesh]
+          assert_equal @message.index - 1, @result[:index][:something]
         end
       end
 

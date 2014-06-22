@@ -10,7 +10,7 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @osc = ControlHub::Input::OSC.new(@config)
+      @osc = ControlHub::Input::OSC.new(@config.osc_inputs.first, @config.osc_controls)
     end
 
     context "#initialize" do
@@ -39,9 +39,9 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
         @hash = @osc.send(:handle_message_received, @message)
         assert_not_nil @hash
         assert_equal Hash, @hash.class
-        assert_not_nil @hash[:WebcamMesh]
-        assert_not_nil @hash[:WebcamMesh][:index]
-        assert_not_nil @hash[:WebcamMesh][:value]
+        assert_not_nil @hash[:something]
+        assert_not_nil @hash[:something][:index]
+        assert_not_nil @hash[:something][:value]
       end
 
       should "yield hash" do
@@ -50,9 +50,9 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
           @hash = hash
           assert_not_nil @hash
           assert_equal Hash, @hash.class
-          assert_not_nil @hash[:WebcamMesh]
-          assert_not_nil @hash[:WebcamMesh][:index]
-          assert_not_nil @hash[:WebcamMesh][:value]
+          assert_not_nil @hash[:something]
+          assert_not_nil @hash[:something][:index]
+          assert_not_nil @hash[:something][:value]
         end
       end
 
