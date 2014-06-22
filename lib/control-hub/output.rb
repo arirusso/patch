@@ -1,5 +1,5 @@
 require "control-hub/output/messenger"
-require "control-hub/output/server"
+require "control-hub/output/websocket"
 
 module ControlHub
 
@@ -10,7 +10,7 @@ module ControlHub
     # @param [Config] config
     # @param [Hash] options
     def self.new(config, options = {})
-      Server.new(config, options)
+      Websocket.new(config, options)
     end
 
   end

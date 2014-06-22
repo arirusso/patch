@@ -2,7 +2,7 @@ module ControlHub
 
   module Output
 
-    class Server
+    class Websocket
 
       attr_reader :messenger
 

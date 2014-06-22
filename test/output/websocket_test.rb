@@ -1,16 +1,16 @@
 require "helper"
 
-class ControlHub::Output::ServerTest < Test::Unit::TestCase
+class ControlHub::Output::WebsocketTest < Test::Unit::TestCase
 
   include ControlHub
 
-  context "Server" do
+  context "Websocket" do
 
     setup do
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @server = ControlHub::Output::Server.new(@config)
+      @server = ControlHub::Output::Websocket.new(@config)
     end
 
     context "#enable" do
