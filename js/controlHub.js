@@ -1,8 +1,10 @@
-ControlHub = function(network, onClose) {
-  this.debug = false;
+ControlHub = function(network, options) {
+  options = options || {};
+  this.debug = options.debug || false;
   this.webSocket;
   this.network = network;
-  this.onClose = onClose;
+  this.onClose = options.onClose;
+  this.initialize();
 }
 
 // Convert the raw websocket JSON message
@@ -33,7 +35,9 @@ ControlHub.prototype.initialize = function() {
     var controller = this;
     this.webSocket.onclose = function() {  
       console.log("control hub closed"); 
-      controller.onClose();
+      if (controller.onClose !== undefined && controller.onClose !== null) {
+        controller.onClose();
+      }
     };
   } else {
     console.log("websocket not supoorted");
@@ -43,26 +47,25 @@ ControlHub.prototype.initialize = function() {
 // Disable the controller
 ControlHub.prototype.disable = function() {
   this.webSocket.onmessage = function(event) {};
+  return false;
 }
 
 // Handle a single event
 ControlHub.prototype.handleEvent = function(event, callback) {
-  var messages = ControlHub.eventToControllerMessage(event);
-  for (var message in messages) {
-    message.time = messages.time;
-    if (this.debug) {
-      console.log("message received");
-      console.log(message);
-    }
-    callback(message);
+  var message = ControlHub.eventToControllerMessage(event);
+  if (this.debug) {
+    console.log("message received: ");
+    console.log(message);
   }
-  return messages;
+  callback(message);
+  return message;
 }
 
 // Initialize controller events
-ControlHub.prototype.initializeEventHandler = function(callback) {
+ControlHub.prototype.onMessage = function(callback) {
   var controller = this;
   this.webSocket.onmessage = function(event) { 
     controller.handleEvent(event, callback); 
   };
+  return true;
 }

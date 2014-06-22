@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Control-hub Demo</title>
+    <meta charset="utf-8">
+    <script src="js/controlHub.js"></script>
+    <script type="text/javascript">
+      var hub;
+      window.onload = function() {
+        var body = document.getElementById("body");
+        hub = new ControlHub({host: "localhost", port: 9006}, {debug:true});
+        hub.onMessage(function(m) {
+          body.style.fontSize = m.simple.value + "px";
+        });
+      }
+    </script>
+  </head>
+  <body>
+  <h1 id="title">This is the <a href="http://github.com/arirusso/control-hub">control-hub</a> demo</h1>
+    <p id="body">hi</p>
+  </body>
+</html>
