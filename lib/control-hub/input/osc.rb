@@ -53,15 +53,15 @@ module ControlHub
         def get_output(message)
           # parse the message
           value = message.to_a[0].to_f
-          hash = {}
+          output = {}
           @controls.each do |namespace, schema|
             namespace = namespace.to_sym
-            hash[namespace] ||= {}
+            output[namespace] ||= {}
             mapping = schema.find { |mapping| mapping[:osc][:address] == message.address }
-            hash[namespace][:index] = schema.index(mapping)
-            hash[namespace][:value] = get_value(mapping[:osc], value)
+            output[namespace][:index] = schema.index(mapping)
+            output[namespace][:value] = get_value(mapping[:osc], value)
           end
-          hash
+          output
         end
 
         # bounce the message back to update the ui or whatever
