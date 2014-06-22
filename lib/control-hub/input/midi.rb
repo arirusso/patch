@@ -70,10 +70,10 @@ module ControlHub
         end
 
         def select_input(input_info)
-          @input = if input_info == "choose"
-                     UniMIDI::Input.gets
-                   elsif !input_info[:name].nil?
-                     UniMIDI::Input.find_by_name(input_info[:name])
+          @input = case input_info[:name]
+                   when "choose" then UniMIDI::Input.gets
+                   when nil then nil
+                   else UniMIDI::Input.find_by_name(input_info[:name])
                    end
         end
 

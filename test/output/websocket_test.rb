@@ -27,7 +27,7 @@ class ControlHub::Output::WebsocketTest < Test::Unit::TestCase
 
     end
 
-    context "#act" do
+    context "#transmit" do
 
       setup do
         @server.expects(:configure).once
@@ -36,13 +36,13 @@ class ControlHub::Output::WebsocketTest < Test::Unit::TestCase
       
       should "fail quietly when messenger hasn't been initialized" do
         assert_nil @server.messenger
-        assert_nothing_raised(Exception) { @server.act(:hi => "hello") }
+        assert_nothing_raised(Exception) { @server.transmit(:hi => "hello") }
       end
 
       should "send when messenger is available" do
         @server.send(:enable, nil)
         @server.messenger.expects(:out).once
-        assert_nothing_raised(Exception) { @server.act(:hi => "hello") }
+        assert_nothing_raised(Exception) { @server.transmit(:hi => "hello") }
       end
 
     end

@@ -102,6 +102,7 @@ module ControlHub
         def configure_client(client_config)
           @client = ::OSC::Client.new(client_config[:host], client_config[:port])
         end
+
         # Configure the control mapping
         def configure_controls(&block)
           if @debug

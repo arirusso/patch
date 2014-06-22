@@ -8,6 +8,7 @@ module ControlHub
     def initialize(options = {})
       @debug = Debug.new($>)
       @inputs = []
+      @outputs = []
       @threads = []
       populate_config(options[:control], options[:io])
       populate_inputs
@@ -17,27 +18,9 @@ module ControlHub
     def listen  
       EM.epoll
       EM.run do
-        @output.start
-        @inputs.each do |input|
-          @threads << Thread.new do
-            input.listen do |message| 
-              @outputs.each do |output| 
-                output.act(message)
-              end
-            end
-          end
-        end
-        @threads.each { |thread| thread.abort_on_exception = true }
+        enable_outputs        
+        enable_inputs
       end
-    end
-
-    def add(type)
-      inputs = case type
-      when :midi then get_midi_inputs
-      when :osc then get_osc_inputs
-      end
-      @inputs += inputs unless inputs.nil?
-      input
     end
 
     def midi_inputs
@@ -50,8 +33,24 @@ module ControlHub
 
     private
 
+    def enable_outputs
+      @outputs.each(&:start)
+    end
+
+    def enable_inputs
+      @inputs.each do |input|
+        Thread::abort_on_exception = true
+        @threads << Thread.new do
+          input.listen do |message| 
+            @outputs.each do |output| 
+              output.transmit(message)
+            end
+          end
+        end
+      end
+    end
+
     def populate_inputs
-      @inputs ||= []
       @inputs += @config.nodes(:input).map do |input|
         klass = config.node_class(:input, input[:type])
         klass.new(input, @config.controls(input[:type]), :debug => @debug)
@@ -59,7 +58,6 @@ module ControlHub
     end
 
     def populate_outputs
-      @outputs ||= []
       @outputs += @config.nodes(:output).map do |output|
         klass = config.node_class(:output, output[:type])
         klass.new(output, :debug => @debug)

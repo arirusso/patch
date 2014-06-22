@@ -19,7 +19,7 @@ module ControlHub
           @debug = options[:debug]
         end
 
-        def act(message)
+        def transmit(message)
           @messenger.out(message) if !@messenger.nil?
         end
 
