@@ -39,9 +39,9 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
         @hash = @osc.send(:handle_message_received, @message)
         assert_not_nil @hash
         assert_equal Hash, @hash.class
-        assert_not_nil @hash[:something]
-        assert_not_nil @hash[:something][:index]
-        assert_not_nil @hash[:something][:value]
+        assert_not_nil @hash[:a_namespace]
+        assert_not_nil @hash[:a_namespace][:index]
+        assert_not_nil @hash[:a_namespace][:value]
       end
 
       should "yield hash" do
@@ -50,9 +50,9 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
           @hash = hash
           assert_not_nil @hash
           assert_equal Hash, @hash.class
-          assert_not_nil @hash[:something]
-          assert_not_nil @hash[:something][:index]
-          assert_not_nil @hash[:something][:value]
+          assert_not_nil @hash[:a_namespace]
+          assert_not_nil @hash[:a_namespace][:index]
+          assert_not_nil @hash[:a_namespace][:value]
         end
       end
 

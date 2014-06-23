@@ -66,7 +66,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
         assert_equal Hash, @result.class
         assert_not_nil @result[:index]
         assert_not_nil @result[:value]
-        assert_equal @message.index - 1, @result[:index][:something]
+        assert_equal @message.index - 1, @result[:index][:a_namespace]
       end
 
       should "yield hash" do
@@ -77,7 +77,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
           assert_equal Hash, @result.class
           assert_not_nil @result[:index]
           assert_not_nil @result[:value]
-          assert_equal @message.index - 1, @result[:index][:something]
+          assert_equal @message.index - 1, @result[:index][:a_namespace]
         end
       end
 

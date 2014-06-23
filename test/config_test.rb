@@ -150,8 +150,8 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
           @config = ControlHub::Config.new(:control => @control, :io => @io)
           assert_not_nil @config.controls(:midi)
           assert_not_empty @config.controls(:midi)
-          assert_not_nil @config.controls(:midi)[:something]
-          assert_not_nil @config.controls(:midi)[:something].first[:midi][:channel]
+          assert_not_nil @config.controls(:midi)[:a_namespace]
+          assert_not_nil @config.controls(:midi)[:a_namespace].first[:midi][:channel]
         end
       end
 
@@ -161,8 +161,8 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
           @config = ControlHub::Config.new(:control => @control, :io => @io)
           assert_not_nil @config.controls(:osc)
           assert_not_empty @config.controls(:osc)
-          assert_not_nil @config.controls(:osc)[:something]
-          assert_not_nil @config.controls(:osc)[:something].first[:osc][:address]
+          assert_not_nil @config.controls(:osc)[:a_namespace]
+          assert_not_nil @config.controls(:osc)[:a_namespace].first[:osc][:address]
         end
 
       end
