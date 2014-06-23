@@ -10,7 +10,7 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @osc = ControlHub::Input::OSC.new(@config.osc_inputs.first, @config.osc_controls)
+      @osc = ControlHub::Input::OSC.new(@config.nodes(:input, :type => :osc).first, :control => @config.controls(:osc))
     end
 
     context "#initialize" do

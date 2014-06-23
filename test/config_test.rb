@@ -113,21 +113,24 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
 
     end
 
-    context "#osc?" do
+    context "#nodes?" do
 
-      should "be true" do
-        @config = ControlHub::Config.new(:control => @control, :io => @io)
-        assert @config.osc?
+      context "osc" do
+        should "be true" do
+          @config = ControlHub::Config.new(:control => @control, :io => @io)
+          assert @config.nodes?(:input, :type => :osc)
+        end
+
       end
 
-    end
+      context "midi" do
 
-    context "#midi?" do
-
-      should "be true" do
-        @config = ControlHub::Config.new(:control => @control, :io => @io)
-        assert @config.midi?
+        should "be true" do
+          @config = ControlHub::Config.new(:control => @control, :io => @io)
+          assert @config.nodes?(:input, :type => :midi)
+        end
       end
+
     end
 
     context "#control?" do
@@ -139,25 +142,29 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
 
     end
 
-    context "#midi_controls" do
+    context "#controls" do
 
-      should "be populated" do
-        @config = ControlHub::Config.new(:control => @control, :io => @io)
-        assert_not_nil @config.midi_controls
-        assert_not_empty @config.midi_controls
-        assert_not_nil @config.midi_controls[:something]
-        assert_not_nil @config.midi_controls[:something].first[:midi][:channel]
+      context "midi" do
+
+        should "be populated" do
+          @config = ControlHub::Config.new(:control => @control, :io => @io)
+          assert_not_nil @config.controls(:midi)
+          assert_not_empty @config.controls(:midi)
+          assert_not_nil @config.controls(:midi)[:something]
+          assert_not_nil @config.controls(:midi)[:something].first[:midi][:channel]
+        end
       end
-    end
 
-    context "#osc_controls" do
+      context "osc" do
 
-      should "be populated" do
-        @config = ControlHub::Config.new(:control => @control, :io => @io)
-        assert_not_nil @config.osc_controls
-        assert_not_empty @config.osc_controls
-        assert_not_nil @config.osc_controls[:something]
-        assert_not_nil @config.osc_controls[:something].first[:osc][:address]
+        should "be populated" do
+          @config = ControlHub::Config.new(:control => @control, :io => @io)
+          assert_not_nil @config.controls(:osc)
+          assert_not_empty @config.controls(:osc)
+          assert_not_nil @config.controls(:osc)[:something]
+          assert_not_nil @config.controls(:osc)[:something].first[:osc][:address]
+        end
+
       end
 
     end

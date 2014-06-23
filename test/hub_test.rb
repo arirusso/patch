@@ -12,9 +12,9 @@ class ControlHub::HubTest < Test::Unit::TestCase
       end
 
       should "start listeners and controller" do
-        ControlHub::Input::MIDI::Listener.any_instance.expects(:listen).once
-        ControlHub::Input::OSC::Listener.any_instance.expects(:listen).once
-        ControlHub::Output::Websocket::Server.any_instance.expects(:start).once
+        ControlHub::Input::MIDI.any_instance.expects(:listen).once
+        ControlHub::Input::OSC.any_instance.expects(:listen).once
+        ControlHub::Output::Websocket.any_instance.expects(:start).once
         @instance = ControlHub::Hub.new(:control => @control, :io => @io)
       end
 

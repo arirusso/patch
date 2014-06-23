@@ -3,46 +3,59 @@ module ControlHub
   # An application object; connects the inputs and output
   class Hub
 
-    attr_reader :config, :inputs, :output
+    attr_reader :config, :nodes
 
     def initialize(options = {})
       @debug = Debug.new($>)
-      @inputs = []
-      @outputs = []
+      @nodes = {
+        :input => [],
+        :output => []
+      }
       @threads = []
       populate_config(options[:control], options[:io])
-      populate_inputs
-      populate_outputs
+      populate_nodes
     end
 
     def listen  
       EM.epoll
-      EM.run do
-        enable_outputs        
-        enable_inputs
-      end
+      EM.run { enable_nodes }
     end
 
-    def midi_inputs
-      @inputs.select { |input| input.kind_of?(ControlHub::Input::MIDI::Listener) }
+    def outputs(options = {})
+      nodes(:output, options)
     end
 
-    def osc_inputs
-      @inputs.select { |input| input.kind_of?(ControlHub::Input::OSC::Listener) }
+    def inputs(options = {})
+      nodes(:input, options)
+    end
+
+    def nodes(direction, options = {})
+      dir = @nodes[direction]
+      options[:type].nil? ? dir : dir[options[:type]]
     end
 
     private
 
+    def populate_nodes
+      populate_inputs
+      populate_outputs
+    end
+
+    def enable_nodes
+      enable_outputs
+      enable_inputs
+    end
+
     def enable_outputs
-      @outputs.each(&:start)
+      @nodes[:output].each(&:start)
     end
 
     def enable_inputs
-      @inputs.each do |input|
+      @nodes[:input].each do |input|
         Thread::abort_on_exception = true
         @threads << Thread.new do
           input.listen do |message| 
-            @outputs.each do |output| 
+            @nodes[:output].each do |output| 
               output.transmit(message)
             end
           end
@@ -51,15 +64,15 @@ module ControlHub
     end
 
     def populate_inputs
-      @inputs += @config.nodes(:input).map do |input|
-        klass = config.node_class(:input, input[:type])
-        klass.new(input, @config.controls(input[:type]), :debug => @debug)
+      @nodes[:input] += @config.nodes(:input).map do |input|
+        klass = config.io_class(:input, input[:type])
+        klass.new(input, :control => @config.controls(input[:type]), :debug => @debug)
       end
     end
 
     def populate_outputs
-      @outputs += @config.nodes(:output).map do |output|
-        klass = config.node_class(:output, output[:type])
+      @nodes[:output] += @config.nodes(:output).map do |output|
+        klass = config.io_class(:output, output[:type])
         klass.new(output, :debug => @debug)
       end
     end
