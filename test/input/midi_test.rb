@@ -63,7 +63,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
         Scale.unstub(:transform)
         @result = @midi.send(:handle_event_received, { :message => @message })
         assert_not_nil @result
-        assert_equal Hash, @result.class
+        assert_equal Message, @result.class
         assert_not_nil @result[:index]
         assert_not_nil @result[:value]
         assert_equal @message.index - 1, @result[:index][:a_namespace]
@@ -74,7 +74,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
         @midi.send(:handle_event_received, { :message => @message }) do |hash|
           @result = hash
           assert_not_nil @result
-          assert_equal Hash, @result.class
+          assert_equal Message, @result.class
           assert_not_nil @result[:index]
           assert_not_nil @result[:value]
           assert_equal @message.index - 1, @result[:index][:a_namespace]

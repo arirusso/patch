@@ -35,6 +35,7 @@ module ControlHub
       # @param [OSC::Message] message The OSC message object
       # @param [Hash] options
       # @option options [ControlHub::Scale] :scale A scale for the value
+      # @return [Message]
       def handle_message_received(message, &block)
         output = get_output(message)        
         bounceback(message)
@@ -45,14 +46,14 @@ module ControlHub
 
       private
 
-      def get_output(message)
+      def get_output(raw_message)
         # parse the message
-        value = message.to_a[0].to_f
-        output = {}
+        value = raw_message.to_a[0].to_f
+        output = Message.new
         @controls.each do |namespace, schema|
           namespace = namespace.to_sym
           output[namespace] ||= {}
-          mapping = schema.find { |mapping| mapping[:osc][:address] == message.address }
+          mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
           output[namespace][:index] = schema.index(mapping)
           output[namespace][:value] = get_value(mapping[:osc], value)
         end

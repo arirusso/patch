@@ -18,6 +18,7 @@ require "control-hub/output"
 require "control-hub/config"
 require "control-hub/debug"
 require "control-hub/hub"
+require "control-hub/message"
 
 # patches
 require "control-hub/patch"

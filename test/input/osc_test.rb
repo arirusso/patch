@@ -34,25 +34,25 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
         @message.stubs(:address).returns("/1/rotaryA")
       end
 
-      should "return hash" do
+      should "return message" do
         @client.expects(:send).once.with(@message)
-        @hash = @osc.send(:handle_message_received, @message)
-        assert_not_nil @hash
-        assert_equal Hash, @hash.class
-        assert_not_nil @hash[:a_namespace]
-        assert_not_nil @hash[:a_namespace][:index]
-        assert_not_nil @hash[:a_namespace][:value]
+        @output = @osc.send(:handle_message_received, @message)
+        assert_not_nil @output
+        assert_equal Message, @output.class
+        assert_not_nil @output[:a_namespace]
+        assert_not_nil @output[:a_namespace][:index]
+        assert_not_nil @output[:a_namespace][:value]
       end
 
-      should "yield hash" do
+      should "yield message" do
         @client.expects(:send).once.with(@message)
-        @osc.send(:handle_message_received, @message) do |hash|
-          @hash = hash
-          assert_not_nil @hash
-          assert_equal Hash, @hash.class
-          assert_not_nil @hash[:a_namespace]
-          assert_not_nil @hash[:a_namespace][:index]
-          assert_not_nil @hash[:a_namespace][:value]
+        @osc.send(:handle_message_received, @message) do |message|
+          @output = message
+          assert_not_nil @output
+          assert_equal Message, @output.class
+          assert_not_nil @output[:a_namespace]
+          assert_not_nil @output[:a_namespace][:index]
+          assert_not_nil @output[:a_namespace][:value]
         end
       end
 
@@ -61,7 +61,7 @@ class ControlHub::Input::OSCTest < Test::Unit::TestCase
         scale = Object.new
         scale.expects(:from).once.returns(scale)
         scale.expects(:to).once
-        @hash = @osc.send(:handle_message_received, @message)
+        @output = @osc.send(:handle_message_received, @message)
         Scale.unstub(:transform)
       end
     end

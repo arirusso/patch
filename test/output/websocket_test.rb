@@ -13,38 +13,28 @@ class ControlHub::Output::WebsocketTest < Test::Unit::TestCase
       @server = ControlHub::Output::Websocket.new(@config)
     end
 
-    context "#enable" do
+    context "#handle_input" do
 
       setup do
-        @server.expects(:configure).once
-        @server.send(:enable, nil)
+        @message = { :value => "blah", :timestamp => 1396406728702 }.to_json
+        @result = @server.handle_input(@message)
+      end
+
+      should "convert from String to Message" do
+        assert_not_nil @result
+        assert_equal Message, @result.class
+        assert_equal "blah", @result[:value]
+      end
+
+      should "convert timestamp from js time to ruby" do
+        time = @result.time
+        assert_not_nil time
+        assert_equal Time, time.class
+        assert_equal 2014, time.year
+        assert_equal 4, time.month
+        assert_equal 22, time.hour
       end
       
-      should "populate messenger" do
-        assert_not_nil @server.messenger
-        assert_equal ControlHub::Output::Messenger, @server.messenger.class
-      end
-
-    end
-
-    context "#transmit" do
-
-      setup do
-        @server.expects(:configure).once
-        EM::WebSocket.stubs(:run).yields(Object.new)
-      end
-      
-      should "fail quietly when messenger hasn't been initialized" do
-        assert_nil @server.messenger
-        assert_nothing_raised(Exception) { @server.transmit(:hi => "hello") }
-      end
-
-      should "send when messenger is available" do
-        @server.send(:enable, nil)
-        @server.messenger.expects(:out).once
-        assert_nothing_raised(Exception) { @server.transmit(:hi => "hello") }
-      end
-
     end
 
   end

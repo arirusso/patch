@@ -30,13 +30,13 @@ module ControlHub
 
       def get_output(message)
         index = (message.index - 1)
-        hash = { :index => {}, :value => {} }
+        output = Message.new(:raw_message => { :index => {}, :value => {} })
         @control.each do |namespace, schema| 
           mapping = schema.find { |mapping| mapping[:index] == index }
-          hash[:value][namespace] = get_value(mapping[:midi], message)
-          hash[:index][namespace] = mapping[:index]
+          output[:value][namespace] = get_value(mapping[:midi], message)
+          output[:index][namespace] = mapping[:index]
         end
-        hash
+        output
       end
 
       def get_value(mapping, message)
