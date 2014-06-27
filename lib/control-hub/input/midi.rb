@@ -29,12 +29,13 @@ module ControlHub
       end
 
       def get_output(message)
-        index = (message.index - 1)
-        output = Message.new(:raw_message => { :index => {}, :value => {} })
+        index = message.index - 1
+        output = Message.new
         @control.each do |namespace, schema| 
           mapping = schema.find { |mapping| mapping[:index] == index }
-          output[:value][namespace] = get_value(mapping[:midi], message)
-          output[:index][namespace] = mapping[:index]
+          output[namespace] ||= {}
+          output[namespace][:value] = get_value(mapping[:midi], message)
+          output[namespace][:index] = mapping[:index]
         end
         output
       end

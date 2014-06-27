@@ -64,9 +64,9 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
         @result = @midi.send(:handle_event_received, { :message => @message })
         assert_not_nil @result
         assert_equal Message, @result.class
-        assert_not_nil @result[:index]
-        assert_not_nil @result[:value]
-        assert_equal @message.index - 1, @result[:index][:a_namespace]
+        assert_not_nil @result[:a_namespace][:index]
+        assert_not_nil @result[:a_namespace][:value]
+        assert_equal @message.index - 1, @result[:a_namespace][:index]
       end
 
       should "yield hash" do
@@ -75,9 +75,9 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
           @result = hash
           assert_not_nil @result
           assert_equal Message, @result.class
-          assert_not_nil @result[:index]
-          assert_not_nil @result[:value]
-          assert_equal @message.index - 1, @result[:index][:a_namespace]
+          assert_not_nil @result[:a_namespace][:index]
+          assert_not_nil @result[:a_namespace][:value]
+          assert_equal @message.index - 1, @result[:a_namespace][:index]
         end
       end
 

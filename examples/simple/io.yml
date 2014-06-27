@@ -4,7 +4,7 @@
     :port: 9006
 :input:
   - :type: midi
-    :name: Apple Inc. IAC Driver
+    :name: choose
   - :type: osc
     :server:
       :port: 8000
