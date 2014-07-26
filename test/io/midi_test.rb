@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::Input::MIDITest < Test::Unit::TestCase
+class ControlHub::IO::MIDITest < Test::Unit::TestCase
 
   include ControlHub
 
@@ -10,7 +10,7 @@ class ControlHub::Input::MIDITest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @midi = ControlHub::Input::MIDI.new(@config.nodes(:input, :type => :midi).first, :control => @config.controls(:midi))
+      @midi = ControlHub::IO::MIDI.new(@config.nodes(:input, :type => :midi).first, :control => @config.controls(:midi))
     end
 
     context "#initialize" do

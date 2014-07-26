@@ -8,13 +8,9 @@ module ControlHub
       populate_config(:control, options)
       populate_config(:io, options)
       @io_classes = {
-        :input => {
-          :midi => Input::MIDI,
-          :osc => Input::OSC
-        },
-        :output => {
-          :websocket => Output::Websocket
-        }
+        :midi => IO::MIDI,
+        :osc => IO::OSC,
+        :websocket => IO::Websocket
       }
     end
 
@@ -26,8 +22,8 @@ module ControlHub
       nodes?(:input)
     end
 
-    def io_class(direction, type)
-      @io_classes[direction][type.to_sym]
+    def io_class(type)
+      @io_classes[type.to_sym]
     end
 
     def output?

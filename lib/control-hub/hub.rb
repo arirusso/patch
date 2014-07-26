@@ -31,7 +31,12 @@ module ControlHub
 
     def nodes(direction, options = {})
       dir = @nodes[direction]
-      options[:type].nil? ? dir : dir[options[:type]]
+      if options[:type].nil?
+        dir
+      else
+        type = @config.io_classes[options[:type]]
+        dir.select { |node| node.kind_of?(type) }
+      end
     end
 
     private
@@ -65,14 +70,14 @@ module ControlHub
 
     def populate_inputs
       @nodes[:input] += @config.nodes(:input).map do |input|
-        klass = config.io_class(:input, input[:type])
+        klass = config.io_class(input[:type])
         klass.new(input, :control => @config.controls(input[:type]), :debug => @debug)
       end
     end
 
     def populate_outputs
       @nodes[:output] += @config.nodes(:output).map do |output|
-        klass = config.io_class(:output, output[:type])
+        klass = config.io_class(output[:type])
         klass.new(output, :debug => @debug)
       end
     end

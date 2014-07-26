@@ -1,6 +1,6 @@
 module ControlHub
 
-  module Output
+  module IO
 
     class Websocket
 

@@ -11,8 +11,7 @@ require "socket"
 require "yaml"
 
 # modules
-require "control-hub/input"
-require "control-hub/output"
+require "control-hub/io"
 
 # classes
 require "control-hub/config"

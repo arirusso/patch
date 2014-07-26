@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::Output::WebsocketTest < Test::Unit::TestCase
+class ControlHub::IO::WebsocketTest < Test::Unit::TestCase
 
   include ControlHub
 
@@ -10,7 +10,7 @@ class ControlHub::Output::WebsocketTest < Test::Unit::TestCase
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
       @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @server = ControlHub::Output::Websocket.new(@config)
+      @server = ControlHub::IO::Websocket.new(@config)
     end
 
     context "#handle_input" do
