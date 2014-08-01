@@ -9,7 +9,7 @@
       var hub;
       window.onload = function() {
         var body = document.getElementById("body");
-        hub = new ControlHub({host: "localhost", port: 9006}, {debug:true});
+        hub = new ControlHub.Websocket({host: "localhost", port: 9006}, {debug:true});
         hub.setInputCallback(function(messages) {
           body.style.fontSize = messages[0].value + "px";
         });
