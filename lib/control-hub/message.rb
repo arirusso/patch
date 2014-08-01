@@ -3,10 +3,8 @@ module ControlHub
   # Handles sending and receiving messages to/from the socket
   class Message
 
-    extend Forwardable
-
+    attr_accessor :index, :namespace, :value
     attr_reader :time
-    def_delegators :@message, :[], :[]=
 
     # @param [Hash] options
     # @option options [Boolean] :debug
@@ -14,11 +12,20 @@ module ControlHub
     def initialize(options = {})
       @debug = options[:debug]
       @message = options[:raw_message] || {}
+      @index = @message[:index]
+      @namespace = @message[:namespace]
+      @value = @message[:value]
       @time = get_time(@message[:timestamp])
     end
 
     def to_json
-      { :timestamp => timestamp }.merge(@message).to_json
+      attrs = {
+        :index => @index, 
+        :schema => @schema, 
+        :timestamp => timestamp, #js format
+        :value => @value
+      }
+      @message.merge(attrs).to_json
     end
 
     # Get the message time as a js timestamp
