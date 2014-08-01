@@ -7,20 +7,25 @@ ControlHub = function(network, options) {
   this.initialize();
 }
 
-// Convert the raw websocket JSON message
-ControlHub.eventToControllerMessage = function(evt) {
-  var msg = JSON.parse(evt.data);
-  // format values
-  for (var i in msg) {
-    if (i === 'timestamp') {
-      var timestamp = Number(msg.timestamp);
-      msg.time = new Date(timestamp);
-    } else {
-      msg[i].index = Number(msg[i].index);
-      msg[i].value = parseFloat(msg[i].value);
-    }
+// Convert the raw websocket event to an array of message objects
+ControlHub.eventToControllerMessages = function(event) {
+  var messages = []
+  var rawMessages = JSON.parse(event.data);
+  for (var i in rawMessages) {
+    var rawMessage = rawMessages[i];
+    var message = ControlHub.processMessage(rawMessage);
+    messages.push(message);
   }
-  return msg;
+  return messages;
+}
+
+// Convert a raw message's properties into more meaningful types, etc
+ControlHub.processMessage = function(message) {
+  var timestamp = Number(message.timestamp);
+  message.time = new Date(timestamp);
+  message.index = Number(message.index);
+  message.value = parseFloat(message.value);
+  return message;
 }
 
 // initialize the socket
@@ -52,17 +57,17 @@ ControlHub.prototype.disable = function() {
 
 // Handle a single event
 ControlHub.prototype.handleEvent = function(event, callback) {
-  var message = ControlHub.eventToControllerMessage(event);
+  var messages = ControlHub.eventToControllerMessages(event);
   if (this.debug) {
-    console.log("message received: ");
-    console.log(message);
+    console.log("messages received: ");
+    console.log(messages);
   }
-  callback(message);
-  return message;
+  callback(messages);
+  return messages;
 }
 
 // Initialize controller events
-ControlHub.prototype.onMessage = function(callback) {
+ControlHub.prototype.setInputCallback = function(callback) {
   var controller = this;
   this.webSocket.onmessage = function(event) { 
     controller.handleEvent(event, callback); 
