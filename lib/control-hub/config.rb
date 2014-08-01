@@ -56,8 +56,8 @@ module ControlHub
     def controls(type)
       controls = {}
       if control?
-        @control.each do |key, schema|
-          controls[key] = schema.select { |mapping| mapping.keys.map(&:to_s).include?(type.to_s) }
+        @control.each do |namespace, schema|
+          controls[namespace] = schema.select { |mapping| mapping.keys.map(&:to_s).include?(type.to_s) }
         end
       end
       controls
