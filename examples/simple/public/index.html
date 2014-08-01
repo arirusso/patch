@@ -10,8 +10,8 @@
       window.onload = function() {
         var body = document.getElementById("body");
         hub = new ControlHub({host: "localhost", port: 9006}, {debug:true});
-        hub.onMessage(function(m) {
-          body.style.fontSize = m.simple.value + "px";
+        hub.setInputCallback(function(messages) {
+          body.style.fontSize = messages[0].value + "px";
         });
       }
     </script>
