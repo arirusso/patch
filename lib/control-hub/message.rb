@@ -18,10 +18,10 @@ module ControlHub
       @time = get_time(@message[:timestamp])
     end
 
-    def to_json
+    def to_json(*a)
       attrs = {
         :index => @index, 
-        :schema => @schema, 
+        :namespace => @namespace, 
         :timestamp => timestamp, #js format
         :value => @value
       }
