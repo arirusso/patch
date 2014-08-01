@@ -17,7 +17,7 @@ class ControlHub::IO::WebsocketTest < Test::Unit::TestCase
 
       setup do
         @message = { :value => "blah", :timestamp => 1396406728702 }.to_json
-        @result = @server.handle_input(@message)
+        @result = @server.send(:handle_input, @message)
       end
 
       should "convert from String to Message" do

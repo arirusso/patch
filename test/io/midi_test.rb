@@ -36,11 +36,11 @@ class ControlHub::IO::MIDITest < Test::Unit::TestCase
       
     end
 
-    context "#listen" do
+    context "#start" do
 
       should "start listener" do
         ::MIDIEye::Listener.any_instance.expects(:run)
-        @midi.listen
+        @midi.start
       end
 
     end

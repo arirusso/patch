@@ -76,12 +76,12 @@ class ControlHub::IO::OSCTest < Test::Unit::TestCase
       end
     end
 
-    context "#listen" do
+    context "#start" do
 
       should "start server" do
         server = @osc.instance_variable_get("@server")
         server.expects(:run)
-        @osc.listen
+        @osc.start
       end
 
     end
