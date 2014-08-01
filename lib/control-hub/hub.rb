@@ -59,11 +59,12 @@ module ControlHub
       @nodes[:input].each do |input|
         Thread::abort_on_exception = true
         @threads << Thread.new do
-          input.listen do |message|
+          input.listen do |messages|
             @nodes[:output].each do |output| 
-              output.out(message)
+              output.out(messages)
             end
           end
+          input.start
         end
       end
     end
