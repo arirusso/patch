@@ -34,25 +34,35 @@ class ControlHub::IO::OSCTest < Test::Unit::TestCase
         @message.stubs(:address).returns("/1/rotaryA")
       end
 
-      should "return message" do
+      should "return array of messages" do
         @client.expects(:send).once.with(@message)
         @output = @osc.send(:handle_message_received, @message)
         assert_not_nil @output
-        assert_equal Message, @output.class
-        assert_not_nil @output[:a_namespace]
-        assert_not_nil @output[:a_namespace][:index]
-        assert_not_nil @output[:a_namespace][:value]
+        assert_equal Array, @output.class
+        assert_not_empty @output
+
+        @output.each do |message|
+          assert_equal Message, message.class
+          assert_equal :a_namespace, message.namespace
+          assert_not_nil message.index
+          assert_not_nil message.value
+        end
       end
 
-      should "yield message" do
+      should "yield array of messages" do
         @client.expects(:send).once.with(@message)
-        @osc.send(:handle_message_received, @message) do |message|
-          @output = message
+        @osc.send(:handle_message_received, @message) do |messages|
+          @output = messages
           assert_not_nil @output
-          assert_equal Message, @output.class
-          assert_not_nil @output[:a_namespace]
-          assert_not_nil @output[:a_namespace][:index]
-          assert_not_nil @output[:a_namespace][:value]
+          assert_equal Array, @output.class
+          assert_not_empty @output
+
+          @output.each do |message|
+            assert_equal Message, message.class
+            assert_equal :a_namespace, message.namespace
+            assert_not_nil message.index
+            assert_not_nil message.value
+          end
         end
       end
 

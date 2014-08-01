@@ -23,7 +23,7 @@ class ControlHub::IO::WebsocketTest < Test::Unit::TestCase
       should "convert from String to Message" do
         assert_not_nil @result
         assert_equal Message, @result.class
-        assert_equal "blah", @result[:value]
+        assert_equal "blah", @result.value
       end
 
       should "convert timestamp from js time to ruby" do

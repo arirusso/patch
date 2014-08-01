@@ -59,30 +59,38 @@ class ControlHub::IO::MIDITest < Test::Unit::TestCase
         @result = @midi.send(:handle_event_received, { :message => @message })
       end
 
-      should "return hash" do
+      should "return array of messages" do
         Scale.unstub(:transform)
         @result = @midi.send(:handle_event_received, { :message => @message })
         assert_not_nil @result
-        assert_equal Message, @result.class
-        assert_not_nil @result[:a_namespace][:index]
-        assert_not_nil @result[:a_namespace][:value]
-        assert_equal @message.index - 1, @result[:a_namespace][:index]
+        assert_equal Array, @result.class
+        assert_not_empty @result
+
+        @result.each do |message|
+          assert_equal Message, message.class
+          assert_equal :a_namespace, message.namespace
+          assert_not_nil message.index
+          assert_not_nil message.value
+        end
       end
 
-      should "yield hash" do
+      should "yield array of messages" do
         Scale.unstub(:transform)
         @midi.send(:handle_event_received, { :message => @message }) do |hash|
           @result = hash
           assert_not_nil @result
-          assert_equal Message, @result.class
-          assert_not_nil @result[:a_namespace][:index]
-          assert_not_nil @result[:a_namespace][:value]
-          assert_equal @message.index - 1, @result[:a_namespace][:index]
+          assert_equal Array, @result.class
+          assert_not_empty @result
+
+          @result.each do |message|
+            assert_equal Message, message.class
+            assert_equal :a_namespace, message.namespace
+            assert_not_nil message.index
+            assert_not_nil message.value
+          end
         end
       end
 
     end
-
   end
-
 end
