@@ -22,13 +22,33 @@ module ControlHub
         configure_io(input_info)
       end
 
-      # Begin to listen for messages.  Yields to a block with a handler for when messages are received.
+      # Start the server and client
+      # @return [Boolean] Whether the server was started
+      def start
+        if !@server.nil? && !@controls.nil?
+          @active = true
+          @server.run
+          true
+        else
+          false
+        end
+      end
+
+      # Specify a handler callback for when input messages are received.
+      # @return [Boolean] Whether adding the callback was successful
       def listen(&block)
         if !@server.nil?
           configure_controls(&block)
-          @active = true
-          @server.run
+        else
+          false
         end
+      end
+
+      # Convert message objects to OSC messages and send
+      # @param [Array<ControlHub::Message>, ControlHub::Message] messages Message(s) to send
+      # @return [Boolean]
+      def out(messages)
+        # todo
       end
 
       protected
@@ -38,16 +58,22 @@ module ControlHub
       # @param [OSC::Message] message The OSC message object
       # @param [Hash] options
       # @option options [ControlHub::Scale] :scale A scale for the value
-      # @return [Message]
-      def handle_message_received(message, &block)
-        output = get_hub_messages(message)        
-        bounceback(message)
+      # @return [Array<Hub::Message>]
+      def handle_message_received(raw_input, &block)
+        messages = get_hub_messages(raw_input)        
+        echo(raw_input)
         # yield to custom behavior
-        yield(output) if block_given?
-        output
+        yield(messages) if block_given?
+        messages
       end
 
       private
+
+      # Output a raw osc message
+      # @param [OSC::Message] osc_message
+      def osc_out(osc_message)
+        @client.send(osc_message)
+      end
 
       def get_hub_messages(raw_message)
         # parse the message
@@ -55,7 +81,7 @@ module ControlHub
         messages = []
         @controls.each do |namespace, schema|
           mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
-          message = Message.new
+          message = ControlHub::Message.new
           message.index = schema.index(mapping)
           message.namespace = namespace.to_sym
           message.value = get_value(mapping[:osc], value)
@@ -64,14 +90,20 @@ module ControlHub
         messages
       end
 
-      # bounce the message back to update the ui or whatever
-      def bounceback(message)
+      # Bounce the message back to update the ui or whatever
+      # @param [OSC::Message] osc_message
+      # @return [Boolean] Whether the echo was successful
+      def echo(message)
         if !@client.nil?
           begin
-            @client.send(message)
-          rescue Exception => e # failsafe
-            @debug.exception(e)
+            osc_out(message)
+            true
+          rescue Exception => exception # failsafe
+            @debug.exception(exception)
+            false
           end
+        else
+          false
         end
       end
 
@@ -104,6 +136,7 @@ module ControlHub
       end
 
       # Configure the control mapping
+      # @return [Boolean] Whether any controls were configured
       def configure_controls(&block)
         if @debug
           @server.add_method(/.*/) { |msg| @debug.puts("Received: #{msg.address}") }
@@ -111,11 +144,13 @@ module ControlHub
         addresses = @controls.map do |key, mappings|
           mappings.map { |mapping| mapping[:osc][:address].dup }
         end.flatten.compact.uniq
-        addresses.each do |address|
+        result = addresses.each do |address|
           @server.add_method(address) do |message|
             handle_message_received(message, &block)
           end
+          true
         end
+        result.any?
       end
 
     end

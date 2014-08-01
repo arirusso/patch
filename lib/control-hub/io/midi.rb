@@ -13,10 +13,32 @@ module ControlHub
         @listener = MIDIEye::Listener.new(@input) unless @input.nil?
       end
 
+      # Convert message objects to MIDI and send
+      # @param [Array<ControlHub::Message>, ControlHub::Message] messages Message(s) to send via MIDI
+      # @return [Boolean]
+      def out(messages)
+        #todo
+      end
+
+      # Start listening for MIDI input
+      # @return [Boolean] Whether the listener was started
+      def start
+        if !@listener.nil?
+          @listener.run(:background => true)
+          true
+        else
+          false
+        end
+      end
+
+      # Specify a handler callback for when messages are received
+      # @return [Boolean] Whether adding the callback was successful
       def listen(&block)
         if !@listener.nil?
           configure_listener(&block)
-          @listener.run(:background => true)
+          true
+        else
+          false
         end
       end
 
@@ -33,7 +55,7 @@ module ControlHub
         messages = []
         @control.each do |namespace, schema| 
           mapping = schema.find { |mapping| mapping[:index] == index }
-          message = Message.new
+          message = ControlHub::Message.new
           message.index = mapping[:index]
           message.namespace = namespace
           message.value = get_value(mapping[:midi], raw_message)
