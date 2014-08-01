@@ -5,6 +5,8 @@ module ControlHub
     # Receive OSC messages and do something with them
     class OSC
 
+      attr_reader :ips
+
       # @param [Hash] input_info
       # @param [Hash] controls
       # @param [Hash] options
@@ -16,6 +18,7 @@ module ControlHub
         @client = nil
         @server = nil
         @active = false
+        @ips = []
         configure_io(input_info)
       end
 
@@ -37,7 +40,7 @@ module ControlHub
       # @option options [ControlHub::Scale] :scale A scale for the value
       # @return [Message]
       def handle_message_received(message, &block)
-        output = get_output(message)        
+        output = get_hub_messages(message)        
         bounceback(message)
         # yield to custom behavior
         yield(output) if block_given?
@@ -46,18 +49,19 @@ module ControlHub
 
       private
 
-      def get_output(raw_message)
+      def get_hub_messages(raw_message)
         # parse the message
         value = raw_message.to_a[0].to_f
-        output = Message.new
+        messages = []
         @controls.each do |namespace, schema|
-          namespace = namespace.to_sym
-          output[namespace] ||= {}
           mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
-          output[namespace][:index] = schema.index(mapping)
-          output[namespace][:value] = get_value(mapping[:osc], value)
+          message = Message.new
+          message.index = schema.index(mapping)
+          message.namespace = namespace.to_sym
+          message.value = get_value(mapping[:osc], value)
+          messages << message
         end
-        output
+        messages
       end
 
       # bounce the message back to update the ui or whatever
@@ -89,8 +93,8 @@ module ControlHub
       # Configure the server connection
       def configure_server(server_config)
         if (@server = ::OSC::EMServer.new(server_config[:port]))
-          ip = Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
-          puts "Server ips are: #{ip}"
+          @ips = Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
+          puts "Server ips are: #{@ips}"
         end
       end
 

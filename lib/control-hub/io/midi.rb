@@ -23,21 +23,23 @@ module ControlHub
       private
 
       def handle_event_received(event, options = {}, &block)
-        output = get_output(event[:message])
-        yield(output) if block_given?
-        output
+        messages = get_hub_messages(event[:message])
+        yield(messages) if block_given?
+        messages
       end
 
-      def get_output(message)
-        index = message.index - 1
-        output = Message.new
+      def get_hub_messages(raw_message)
+        index = raw_message.index - 1
+        messages = []
         @control.each do |namespace, schema| 
           mapping = schema.find { |mapping| mapping[:index] == index }
-          output[namespace] ||= {}
-          output[namespace][:value] = get_value(mapping[:midi], message)
-          output[namespace][:index] = mapping[:index]
+          message = Message.new
+          message.index = mapping[:index]
+          message.namespace = namespace
+          message.value = get_value(mapping[:midi], raw_message)
+          messages << message
         end
-        output
+        messages
       end
 
       def get_value(mapping, message)
