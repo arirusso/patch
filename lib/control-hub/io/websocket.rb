@@ -16,12 +16,12 @@ module ControlHub
       def out(messages)
         messages = Array(messages)
         if !@socket.nil?
-          json = message.to_json
+          json = messages.to_json
           @debug.puts("Sending messages: #{json}") if @debug
           begin
             @socket.send(json)
-          rescue Exception => e # failsafe
-            @debug.exception(e)
+          rescue Exception => exception # failsafe
+            @debug.exception(exception)
           end
           json
         else

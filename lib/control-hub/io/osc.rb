@@ -93,10 +93,10 @@ module ControlHub
       # Bounce the message back to update the ui or whatever
       # @param [OSC::Message] osc_message
       # @return [Boolean] Whether the echo was successful
-      def echo(message)
+      def echo(osc_message)
         if !@client.nil?
           begin
-            osc_out(message)
+            osc_out(osc_message)
             true
           rescue Exception => exception # failsafe
             @debug.exception(exception)
