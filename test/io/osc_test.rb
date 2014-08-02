@@ -43,7 +43,7 @@ class ControlHub::IO::OSCTest < Test::Unit::TestCase
 
         @output.each do |message|
           assert_equal Message, message.class
-          assert_equal :a_namespace, message.namespace
+          assert_equal :test_namespace, message.namespace
           assert_not_nil message.index
           assert_not_nil message.value
         end
@@ -59,7 +59,7 @@ class ControlHub::IO::OSCTest < Test::Unit::TestCase
 
           @output.each do |message|
             assert_equal Message, message.class
-            assert_equal :a_namespace, message.namespace
+            assert_equal :test_namespace, message.namespace
             assert_not_nil message.index
             assert_not_nil message.value
           end

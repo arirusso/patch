@@ -48,7 +48,8 @@ module ControlHub
       # @param [Array<ControlHub::Message>, ControlHub::Message] messages Message(s) to send
       # @return [Boolean]
       def out(messages)
-        # todo
+        osc_messages = messages.map { |message| get_osc_messages(message) }.flatten
+        osc_messages.each { |osc_message| osc_out(osc_message) } 
       end
 
       protected
@@ -75,19 +76,26 @@ module ControlHub
         @client.send(osc_message)
       end
 
+      # Convert a message object to an OSC message for output
+      def get_osc_messages(message)
+        @controls.map do |namespace, schema|
+          mapping = schema.at(message.index)
+          address = mapping[:osc][:address]
+          OSC::Message.new(address, message.value)
+        end
+      end
+
       def get_hub_messages(raw_message)
         # parse the message
         value = raw_message.to_a[0].to_f
-        messages = []
-        @controls.each do |namespace, schema|
+        @controls.map do |namespace, schema|
           mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
           message = ControlHub::Message.new
           message.index = schema.index(mapping)
           message.namespace = namespace.to_sym
-          message.value = get_value(mapping[:osc], value)
-          messages << message
+          message.value = get_value(mapping[:osc], value, :destination => :hub)
+          message
         end
-        messages
       end
 
       # Bounce the message back to update the ui or whatever
@@ -107,13 +115,20 @@ module ControlHub
         end
       end
 
-      def get_value(mapping, value)
+      def get_value(mapping, value, options = {})
         scale = mapping[:scale]
         if scale.nil?
           value
         else
-          Scale.transform(value).from(scale[:from]).to(scale[:to]) 
+          get_scaled_value(scale, value, options)
         end
+      end
+
+      def get_scaled_value(scale, value, options = {})
+        destination = options[:destination] || :hub
+        direction = [:osc, :hub]
+        direction.reverse! if destination != :hub
+        Scale.transform(value).from(scale[direction.first]).to(scale[direction.last]) 
       end
 
       # Configure the client and server connections
