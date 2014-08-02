@@ -54,9 +54,9 @@ module ControlHub
         index = raw_message.index - 1
         messages = []
         @control.each do |namespace, schema| 
-          mapping = schema.find { |mapping| mapping[:index] == index }
+          mapping = schema.at(index)
           message = ControlHub::Message.new
-          message.index = mapping[:index]
+          message.index = index
           message.namespace = namespace
           message.value = get_value(mapping[:midi], raw_message)
           messages << message

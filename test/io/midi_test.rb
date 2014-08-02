@@ -68,7 +68,7 @@ class ControlHub::IO::MIDITest < Test::Unit::TestCase
 
         @result.each do |message|
           assert_equal Message, message.class
-          assert_equal :a_namespace, message.namespace
+          assert_equal :test_namespace, message.namespace
           assert_not_nil message.index
           assert_not_nil message.value
         end
@@ -84,7 +84,7 @@ class ControlHub::IO::MIDITest < Test::Unit::TestCase
 
           @result.each do |message|
             assert_equal Message, message.class
-            assert_equal :a_namespace, message.namespace
+            assert_equal :test_namespace, message.namespace
             assert_not_nil message.index
             assert_not_nil message.value
           end
