@@ -1,7 +1,6 @@
-:a_namespace:
+:test_namespace:
 
     - :name: Zoom
-      :index: 0
       :key: zoom
       :midi:
         :channel: 0
@@ -9,32 +8,29 @@
       :osc:
         :address: /1/rotaryA
         :scale:
-          :from: !ruby/range 0..1
-          :to: !ruby/range 0.1..5.0
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 0.1..5.0
 
     - :name: Contrast
-      :index: 3
       :key: contrast
       :osc:
         :address: /1/rotaryD
         :scale: 
-          :from: !ruby/range 0..1
-          :to: !ruby/range 0..5.0
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 0..5.0
 
     - :name: Saturation
-      :index: 4
       :key: saturation
       :osc:
         :address: /faderM
         :scale: 
-          :from: !ruby/range 0..1
-          :to: !ruby/range 0..2.0
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 0..2.0
 
     - :name: Z Depth
-      :index: 5
       :key: zDepth
       :osc:
         :address: /1/faderA
         :scale: 
-          :from: !ruby/range 0..1
-          :to: !ruby/range 0..1000
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 0..1000

@@ -1,7 +1,6 @@
 :simple:
 
     - :name: Zoom
-      :index: 0
       :key: zoom
       :midi:
         :channel: 0
@@ -9,6 +8,6 @@
       :osc:
         :address: /1/rotaryA
         :scale:
-          :from: !ruby/range 0..1
-          :to: !ruby/range 10..200
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 10..200
 
