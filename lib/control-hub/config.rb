@@ -1,5 +1,6 @@
 module ControlHub
 
+  # Hub configuration class
   class Config
 
     attr_reader :control, :control_file, :io, :io_classes, :io_file
@@ -14,22 +15,29 @@ module ControlHub
       }
     end
 
+    # Is there a control spec?
+    # @return [Boolean]
     def control?
       !@control.nil?
     end
 
+    # Is there an input node?
+    # @return [Boolean]
     def input?
       nodes?(:input)
     end
 
-    def io_class(type)
-      @io_classes[type.to_sym]
-    end
-
+    # Is there an output node?
+    # @return [Boolean]
     def output?
       nodes?(:output)
     end
 
+    # The nodes for the given direction
+    # @param [Symbol, String] direction
+    # @param [Hash] options
+    # @option options [Symbol] :type The type of node eg OSC, MIDI
+    # @return [Array<IO::OSC, IO::MIDI, IO::Websocket>]
     def nodes(direction, options = {})
       if nodes?(direction)
         if options[:type].nil?
@@ -40,6 +48,12 @@ module ControlHub
       end
     end
 
+    # Are there nodes for the given direction?
+    # @param [Symbol, String] direction
+    # @param [Hash] options
+    # @param [Hash] options
+    # @option options [Symbol] :type The type of node eg OSC, MIDI
+    # @return [Boolean]
     def nodes?(direction, options = {})
       if !@io.nil? && !@io[direction].nil? && !@io[direction].empty?
         if options[:type].nil?
@@ -53,6 +67,9 @@ module ControlHub
       end
     end
 
+    # Controls that have specification for the given type
+    # @param [Symbol, String] type The type of control eg OSC, MIDI
+    # @return [Hash]
     def controls(type)
       controls = {}
       if control?
@@ -64,6 +81,10 @@ module ControlHub
     end
 
     private
+
+    def io_class(type)
+      @io_classes[type.to_sym]
+    end
 
     def populate_config(key, options = {})
       file_var = case options[key]
