@@ -99,7 +99,7 @@ module ControlHub
     # @return [Array]
     def populate_inputs
       @nodes[:input] += @config.nodes(:input).map do |input|
-        klass = config.io_class(input[:type])
+        klass = config.send(:io_class, input[:type])
         klass.new(input, :control => @config.controls(input[:type]), :debug => @debug)
       end
     end
@@ -108,7 +108,7 @@ module ControlHub
     # @return [Array]
     def populate_outputs
       @nodes[:output] += @config.nodes(:output).map do |output|
-        klass = config.io_class(output[:type])
+        klass = config.send(:io_class, output[:type])
         klass.new(output, :debug => @debug)
       end
     end
