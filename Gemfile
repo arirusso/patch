@@ -10,6 +10,6 @@ end
 gem "analog", ">=0.3"
 gem "colorize"
 gem "em-websocket"
-gem "micromidi"
+gem "midi-eye"
 gem "osc-ruby"
 gem "web-repl"
