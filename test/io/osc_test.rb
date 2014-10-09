@@ -34,9 +34,7 @@ class ControlHub::IO::OSCTest < Test::Unit::TestCase
 
       setup do
         @client = @osc.instance_variable_get("@client")
-        @message = Object.new
-        @message.stubs(:to_a).returns([0.5])
-        @message.stubs(:address).returns("/1/rotaryA")
+        @message = ::OSC::Message.new( "/1/rotaryA" , 0.5 )
       end
 
       should "return array of messages" do
