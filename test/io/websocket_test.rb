@@ -9,8 +9,8 @@ class ControlHub::IO::WebsocketTest < Test::Unit::TestCase
     setup do
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
-      @config = ControlHub::Config.new(:control => @control, :io => @io)
-      @server = ControlHub::IO::Websocket.new(@config)
+      @config = ControlHub::Config.new(@io, :control => @control)
+      @server = ControlHub::IO::Websocket.new(@config.nodes(:type => :websocket).first)
     end
 
     context "#handle_input" do
