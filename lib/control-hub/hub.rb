@@ -5,18 +5,16 @@ module ControlHub
 
     attr_reader :config, :nodes
 
+    # @param [File, String] io
     # @param [Hash] options
     # @option options [File, String] :control
-    # @option options [File, String] :io
-    def initialize(options = {})
+    def initialize(io, options = {})
       @debug = Debug.new($>)
-      @nodes = {
-        :input => [],
-        :output => []
-      }
+      @nodes = []
       @threads = []
-      populate_config(options[:control], options[:io])
+      @config = Config.new(io, :control => options[:control])
       populate_nodes
+      populate_node_map
     end
 
     # Start the hub
@@ -58,68 +56,53 @@ module ControlHub
       end
     end
 
+    def find_node_by_id(id)
+      @nodes.find { |node| node.id == id }
+    end
+
     private
+
+    def populate_node_map
+      @config.io[:map].each do |from, to|
+        to_node = find_node_by_id(to)
+        from.each do |id|
+          from_node = find_node_by_id(id)
+          from_node.listen do |messages| 
+            to_node.out(messages)
+          end
+        end
+      end
+    end
 
     # Populate all of the nodes from the spec
     def populate_nodes
-      populate_inputs + populate_outputs
-    end
-
-    # Enable the nodes
-    # @return [Boolean]
-    def enable_nodes
-      enable_outputs || enable_inputs
-    end
-
-    # Enable the outputs
-    # @return [Boolean]
-    def enable_outputs
-      @nodes[:output].each(&:start)
-      true
+      nodes = @config.io[:nodes].map do |node|
+        mod = config.send(:io_module, node[:type])
+        options = { 
+          :control => @config.controls(node[:type]), 
+          :debug => @debug
+        }
+        mod.new(node, options)
+      end 
+      @nodes += nodes.flatten.compact
     end
 
     # Enable the inputs
     # @return [Boolean]
-    def enable_inputs
-      @nodes[:input].each do |input|
-        Thread::abort_on_exception = true
-        @threads << Thread.new do
-          input.listen do |messages|
-            @nodes[:output].each do |output| 
-              output.out(messages)
-            end
+    def enable_nodes
+      @nodes.map do |node|
+        thread = Thread.new do
+          begin
+            node.start if node.respond_to?(:start)
+          rescue Exception => exception
+            Thread.main.raise(exception)
           end
-          input.start
         end
+        thread.abort_on_exception = true
+        @threads << thread
       end
       true
     end
-
-    # Populate the inputs
-    # @return [Array]
-    def populate_inputs
-      @nodes[:input] += @config.nodes(:input).map do |input|
-        klass = config.send(:io_class, input[:type])
-        klass.new(input, :control => @config.controls(input[:type]), :debug => @debug)
-      end
-    end
-
-    # Populate the outputs
-    # @return [Array]
-    def populate_outputs
-      @nodes[:output] += @config.nodes(:output).map do |output|
-        klass = config.send(:io_class, output[:type])
-        klass.new(output, :debug => @debug)
-      end
-    end
     
-    # Populate the config
-    # @param [String, File] control_path
-    # @param [String, File] io_path
-    # @return [Config]
-    def populate_config(control_path, io_path)
-      @config = Config.new(:control => control_path, :io => io_path)
-    end
-
   end
 end

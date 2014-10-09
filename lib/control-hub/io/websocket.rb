@@ -4,8 +4,11 @@ module ControlHub
 
     class Websocket
 
-      def initialize(output_info, options = {})
-        @config = output_info
+      attr_reader :id
+
+      def initialize(socket_info, options = {})
+        @config = socket_info
+        @id = socket_info[:id]
         @socket = nil
         @debug = options[:debug]
       end
@@ -35,6 +38,12 @@ module ControlHub
         EM::WebSocket.run(@config) { |ws| enable(ws) }
       end
 
+      def listen(&block)
+        @socket.onmessage do |raw_message|
+          handle_input(raw_message, &block)
+        end
+      end
+
       private
 
       # Handle an inputted message
@@ -61,10 +70,6 @@ module ControlHub
 
         @socket.onclose do 
           puts "Connection closed"
-        end
-
-        @socket.onmessage do |raw_message|
-          handle_input(raw_message)
         end
       end
 
