@@ -25,34 +25,17 @@ module ControlHub
       true
     end
 
-    # Get the output nodes
-    # @param [Hash] options
-    # @option options [Symbol] :type The type of node (eg :midi)
-    # @return [IO::MIDI, IO::OSC, IO::Websocket]
-    def outputs(options = {})
-      nodes(:output, options)
-    end
-
-    # Get the input nodes
-    # @param [Hash] options
-    # @option options [Symbol] :type The type of node (eg :midi)
-    # @return [IO::MIDI, IO::OSC, IO::Websocket]
-    def inputs(options = {})
-      nodes(:input, options)
-    end
-
     # Get the nodes of the given direction
     # @param [String] direction
     # @param [Hash] options
     # @option options [Symbol] :type The type of node (eg :midi)
     # @return [IO::MIDI, IO::OSC, IO::Websocket]
-    def nodes(direction, options = {})
-      dir = @nodes[direction]
+    def nodes(options = {})
       if options[:type].nil?
-        dir
+        @nodes
       else
         type = @config.io_classes[options[:type]]
-        dir.select { |node| node.kind_of?(type) }
+        @nodes.select { |node| node.kind_of?(type) }
       end
     end
 
