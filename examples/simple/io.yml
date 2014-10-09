@@ -1,13 +1,18 @@
-:output:
+:nodes:
   - :type: websocket
+    :id: 1
     :host: localhost
     :port: 9006
-:input:
   - :type: midi
-    :name: choose
+    :direction: input
+    :id: 2
+    :name: Apple Inc. IAC Driver
   - :type: osc
     :server:
       :port: 8000
     :client:
       :host: 192.168.1.118
       :port: 9000
+    :id: 3
+:map:
+  [2, 3]: 1
