@@ -77,11 +77,13 @@ module ControlHub
           value = raw_message.to_a[0].to_f
           @controls.map do |namespace, schema|
             mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
-            message = ControlHub::Message.new
-            message.index = schema.index(mapping)
-            message.namespace = namespace.to_sym
-            message.value = get_value(mapping[:osc], value, :destination => :hub)
-            message
+            unless mapping.nil?
+              message = ControlHub::Message.new
+              message.index = schema.index(mapping)
+              message.namespace = namespace.to_sym
+              message.value = get_value(mapping[:osc], value, :destination => :hub)
+              message
+            end
           end
         end
 
@@ -93,8 +95,8 @@ module ControlHub
             @client.out(osc_message)
             true
           rescue Exception => exception # failsafe
-            p exception.backtrace
             @debug.exception(exception) if @debug
+            Thread.main.raise(exception)
             false
           end
         end
@@ -185,7 +187,7 @@ module ControlHub
           @controls.map do |namespace, schema|
             mapping = schema.at(message.index)
             address = mapping[:osc][:address]
-            OSC::Message.new(address, message.value)
+            ::OSC::Message.new(address, message.value)
           end
         end
 
