@@ -13,8 +13,9 @@ module ControlHub
       @nodes = []
       @threads = []
       @config = Config.new(io, :control => options[:control])
+      @map = Map.new(@config.io[:map])
       populate_nodes
-      populate_node_map
+      @map.enable(@nodes)
     end
 
     # Start the hub
@@ -44,18 +45,6 @@ module ControlHub
     end
 
     private
-
-    def populate_node_map
-      @config.io[:map].each do |from, to|
-        to_node = find_node_by_id(to)
-        from.each do |id|
-          from_node = find_node_by_id(id)
-          from_node.listen do |messages| 
-            to_node.out(messages)
-          end
-        end
-      end
-    end
 
     # Populate all of the nodes from the spec
     def populate_nodes
