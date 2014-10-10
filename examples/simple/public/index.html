@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Control-hub Demo</title>
+    <title>Patch Demo</title>
     <meta charset="utf-8">
-    <script src="js/controlHub.js"></script>
+    <script src="js/patch.js"></script>
     <script type="text/javascript">
       var hub;
       window.onload = function() {
         var body = document.getElementById("body");
-        hub = new ControlHub.Websocket({host: "localhost", port: 9006}, {debug:true});
+        hub = new Patch.Websocket({host: "localhost", port: 9006}, {debug:true});
         hub.setInputCallback(function(messages) {
           body.style.fontSize = messages[0].value + "px";
         });
@@ -17,7 +17,7 @@
     </script>
   </head>
   <body>
-  <h1 id="title">This is the <a href="http://github.com/arirusso/control-hub">control-hub</a> demo</h1>
+  <h1 id="title">This is the <a href="http://github.com/arirusso/patch">patch</a> demo</h1>
     <p id="body">hi</p>
   </body>
 </html>

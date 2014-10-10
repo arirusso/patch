@@ -1,4 +1,4 @@
-module ControlHub
+module Patch 
 
   # Handles sending and receiving messages to/from the socket
   class Message

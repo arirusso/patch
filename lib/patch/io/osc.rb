@@ -1,4 +1,4 @@
-module ControlHub
+module Patch
 
   module IO
 
@@ -56,8 +56,8 @@ module ControlHub
         # @param [Fixnum] index The control index
         # @param [OSC::Message] message The OSC message object
         # @param [Hash] options
-        # @option options [ControlHub::Scale] :scale A scale for the value
-        # @return [Array<Hub::Message>]
+        # @option options [::Scale] :scale A scale for the value
+        # @return [Array<Patch::Message>]
         def handle_message_received(raw_input, &block)
           messages = get_hub_messages(raw_input)        
           echo(raw_input) if echo?
@@ -78,7 +78,7 @@ module ControlHub
           @controls.map do |namespace, schema|
             mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
             unless mapping.nil?
-              message = ControlHub::Message.new
+              message = Patch::Message.new
               message.index = schema.index(mapping)
               message.namespace = namespace.to_sym
               message.value = get_value(mapping[:osc], value, :destination => :hub)
@@ -169,7 +169,7 @@ module ControlHub
         end
 
         # Convert message objects to OSC messages and send
-        # @param [Array<ControlHub::Message>, ControlHub::Message] messages Message(s) to send
+        # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send
         # @return [Boolean]
         def out(messages)
           messages = [messages].flatten

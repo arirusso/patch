@@ -1,4 +1,4 @@
-module ControlHub
+module Patch
 
   # Debugging util
   class Debug

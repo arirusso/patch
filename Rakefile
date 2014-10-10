@@ -5,9 +5,9 @@ require 'rake/minify'
 Rake::Minify.new(:minify) do
   dir("js") do
     $LOAD_PATH.unshift(File.dirname(File.expand_path(__FILE__)) + '/lib')
-    require "control-hub"
-    add("js/controlHub-#{ControlHub::VERSION}.min.js", "controlHub.js") 
-    add("js/controlHub.min.js", "controlHub.js") 
+    require "patch"
+    add("js/patch-#{Patch::VERSION}.min.js", "patch.js") 
+    add("js/patch.min.js", "patch.js") 
   end
 end
 

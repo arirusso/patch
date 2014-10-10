@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::ConfigTest < Test::Unit::TestCase
+class Patch::ConfigTest < Test::Unit::TestCase
 
   context "Config" do
 
@@ -16,7 +16,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
         setup do
           @control_file = File.new(@control)
           @io_file = File.new(@io)
-          @config = ControlHub::Config.new(@io, :control => @control_file)
+          @config = Patch::Config.new(@io, :control => @control_file)
         end
 
         should "populate" do
@@ -33,7 +33,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
       context "from strings" do
 
         setup do
-          @config = ControlHub::Config.new(@io, :control => @control)
+          @config = Patch::Config.new(@io, :control => @control)
         end
 
         should "populate" do
@@ -76,7 +76,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
               :port=>9006
             }
           }
-          @config = ControlHub::Config.new(@io_hash, :control => @control_hash)
+          @config = Patch::Config.new(@io_hash, :control => @control_hash)
         end
 
         should "populate" do
@@ -97,7 +97,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
               :port=>9006
             }
           }
-          @config = ControlHub::Config.new(@io_hash, :control => @control)
+          @config = Patch::Config.new(@io_hash, :control => @control)
         end
 
         should "populate" do
@@ -116,7 +116,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
 
       context "osc" do
         should "be true" do
-          @config = ControlHub::Config.new(@io, :control => @control)
+          @config = Patch::Config.new(@io, :control => @control)
           assert @config.nodes?(:type => :osc)
         end
 
@@ -125,7 +125,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
       context "midi" do
 
         should "be true" do
-          @config = ControlHub::Config.new(@io, :control => @control)
+          @config = Patch::Config.new(@io, :control => @control)
           assert @config.nodes?(:type => :midi)
         end
       end
@@ -135,7 +135,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
     context "#control?" do
 
       should "be true" do
-        @config = ControlHub::Config.new(@io, :control => @control)
+        @config = Patch::Config.new(@io, :control => @control)
         assert @config.control?
       end
 
@@ -146,7 +146,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
       context "midi" do
 
         should "be populated" do
-          @config = ControlHub::Config.new(@io, :control => @control)
+          @config = Patch::Config.new(@io, :control => @control)
           assert_not_nil @config.controls(:midi)
           assert_not_empty @config.controls(:midi)
           assert_not_nil @config.controls(:midi)[:test_namespace]
@@ -157,7 +157,7 @@ class ControlHub::ConfigTest < Test::Unit::TestCase
       context "osc" do
 
         should "be populated" do
-          @config = ControlHub::Config.new(@io, :control => @control)
+          @config = Patch::Config.new(@io, :control => @control)
           assert_not_nil @config.controls(:osc)
           assert_not_empty @config.controls(:osc)
           assert_not_nil @config.controls(:osc)[:test_namespace]

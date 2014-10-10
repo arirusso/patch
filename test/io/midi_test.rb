@@ -1,8 +1,8 @@
 require "helper"
 
-class ControlHub::IO::MIDITest < Test::Unit::TestCase
+class Patch::IO::MIDITest < Test::Unit::TestCase
 
-  include ControlHub
+  include Patch
 
   context "MIDI" do
 
@@ -11,8 +11,8 @@ class ControlHub::IO::MIDITest < Test::Unit::TestCase
       setup do
         @control = File.join(__dir__,"../config/control.yml")
         @io = File.join(__dir__,"../config/io.yml")
-        @config = ControlHub::Config.new(@io, :control => @control)
-        @input = ControlHub::IO::MIDI.new(@config.nodes(:type => :midi).first, :control => @config.controls(:midi))
+        @config = Patch::Config.new(@io, :control => @control)
+        @input = Patch::IO::MIDI.new(@config.nodes(:type => :midi).first, :control => @config.controls(:midi))
       end
 
       context "#initialize" do

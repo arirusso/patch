@@ -1,8 +1,8 @@
 require "helper"
 
-class ControlHub::MessageTest < Test::Unit::TestCase
+class Patch::MessageTest < Test::Unit::TestCase
 
-  include ControlHub
+  include Patch
 
   context "Message" do
 

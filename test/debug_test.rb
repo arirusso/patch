@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::DebugTest < Test::Unit::TestCase
+class Patch::DebugTest < Test::Unit::TestCase
 
   context "Debug" do
 
@@ -9,7 +9,7 @@ class ControlHub::DebugTest < Test::Unit::TestCase
       @io = File.join(__dir__,"config/io.yml")
       @control_file = File.new(@control)
       @io_file = File.new(@io)
-      @config = ControlHub::Config.new(:control => @control_file, :io => @io_file)
+      @config = Patch::Config.new(:control => @control_file, :io => @io_file)
       @out = Object.new
     end
 
@@ -18,7 +18,7 @@ class ControlHub::DebugTest < Test::Unit::TestCase
       should "display exception" do
         message = "blah blah"
         @out.expects(:puts).once
-        @debug = ControlHub::Debug.new(@out)
+        @debug = Patch::Debug.new(@out)
         begin
           raise(message)
         rescue Exception => e
@@ -33,7 +33,7 @@ class ControlHub::DebugTest < Test::Unit::TestCase
       should "display message" do
         message = "blah blah"
         @out.expects(:puts).once
-        @debug = ControlHub::Debug.new(@out)
+        @debug = Patch::Debug.new(@out)
         @debug.info(message)
       end
 
@@ -47,7 +47,7 @@ class ControlHub::DebugTest < Test::Unit::TestCase
       end
 
       should "only output info" do
-        @debug = ControlHub::Debug.new(@out, :show => :info)
+        @debug = Patch::Debug.new(@out, :show => :info)
         refute @debug.instance_variable_get("@exception")
         assert @debug.instance_variable_get("@info")
         @out.expects(:puts).once
@@ -63,7 +63,7 @@ class ControlHub::DebugTest < Test::Unit::TestCase
       end
 
       should "only output exception" do
-        @debug = ControlHub::Debug.new(@out, :show => :exception)
+        @debug = Patch::Debug.new(@out, :show => :exception)
         assert @debug.instance_variable_get("@exception")
         refute @debug.instance_variable_get("@info")
         @out.expects(:puts).once
@@ -78,7 +78,7 @@ class ControlHub::DebugTest < Test::Unit::TestCase
       end
 
       should "show everything" do
-        @debug = ControlHub::Debug.new(@out)
+        @debug = Patch::Debug.new(@out)
         assert @debug.instance_variable_get("@exception")
         assert @debug.instance_variable_get("@info")
         @out.expects(:puts).twice

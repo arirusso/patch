@@ -2,13 +2,13 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require "optparse"
-require "control-hub"
+require "patch"
 
 network_config = ARGV.first
 options = {}
 
 args = OptionParser.new do |opts|
-  opts.banner = "Usage: control-hub [io config file] [options]"
+  opts.banner = "Usage: patch [io config file] [options]"
 
   opts.on("-c", "--control [FILE]", "Use control spec") do |file|
     options[:control] = file
@@ -24,5 +24,5 @@ end
 
 control = File.new(options[:control]) unless options[:control].nil?
 
-hub = ControlHub.new(File.new(network_config), :control => control)
+hub = Patch.new(File.new(network_config), :control => control)
 hub.listen

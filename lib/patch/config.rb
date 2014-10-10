@@ -1,4 +1,4 @@
-module ControlHub
+module Patch 
 
   # Hub configuration class
   class Config

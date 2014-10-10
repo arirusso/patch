@@ -1,17 +1,17 @@
 require "helper"
 
-class ControlHub::IO::OSCTest < Test::Unit::TestCase
+class Patch::IO::OSCTest < Test::Unit::TestCase
 
-  include ControlHub
+  include Patch
 
   context "OSC" do
 
     setup do
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
-      @config = ControlHub::Config.new(@io, :control => @control)
+      @config = Patch::Config.new(@io, :control => @control)
       io_config = @config.nodes(:type => :osc).first
-      @osc = ControlHub::IO::OSC::Server.new(io_config, :control => @config.controls(:osc))
+      @osc = Patch::IO::OSC::Server.new(io_config, :control => @config.controls(:osc))
     end
 
     context "#initialize" do

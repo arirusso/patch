@@ -1,6 +1,6 @@
 require "helper"
 
-class ControlHub::HubTest < Test::Unit::TestCase
+class Patch::HubTest < Test::Unit::TestCase
 
   context "Hub" do
 
@@ -12,10 +12,10 @@ class ControlHub::HubTest < Test::Unit::TestCase
       end
 
       should "start listeners and controller" do
-        ControlHub::IO::MIDI::Input.any_instance.expects(:listen).once
-        ControlHub::IO::OSC::Server.any_instance.expects(:listen).once
-        ControlHub::IO::Websocket.any_instance.expects(:start).once
-        @instance = ControlHub::Hub.new(@io, :control => @control)
+        Patch::IO::MIDI::Input.any_instance.expects(:listen).once
+        Patch::IO::OSC::Server.any_instance.expects(:listen).once
+        Patch::IO::Websocket.any_instance.expects(:start).once
+        @instance = Patch::Hub.new(@io, :control => @control)
       end
 
     end

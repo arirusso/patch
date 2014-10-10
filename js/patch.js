@@ -1,7 +1,7 @@
-ControlHub = function() {}
+Patch = function() {}
 
 // Initialize a websocket
-ControlHub.Websocket = function(network, options) {
+Patch.Websocket = function(network, options) {
   options = options || {};
   this.debug = options.debug || false;
   this.webSocket;
@@ -11,19 +11,19 @@ ControlHub.Websocket = function(network, options) {
 }
 
 // Convert the raw websocket event to an array of message objects
-ControlHub.Websocket.eventToControllerMessages = function(event) {
+Patch.Websocket.eventToControllerMessages = function(event) {
   var messages = []
   var rawMessages = JSON.parse(event.data);
   for (var i in rawMessages) {
     var rawMessage = rawMessages[i];
-    var message = ControlHub.Websocket.processMessage(rawMessage);
+    var message = Patch.Websocket.processMessage(rawMessage);
     messages.push(message);
   }
   return messages;
 }
 
 // Convert a raw message's properties into more meaningful types, etc
-ControlHub.Websocket.processMessage = function(message) {
+Patch.Websocket.processMessage = function(message) {
   var timestamp = Number(message.timestamp);
   message.time = new Date(timestamp);
   message.index = Number(message.index);
@@ -32,17 +32,17 @@ ControlHub.Websocket.processMessage = function(message) {
 }
 
 // initialize the socket
-ControlHub.Websocket.prototype.initialize = function() {
+Patch.Websocket.prototype.initialize = function() {
   var address = "ws://" + this.network.host + ":" + this.network.port + "/echo";
   if ("WebSocket" in window)
   {
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
-      console.log("control hub ready")  
+      console.log("patch ready")  
     };
     var controller = this;
     this.webSocket.onclose = function() {  
-      console.log("control hub closed"); 
+      console.log("patch closed"); 
       if (controller.onClose !== undefined && controller.onClose !== null) {
         controller.onClose();
       }
@@ -53,14 +53,14 @@ ControlHub.Websocket.prototype.initialize = function() {
 }
 
 // Disable the controller
-ControlHub.Websocket.prototype.disable = function() {
+Patch.Websocket.prototype.disable = function() {
   this.webSocket.onmessage = function(event) {};
   return false;
 }
 
 // Handle a single event
-ControlHub.Websocket.prototype.handleEvent = function(event, callback) {
-  var messages = ControlHub.Websocket.eventToControllerMessages(event);
+Patch.Websocket.prototype.handleEvent = function(event, callback) {
+  var messages = Patch.Websocket.eventToControllerMessages(event);
   if (this.debug) {
     console.log("messages received: ");
     console.log(messages);
@@ -70,7 +70,7 @@ ControlHub.Websocket.prototype.handleEvent = function(event, callback) {
 }
 
 // Initialize controller events
-ControlHub.Websocket.prototype.setInputCallback = function(callback) {
+Patch.Websocket.prototype.setInputCallback = function(callback) {
   var controller = this;
   this.webSocket.onmessage = function(event) { 
     controller.handleEvent(event, callback); 

@@ -1,4 +1,4 @@
-module ControlHub
+module Patch 
 
   module IO
 
@@ -60,7 +60,7 @@ module ControlHub
           messages = []
           @control.each do |namespace, schema| 
             mapping = schema.at(index)
-            message = ControlHub::Message.new
+            message = Patch::Message.new
             message.index = index
             message.namespace = namespace
             message.value = get_value(mapping[:midi], raw_message)
@@ -116,7 +116,7 @@ module ControlHub
         end
 
         # Convert message objects to MIDI and send
-        # @param [Array<ControlHub::Message>, ControlHub::Message] messages Message(s) to send via MIDI
+        # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send via MIDI
         # @return [Boolean]
         def out(messages)
           #todo

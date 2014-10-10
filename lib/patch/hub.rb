@@ -1,4 +1,4 @@
-module ControlHub
+module Patch 
 
   # An application object; connects the inputs and output
   class Hub

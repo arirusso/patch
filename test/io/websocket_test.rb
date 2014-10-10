@@ -1,16 +1,16 @@
 require "helper"
 
-class ControlHub::IO::WebsocketTest < Test::Unit::TestCase
+class Patch::IO::WebsocketTest < Test::Unit::TestCase
 
-  include ControlHub
+  include Patch
 
   context "Websocket" do
 
     setup do
       @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
-      @config = ControlHub::Config.new(@io, :control => @control)
-      @server = ControlHub::IO::Websocket.new(@config.nodes(:type => :websocket).first)
+      @config = Patch::Config.new(@io, :control => @control)
+      @server = Patch::IO::Websocket.new(@config.nodes(:type => :websocket).first)
     end
 
     context "#handle_input" do
