@@ -9,7 +9,10 @@ module Patch
           :input => Input, 
           :output => Output
         }
-        klass = directions[spec[:direction].to_sym]
+        klass = case spec[:direction].to_sym
+          when :input then Input
+          when :output then Output
+        end
         klass.new(spec, :action => options[:action], :debug => options[:debug])
       end
 

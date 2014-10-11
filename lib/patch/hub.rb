@@ -12,20 +12,20 @@ module Patch
       @debug = Debug.new($>)
       @nodes = []
       @threads = []
-      @nodes = Nodes.new(nodes_spec)
+      @nodes = Nodes.new(nodes_spec, :debug => @debug)
       unless options[:action].nil?
         @action = Action.new(options[:action]) 
         @nodes.action = @action
       end
-      @map = Map.new(@nodes.spec[:map])
-      @map.enable(@nodes)
+      @map = Map.new(@nodes)
     end
 
     # Start the hub
     # @return [Boolean]
-    def listen  
+    def listen
+      @map.enable
       EM.epoll
-      EM.run { enable_nodes }
+      EM.run { @nodes.enable }
       true
     end
 

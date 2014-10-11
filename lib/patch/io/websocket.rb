@@ -38,12 +38,6 @@ module Patch
         EM::WebSocket.run(@config) { |ws| enable(ws) }
       end
 
-      def listen(&block)
-        @socket.onmessage do |raw_message|
-          handle_input(raw_message, &block)
-        end
-      end
-
       private
 
       # Handle an inputted message
@@ -71,6 +65,11 @@ module Patch
         @socket.onclose do 
           puts "Connection closed"
         end
+
+        @socket.onmessage do |raw_message|
+          handle_input(raw_message, &block)
+        end
+
       end
 
     end

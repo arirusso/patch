@@ -8,20 +8,13 @@ module Patch
     attr_reader :spec
     def_delegators :@nodes, :empty?
 
-    def initialize(spec)
-      populate(spec)
+    def initialize(spec, options = {})
+      @threads = []
+      populate(spec, options)
     end
 
     def each(&block)
       @nodes.each(&block)
-    end
-
-    def modules
-      @modules ||= {
-        :midi => IO::MIDI,
-        :osc => IO::OSC,
-        :websocket => IO::Websocket
-      }
     end
 
     # @return [Boolean]
@@ -45,7 +38,7 @@ module Patch
     # @param [Hash] options
     # @option options [Symbol] :type The type of node (eg :midi)
     # @return [IO::MIDI, IO::OSC, IO::Websocket]
-    def find_all_by_type(type, &block)
+    def find_all_by_type(type)
       klass = modules[type]
       @nodes.select { |node| node.class.name.match(/\A#{klass}.*/) }
     end
@@ -65,9 +58,17 @@ module Patch
 
     private
 
-    def populate(spec)
+    def modules
+      @modules ||= {
+        :midi => IO::MIDI,
+        :osc => IO::OSC,
+        :websocket => IO::Websocket
+      }
+    end
+
+    def populate(spec, options = {})
       populate_spec(spec)
-      populate_nodes
+      populate_nodes(:debug => options[:debug])
     end
 
     def populate_spec(spec)
@@ -81,10 +82,10 @@ module Patch
     end
 
     # Populate all of the nodes from the spec
-    def populate_nodes
+    def populate_nodes(options = {})
       nodes = @spec[:nodes].map do |node|
         mod = modules[node[:type].to_sym]
-        mod.new(node, :debug => @debug)
+        mod.new(node, :debug => options[:debug])
       end 
       @nodes = nodes.flatten.compact
     end

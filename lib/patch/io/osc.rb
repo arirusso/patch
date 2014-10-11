@@ -32,7 +32,7 @@ module Patch
         # Start the server and client
         # @return [Boolean] Whether the server was started
         def start
-          if !@server.nil? && !@controls.nil?
+          if !@server.nil? && !@action.nil?
             @active = true
             @server.run
             true
@@ -97,6 +97,7 @@ module Patch
             true
           rescue Exception => exception # failsafe
             @debug.exception(exception) if @debug
+            p exception
             Thread.main.raise(exception)
             false
           end
@@ -142,16 +143,21 @@ module Patch
           if @debug
             @server.add_method(/.*/) { |msg| @debug.puts("Received: #{msg.address}") }
           end
-          addresses = @action.map do |key, mappings|
-            mappings.map { |mapping| mapping[:osc][:address].dup }
-          end.flatten.compact.uniq
-          result = addresses.each do |address|
-            @server.add_method(address) do |message|
-              handle_message_received(message, &block)
+          if @action.nil?
+            false
+          else
+            address_collection = @action.map do |key, mappings|
+              mappings.map { |mapping| mapping[:osc][:address].dup }
             end
-            true
+            addresses = address_collection.flatten.compact.uniq
+            result = addresses.map do |address|
+              @server.add_method(address) do |message|
+                handle_message_received(message, &block)
+              end
+              true
+            end
+            result.any?
           end
-          result.any?
         end
 
       end
