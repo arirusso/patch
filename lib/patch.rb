@@ -31,7 +31,7 @@ require "patch/nodes"
 require "patch/message"
 
 # patches
-require "patch/patch"
+require "patch/em_patch"
 
 module Patch
 
