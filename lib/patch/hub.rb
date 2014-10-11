@@ -12,7 +12,8 @@ module Patch
       @debug = Debug.new($>)
       @nodes = []
       @threads = []
-      @config = Config.new(io, :control => options[:control])
+      @config = Config.new(io)
+      @action = Action.new(options[:action]) unless options[:action].nil?
       @map = Map.new(@config.io[:map])
       populate_nodes
       @map.enable(@nodes)
@@ -51,7 +52,7 @@ module Patch
       nodes = @config.io[:nodes].map do |node|
         mod = config.send(:io_module, node[:type])
         options = { 
-          :control => @config.controls(node[:type]), 
+          :control => @action.by_type(node[:type]), 
           :debug => @debug
         }
         mod.new(node, options)

@@ -7,9 +7,8 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
   context "Websocket" do
 
     setup do
-      @control = File.join(__dir__,"../config/control.yml")
       @io = File.join(__dir__,"../config/io.yml")
-      @config = Patch::Config.new(@io, :control => @control)
+      @config = Patch::Config.new(@io)
       @server = Patch::IO::Websocket.new(@config.nodes(:type => :websocket).first)
     end
 

@@ -10,8 +10,8 @@ options = {}
 args = OptionParser.new do |opts|
   opts.banner = "Usage: patch [io config file] [options]"
 
-  opts.on("-c", "--control [FILE]", "Use control spec") do |file|
-    options[:control] = file
+  opts.on("-a", "--action [FILE]", "Use action spec") do |file|
+    options[:action] = file
   end
 end
 
@@ -22,7 +22,7 @@ if network_config.nil?
   exit 0
 end
 
-control = File.new(options[:control]) unless options[:control].nil?
+action = File.new(options[:action]) unless options[:action].nil?
 
-hub = Patch.new(File.new(network_config), :control => control)
+hub = Patch.new(File.new(network_config), :action => action)
 hub.listen

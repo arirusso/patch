@@ -7,11 +7,13 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
   context "OSC" do
 
     setup do
-      @control = File.join(__dir__,"../config/control.yml")
-      @io = File.join(__dir__,"../config/io.yml")
-      @config = Patch::Config.new(@io, :control => @control)
+      @action_path = File.join(__dir__,"../config/control.yml")
+      @io_path = File.join(__dir__,"../config/io.yml")
+      @config = Patch::Config.new(@io_path)
+      @action = Patch::Action.new(@action_path)
       io_config = @config.nodes(:type => :osc).first
-      @osc = Patch::IO::OSC::Server.new(io_config, :control => @config.controls(:osc))
+      @osc = Patch::IO::OSC::Server.new(io_config, :action => @action.by_type(:osc))
+      @osc.instance_variable_get("@server").stubs(:run).returns(:true)
     end
 
     context "#initialize" do

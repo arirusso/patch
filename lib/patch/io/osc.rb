@@ -6,7 +6,7 @@ module Patch
     module OSC
 
       def self.new(spec, options = {})
-        Server.new(spec, :control => options[:control], :debug => options[:debug])
+        Server.new(spec, :action => options[:action], :debug => options[:debug])
       end
 
       class Server
@@ -19,7 +19,7 @@ module Patch
         # @option options [Hash] :contol
         # @option options [Boolean] :debug
         def initialize(spec, options = {})
-          @controls = options[:control]
+          @action = options[:action]
           @debug = options[:debug]
           @server = nil
           @active = false
@@ -44,7 +44,7 @@ module Patch
         # @return [Boolean] Whether adding the callback was successful
         def listen(&block)
           if !@server.nil?
-            configure_controls(&block)
+            configure_actions(&block)
           else
             false
           end
@@ -75,7 +75,7 @@ module Patch
         def get_hub_messages(raw_message)
           # parse the message
           value = raw_message.to_a[0].to_f
-          @controls.map do |namespace, schema|
+          @action.map do |namespace, schema|
             mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
             unless mapping.nil?
               message = Patch::Message.new
@@ -124,7 +124,7 @@ module Patch
         end
 
         def configure_echo(client_info, options = {})
-          @client = Client.new(client_info, :control => options[:control], :debug => @debug)
+          @client = Client.new(client_info, :action => options[:action], :debug => @debug)
         end
 
         # Configure the server connection
@@ -137,11 +137,11 @@ module Patch
 
         # Configure the control mapping
         # @return [Boolean] Whether any controls were configured
-        def configure_controls(&block)
+        def configure_actions(&block)
           if @debug
             @server.add_method(/.*/) { |msg| @debug.puts("Received: #{msg.address}") }
           end
-          addresses = @controls.map do |key, mappings|
+          addresses = @action.map do |key, mappings|
             mappings.map { |mapping| mapping[:osc][:address].dup }
           end.flatten.compact.uniq
           result = addresses.each do |address|
@@ -163,7 +163,7 @@ module Patch
         # @option options [Hash] :contol
         # @option options [Boolean] :debug
         def initialize(client_info, options = {})
-          @controls = options[:control]
+          @action = options[:action]
           @debug = options[:debug]
           @client = ::OSC::Client.new(client_info[:host], client_info[:port])
         end
@@ -184,7 +184,7 @@ module Patch
 
         # Convert a message object to an OSC message for output
         def get_osc_messages(message)
-          @controls.map do |namespace, schema|
+          @action.map do |namespace, schema|
             mapping = schema.at(message.index)
             address = mapping[:osc][:address]
             ::OSC::Message.new(address, message.value)

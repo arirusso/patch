@@ -9,10 +9,11 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
     context "Input" do
 
       setup do
-        @control = File.join(__dir__,"../config/control.yml")
-        @io = File.join(__dir__,"../config/io.yml")
-        @config = Patch::Config.new(@io, :control => @control)
-        @input = Patch::IO::MIDI.new(@config.nodes(:type => :midi).first, :control => @config.controls(:midi))
+        @action_file = File.join(__dir__,"../config/control.yml")
+        @io_file = File.join(__dir__,"../config/io.yml")
+        @config = Patch::Config.new(@io_file)
+        @action = Patch::Action.new(@action_file)
+        @input = Patch::IO::MIDI.new(@config.nodes(:type => :midi).first, :action => @action.by_type(:midi))
       end
 
       context "#initialize" do
@@ -30,7 +31,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
         end
 
         should "create control mapping" do
-          assert_not_nil @input.instance_variable_get("@control")
+          assert_not_nil @input.instance_variable_get("@action")
         end
 
       end

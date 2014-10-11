@@ -1,5 +1,5 @@
 # Patch
-# Patch controller messages
+# Controller message patching
 #
 # Ari Russo
 # (c)2014
@@ -23,6 +23,7 @@ require "scale"
 require "patch/io"
 
 # classes
+require "patch/action"
 require "patch/config"
 require "patch/debug"
 require "patch/hub"

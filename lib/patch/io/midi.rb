@@ -10,15 +10,15 @@ module Patch
           :output => Output
         }
         klass = directions[spec[:direction].to_sym]
-        klass.new(spec, :control => options[:control], :debug => options[:debug])
+        klass.new(spec, :action => options[:action], :debug => options[:debug])
       end
 
       class Input
 
-        attr_reader :controls, :id, :input, :listener
+        attr_reader :id, :input, :listener
 
         def initialize(spec, options = {})
-          @control = options[:control]
+          @action = options[:action]
           @debug = options[:debug]
           @id = spec[:id]
           @input = get_input(spec)
@@ -58,7 +58,7 @@ module Patch
         def get_hub_messages(raw_message)
           index = raw_message.index - 1
           messages = []
-          @control.each do |namespace, schema| 
+          @action.each do |namespace, schema| 
             mapping = schema.at(index)
             message = Patch::Message.new
             message.index = index

@@ -1,24 +1,17 @@
 module Patch 
 
-  # Hub configuration class
+  # IO configuration class
   class Config
 
-    attr_reader :control, :control_file, :io, :io_file
+    attr_reader :io, :io_file
 
-    def initialize(io, options = {})
+    def initialize(io)
       populate_io(io)
-      populate_control(options[:control]) unless options[:control].nil?
       @modules = {
         :midi => IO::MIDI,
         :osc => IO::OSC,
         :websocket => IO::Websocket
       }
-    end
-
-    # Is there a control spec?
-    # @return [Boolean]
-    def control?
-      !@control.nil?
     end
 
     # The nodes for the given direction
@@ -53,33 +46,10 @@ module Patch
       end
     end
 
-    # Controls that have specification for the given type
-    # @param [Symbol, String] type The type of control eg OSC, MIDI
-    # @return [Hash]
-    def controls(type)
-      controls = {}
-      if control?
-        @control.each do |namespace, schema|
-          controls[namespace] = schema.select { |mapping| mapping.keys.map(&:to_s).include?(type.to_s) }
-        end
-      end
-      controls
-    end
-
     private
 
     def io_module(type)
       @modules[type.to_sym]
-    end
-
-    def populate_control(control)
-      @control_file = case control
-                      when File, String then control
-                      end
-      @control = case @control_file
-                 when nil then control
-                 else YAML.load_file(@control_file)
-                 end
     end
 
     def populate_io(io)
