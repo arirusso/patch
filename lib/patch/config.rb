@@ -7,11 +7,6 @@ module Patch
 
     def initialize(io)
       populate_io(io)
-      @modules = {
-        :midi => IO::MIDI,
-        :osc => IO::OSC,
-        :websocket => IO::Websocket
-      }
     end
 
     # The nodes for the given direction
@@ -52,15 +47,6 @@ module Patch
       @modules[type.to_sym]
     end
 
-    def populate_io(io)
-      @io_file = case io
-                 when File, String then io
-                 end
-      @io = case @io_file
-            when nil then io
-            else YAML.load_file(@io_file)
-            end
-    end
 
   end
 end

@@ -12,6 +12,7 @@ module Patch
       class Server
 
         attr_reader :id, :ips
+        attr_writer :action
 
         # @param [Hash] io_info
         # @param [Hash] controls

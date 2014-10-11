@@ -24,10 +24,10 @@ require "patch/io"
 
 # classes
 require "patch/action"
-require "patch/config"
 require "patch/debug"
 require "patch/hub"
 require "patch/map"
+require "patch/nodes"
 require "patch/message"
 
 # patches

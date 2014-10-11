@@ -7,15 +7,15 @@ class Patch::HubTest < Test::Unit::TestCase
     context "#listen" do
 
       setup do
-        @action = File.join(__dir__, "config/control.yml")
-        @io = File.join(__dir__, "config/io.yml")
+        @action_path = File.join(__dir__, "config/action.yml")
+        @nodes_path = File.join(__dir__, "config/nodes.yml")
       end
 
       should "start listeners and controller" do
         Patch::IO::MIDI::Input.any_instance.expects(:listen).once
         Patch::IO::OSC::Server.any_instance.expects(:listen).once
         Patch::IO::Websocket.any_instance.expects(:start).once
-        @instance = Patch::Hub.new(@io, :action => @action)
+        @instance = Patch::Hub.new(@nodes_path, :action => @action_path)
       end
 
     end

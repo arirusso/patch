@@ -9,11 +9,12 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
     context "Input" do
 
       setup do
-        @action_file = File.join(__dir__,"../config/control.yml")
-        @io_file = File.join(__dir__,"../config/io.yml")
-        @config = Patch::Config.new(@io_file)
+        @action_file = File.join(__dir__,"../config/action.yml")
+        @io_file = File.join(__dir__,"../config/nodes.yml")
+        @nodes = Patch::Nodes.new(@io_file)
         @action = Patch::Action.new(@action_file)
-        @input = Patch::IO::MIDI.new(@config.nodes(:type => :midi).first, :action => @action.by_type(:midi))
+        @input = @nodes.find_all_by_type(:midi).first
+        @input.action = @action.find_all_by_type(:midi)
       end
 
       context "#initialize" do
@@ -68,7 +69,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
           @result.each do |message|
             assert_equal Message, message.class
-            assert_equal :test_namespace, message.namespace
+            assert_equal :test_patch, message.namespace
             assert_not_nil message.index
             assert_not_nil message.value
           end
@@ -84,7 +85,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
             @result.each do |message|
               assert_equal Message, message.class
-              assert_equal :test_namespace, message.namespace
+              assert_equal :test_patch, message.namespace
               assert_not_nil message.index
               assert_not_nil message.value
             end

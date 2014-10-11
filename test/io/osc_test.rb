@@ -7,12 +7,12 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
   context "OSC" do
 
     setup do
-      @action_path = File.join(__dir__,"../config/control.yml")
-      @io_path = File.join(__dir__,"../config/io.yml")
-      @config = Patch::Config.new(@io_path)
+      @action_path = File.join(__dir__,"../config/action.yml")
+      @nodes_path = File.join(__dir__,"../config/nodes.yml")
+      @nodes = Patch::Nodes.new(@nodes_path)
       @action = Patch::Action.new(@action_path)
-      io_config = @config.nodes(:type => :osc).first
-      @osc = Patch::IO::OSC::Server.new(io_config, :action => @action.by_type(:osc))
+      @osc = @nodes.find_all_by_type(:osc).first
+      @osc.action = @action.find_all_by_type(:osc)
       @osc.instance_variable_get("@server").stubs(:run).returns(:true)
     end
 
@@ -35,7 +35,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
     context "#handle_message_received" do
 
       setup do
-        @client = @osc.instance_variable_get("@client")
+        @client = @osc.instance_variable_get("@client").instance_variable_get("@client")
         @message = ::OSC::Message.new( "/1/rotaryA" , 0.5 )
       end
 
@@ -48,7 +48,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
         @results.each do |message|
           assert_equal Message, message.class
-          assert_equal :test_namespace, message.namespace
+          assert_equal :test_patch, message.namespace
           assert_not_nil message.index
           assert_not_nil message.value
         end
@@ -64,7 +64,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
           @results.each do |message|
             assert_equal Message, message.class
-            assert_equal :test_namespace, message.namespace
+            assert_equal :test_patch, message.namespace
             assert_not_nil message.index
             assert_not_nil message.value
           end

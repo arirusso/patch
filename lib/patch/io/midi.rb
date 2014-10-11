@@ -16,6 +16,7 @@ module Patch
       class Input
 
         attr_reader :id, :input, :listener
+        attr_writer :action
 
         def initialize(spec, options = {})
           @action = options[:action]

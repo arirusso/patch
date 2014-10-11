@@ -5,11 +5,6 @@ class Patch::DebugTest < Test::Unit::TestCase
   context "Debug" do
 
     setup do
-      @control = File.join(__dir__,"config/control.yml")
-      @io = File.join(__dir__,"config/io.yml")
-      @control_file = File.new(@control)
-      @io_file = File.new(@io)
-      @config = Patch::Config.new(:control => @control_file, :io => @io_file)
       @out = Object.new
     end
 

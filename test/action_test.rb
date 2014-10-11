@@ -5,7 +5,7 @@ class Patch::ActionTest < Test::Unit::TestCase
   context "Action" do
 
     setup do
-      @action_path = File.join(__dir__,"config/control.yml")
+      @action_path = File.join(__dir__,"config/action.yml")
     end
 
     context "#initialize" do
@@ -82,20 +82,20 @@ class Patch::ActionTest < Test::Unit::TestCase
       context "midi" do
 
         should "be populated" do
-          assert_not_nil @action.by_type(:midi)
-          assert_not_empty @action.by_type(:midi)
-          assert_not_nil @action.by_type(:midi)[:test_namespace]
-          assert_not_nil @action.by_type(:midi)[:test_namespace].first[:midi][:channel]
+          assert_not_nil @action.find_all_by_type(:midi)
+          assert_not_empty @action.find_all_by_type(:midi)
+          assert_not_nil @action.find_all_by_type(:midi)[:test_patch]
+          assert_not_nil @action.find_all_by_type(:midi)[:test_patch].first[:midi][:channel]
         end
       end
 
       context "osc" do
 
         should "be populated" do
-          assert_not_nil @action.by_type(:osc)
-          assert_not_empty @action.by_type(:osc)
-          assert_not_nil @action.by_type(:osc)[:test_namespace]
-          assert_not_nil @action.by_type(:osc)[:test_namespace].first[:osc][:address]
+          assert_not_nil @action.find_all_by_type(:osc)
+          assert_not_empty @action.find_all_by_type(:osc)
+          assert_not_nil @action.find_all_by_type(:osc)[:test_patch]
+          assert_not_nil @action.find_all_by_type(:osc)[:test_patch].first[:osc][:address]
         end
 
       end
