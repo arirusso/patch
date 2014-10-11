@@ -2,9 +2,15 @@ module Patch
 
   class Map
 
+    include Enumerable
+
     def initialize(nodes)
       @map = nodes.spec[:map]
       @nodes = nodes
+    end
+
+    def each(&block)
+      @map.each(&block)
     end
 
     def enable

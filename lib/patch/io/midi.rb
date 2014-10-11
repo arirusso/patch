@@ -62,11 +62,11 @@ module Patch
         def get_hub_messages(raw_message)
           index = raw_message.index - 1
           messages = []
-          @action.each do |namespace, schema| 
-            mapping = schema.at(index)
+          @action.each do |patch_name, patch_schema| 
+            mapping = patch_schema.at(index)
             message = Patch::Message.new
             message.index = index
-            message.namespace = namespace
+            message.patch_name = patch_name
             message.value = get_value(mapping[:midi], raw_message)
             messages << message
           end

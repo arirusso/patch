@@ -2,6 +2,7 @@ module Patch
 
   class Action
 
+    include Enumerable
     extend Forwardable
 
     attr_reader :spec
@@ -11,25 +12,29 @@ module Patch
       populate(spec)
     end
 
+    def each(&block)
+      @spec.each(&block)
+    end
+
     # Actions that have specification for the given type
     # @param [Symbol, String] type The type of control eg :osc, :midi
     # @return [Hash]
     def find_all_by_type(type)
-      controls = {}
-      @spec.each do |namespace, schema|
-        controls[namespace] = schema.select { |mapping| mapping.keys.map(&:to_s).include?(type.to_s) }
+      action = {}
+      @spec.each do |patch_name, patch_schema|
+        action[patch_name] = patch_schema.select { |mapping| mapping.keys.map(&:to_s).include?(type.to_s) }
       end
-      controls
+      action
     end
 
     private
 
-    def populate(control)
-      spec_file = case control
-                      when File, String then control
+    def populate(spec)
+      spec_file = case spec
+                      when File, String then spec
                       end
       @spec = case spec_file
-                 when nil then control
+                 when nil then spec
                  else YAML.load_file(spec_file)
                  end
     end

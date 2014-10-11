@@ -48,7 +48,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
         @results.each do |message|
           assert_equal Message, message.class
-          assert_equal :test_patch, message.namespace
+          assert_equal :test_patch, message.patch_name
           assert_not_nil message.index
           assert_not_nil message.value
         end
@@ -64,7 +64,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
           @results.each do |message|
             assert_equal Message, message.class
-            assert_equal :test_patch, message.namespace
+            assert_equal :test_patch, message.patch_name
             assert_not_nil message.index
             assert_not_nil message.value
           end

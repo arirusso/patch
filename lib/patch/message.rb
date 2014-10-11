@@ -3,7 +3,7 @@ module Patch
   # Handles sending and receiving messages to/from the socket
   class Message
 
-    attr_accessor :index, :namespace, :value
+    attr_accessor :index, :patch_name, :value
     attr_reader :time
 
     # @param [Hash] options
@@ -13,7 +13,7 @@ module Patch
       @debug = options[:debug]
       @message = options[:raw_message] || {}
       @index = @message[:index]
-      @namespace = @message[:namespace]
+      @patch_name = @message[:patch_name]
       @value = @message[:value]
       @time = get_time(@message[:timestamp])
     end
@@ -21,7 +21,7 @@ module Patch
     def to_json(*a)
       attrs = {
         :index => @index, 
-        :namespace => @namespace, 
+        :patch_name => @patch_name, 
         :timestamp => timestamp, #js format
         :value => @value
       }

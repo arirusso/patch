@@ -27,7 +27,11 @@ module EventMachine
     def self.run(options)
       host, port = options.values_at(:host, :port)
       EM.start_server(host, port, Connection, options) do |c|
-        yield c
+        begin
+          yield c
+        rescue Exception => exception
+          Thread.main.raise(exception)
+        end
       end
     end
   end

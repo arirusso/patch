@@ -35,7 +35,13 @@ module Patch
 
       def start
         Thread.abort_on_exception = true
-        EM::WebSocket.run(@config) { |ws| enable(ws) }
+        EM::WebSocket.run(@config) do |websocket| 
+          begin
+            enable(websocket)
+          rescue Exception => exception
+            Thread.main.raise(exception)
+          end
+        end
       end
 
       private
@@ -52,8 +58,8 @@ module Patch
       end
 
       # Enable this server after initializing an EM::Websocket
-      def enable(ws)
-        @socket = ws
+      def enable(websocket)
+        @socket = websocket
         configure
       end
 

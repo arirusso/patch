@@ -28,4 +28,5 @@ end
 action = File.new(options[:action]) unless options[:action].nil?
 
 hub = Patch.new(node_config_file, :action => action)
+hub.print_report
 hub.listen

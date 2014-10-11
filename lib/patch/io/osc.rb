@@ -11,7 +11,7 @@ module Patch
 
       class Server
 
-        attr_reader :id, :ips
+        attr_reader :id
         attr_writer :action
 
         # @param [Hash] io_info
@@ -24,7 +24,6 @@ module Patch
           @debug = options[:debug]
           @server = nil
           @active = false
-          @ips = []
           @id = spec[:id]
           configure_io(spec, options)
         end
@@ -76,12 +75,12 @@ module Patch
         def get_hub_messages(raw_message)
           # parse the message
           value = raw_message.to_a[0].to_f
-          @action.map do |namespace, schema|
-            mapping = schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
+          @action.map do |patch_name, patch_schema|
+            mapping = patch_schema.find { |mapping| mapping[:osc][:address] == raw_message.address }
             unless mapping.nil?
               message = Patch::Message.new
-              message.index = schema.index(mapping)
-              message.namespace = namespace.to_sym
+              message.index = patch_schema.index(mapping)
+              message.patch_name = patch_name.to_sym
               message.value = get_value(mapping[:osc], value, :destination => :hub)
               message
             end
@@ -97,7 +96,6 @@ module Patch
             true
           rescue Exception => exception # failsafe
             @debug.exception(exception) if @debug
-            p exception
             Thread.main.raise(exception)
             false
           end
@@ -131,10 +129,7 @@ module Patch
 
         # Configure the server connection
         def configure_server(server_config)
-          if (@server = ::OSC::EMServer.new(server_config[:port]))
-            @ips = Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
-            puts "Server ips are: #{@ips}"
-          end
+          @server = ::OSC::EMServer.new(server_config[:port])
         end
 
         # Configure the control mapping
