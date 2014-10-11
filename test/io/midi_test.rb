@@ -10,8 +10,8 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
       setup do
         @action_file = File.join(__dir__,"../config/action.yml")
-        @io_file = File.join(__dir__,"../config/nodes.yml")
-        @nodes = Patch::Nodes.new(@io_file)
+        @nodes_file = File.join(__dir__,"../config/nodes.yml")
+        @nodes = Patch::Nodes.new(@nodes_file)
         @action = Patch::Action.new(@action_file)
         @input = @nodes.find_all_by_type(:midi).first
         @input.action = @action.find_all_by_type(:midi)
