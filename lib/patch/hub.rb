@@ -1,6 +1,6 @@
 module Patch 
 
-  # An application object; connects the inputs and output
+  # The main application object
   class Hub
 
     attr_reader :patches, :nodes
@@ -16,6 +16,8 @@ module Patch
       @patches ||= []
     end
 
+    # Collected IP addresses for the nodes
+    # @return [Array<String>]
     def ips
       Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
     end
