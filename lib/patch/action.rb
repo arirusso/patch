@@ -1,5 +1,6 @@
 module Patch
 
+  # Describes action that is taken when messages are received
   class Action
 
     include Enumerable
@@ -8,6 +9,7 @@ module Patch
     attr_reader :spec
     def_delegators :@spec, :empty?, :index
     
+    # @param [Array<Hash>] spec
     def initialize(spec)
       @spec = spec
     end

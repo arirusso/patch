@@ -7,7 +7,7 @@ module Patch
 
     # @param [File, String] nodes_spec
     # @param [Hash] options
-    # @option options [File, String] :control
+    # @option options [File, String] :patches
     def initialize(nodes_spec, options = {})
       @debug = Debug.new($>)
       @threads = []
