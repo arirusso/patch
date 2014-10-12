@@ -16,10 +16,15 @@ module Patch
         klass.new(spec, :action => options[:action], :debug => options[:debug])
       end
 
-      # Convert MIDI messages to Patch::Message objects
+      # Convert between MIDI message objects and Patch::Message objects
       module Message
  
         extend self
+
+        def to_midi_messages(patch, message)
+          #todo
+          []
+        end
 
         # Convert the given MIDI message to Patch::Message objects using the context of the given patch
         # @param [::Patch::Patch] patch
@@ -107,19 +112,6 @@ module Patch
           messages
         end
 
-        # Extract MIDI message objects from the input event
-        # @param [Hash] event
-        # @return [Hash]
-        def extract_message(event)
-          message = event[:message]
-          index = (message.index - 1)
-          value = message.value
-          {
-            :index => index,
-            :value => value
-          }
-        end
-
         # Initialize the input device specified in the spec.  If the name of the device is "choose" the user is prompted
         # to select an available input.
         # @param [Hash] spec
@@ -149,9 +141,11 @@ module Patch
 
         # Convert Patch::Message objects to MIDI and send
         # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send via MIDI
-        # @return [Boolean]
-        def out(messages)
-          #todo
+        # @return [Array<MIDIMessage>]
+        def puts(patch, patch_messages)
+          messages = ::Patch::IO::MIDI::Message.to_midi_messages(patch, patch_messages)
+          @output.puts(messages) unless messages.empty?
+          messages
         end
 
         private
