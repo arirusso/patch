@@ -1,6 +1,6 @@
 module Patch 
 
-  # Handles sending and receiving messages to/from the socket
+  # A generic controller message
   class Message
 
     attr_accessor :index, :patch_name, :value
@@ -18,7 +18,9 @@ module Patch
       @time = get_time(@message[:timestamp])
     end
 
-    def to_json(*a)
+    # Convert the message to a json hash
+    # @return [Hash]
+    def to_json(*args)
       attrs = {
         :index => @index, 
         :patch_name => @patch_name, 
@@ -36,6 +38,9 @@ module Patch
 
     private
 
+    # Get a numeric timestamp as a Ruby time object.  If the timestamp is nil, the current time will be returned.
+    # @param [Fixnum] timestamp
+    # @return [Time]
     def get_time(timestamp)
       case timestamp 
         when nil then Time.now
