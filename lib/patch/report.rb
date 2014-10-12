@@ -1,5 +1,6 @@
 module Patch
 
+  # Terminal/Console output explaining the hub configuration
   class Report
 
     # @param [Hub] hub The hub to report about
@@ -10,14 +11,8 @@ module Patch
     # Print a report to standard out
     # @return [Hash]
     def print
-      report = get_report
-      cols = `tput cols`.to_i
-      puts Rainbow("██████╗  █████╗ ████████╗ ██████╗██╗  ██╗").blue
-      puts Rainbow("██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██║  ██║").blue
-      puts Rainbow("██████╔╝███████║   ██║   ██║     ███████║").blue
-      puts Rainbow("██╔═══╝ ██╔══██║   ██║   ██║     ██╔══██║").blue
-      puts Rainbow("██║     ██║  ██║   ██║   ╚██████╗██║  ██║").blue
-      puts Rainbow("╚═╝     ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝").blue
+      report = self.report
+      print_logo
       puts
       puts Rainbow("IPs").cyan
       puts Rainbow("---").cyan
@@ -40,17 +35,7 @@ module Patch
         puts Rainbow("|").cyan
         puts Rainbow("| Actions").cyan
         puts Rainbow("| ---").cyan
-        len = cols - 10
-        chunks = []
-        patch[:action].each do |action|
-          if chunks.last.nil? || chunks.last.length >= len - action.length
-            chunks << ""
-          end
-          chunk = chunks.last
-          chunk << "#{action}"
-          chunk << ", " unless action == patch[:action].last
-        end
-        chunks.each do |chunk|
+        chunked_actions(patch[:action]).each do |chunk|
           puts Rainbow("| ").cyan + chunk
         end
         puts Rainbow("|").cyan
@@ -60,7 +45,7 @@ module Patch
 
     # Construct the report hash
     # @return [Hash]
-    def get_report
+    def report
       report = {}
       report[:ips] = @hub.ips
       report[:nodes] = @hub.nodes.map { |node| node_report(node) }
@@ -69,6 +54,42 @@ module Patch
     end
 
     private
+
+    # Get a patch action formatted for terminal width
+    # @param [Array<String>] actions
+    # @return [Array<String>]
+    def chunked_actions(actions)
+      max_length = columns - 10
+      chunks = []
+      actions.each do |action|
+        if chunks.last.nil? || chunks.last.length >= max_length - action.length
+          chunks << ""
+        end
+        chunk = chunks.last
+        chunk << "#{action}"
+        chunk << ", " unless action == actions.last
+      end
+      chunks
+    end
+
+    # The number of columns of the terminal
+    # @return [Fixnum]
+    def columns
+      `tput cols`.to_i
+    end
+
+    # Output the patch logo
+    # @return [Boolean]
+    def print_logo
+      color = :blue
+      puts Rainbow("██████╗  █████╗ ████████╗ ██████╗██╗  ██╗").send(color)
+      puts Rainbow("██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██║  ██║").send(color)
+      puts Rainbow("██████╔╝███████║   ██║   ██║     ███████║").send(color)
+      puts Rainbow("██╔═══╝ ██╔══██║   ██║   ██║     ██╔══██║").send(color)
+      puts Rainbow("██║     ██║  ██║   ██║   ╚██████╗██║  ██║").send(color)
+      puts Rainbow("╚═╝     ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝").send(color)
+      true
+    end
 
     # Construct the report about a node
     # @return [Hash]
