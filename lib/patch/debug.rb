@@ -22,7 +22,7 @@ module Patch
     # @param [String] message
     # @return [String]
     def puts(message)
-      message_for_output = format(message).colorize(:blue)
+      message_for_output = Rainbow(format(message)).blue
       @out.puts(message_for_output) if @info
       message
     end
@@ -34,7 +34,7 @@ module Patch
     def exception(exception)
       if @exception
         message = format(exception.message)
-        message_for_output = message.colorize(:red)
+        message_for_output = Rainbow(message).red
         @out.puts(message_for_output)
       end
       exception

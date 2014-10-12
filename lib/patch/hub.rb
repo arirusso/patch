@@ -20,22 +20,6 @@ module Patch
       Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
     end
 
-    def print_report
-      puts "Patch"
-      puts "Configuration"
-      puts
-      puts "IPs"
-      ips.each { |ip| puts ip }
-      puts
-      puts "Nodes"
-      @nodes.each do |node|
-        puts "#{node.id}: #{node.class.name}"
-      end
-      puts
-      puts "Patches"
-      @patches.each(&:print_report)
-    end
-
     # Start the hub
     # @return [Boolean]
     def listen

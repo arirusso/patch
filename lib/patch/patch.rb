@@ -37,19 +37,6 @@ module Patch
       end
     end
 
-    def print_report
-      puts "Map"
-      @map.each do |from, to|
-        puts "#{from} => #{to}"
-      end
-      puts
-      puts "Actions"
-      action_names = @action.map { |mapping| mapping[:name] }
-      action_names_string = action_names.join(", ")
-      puts "#{@name} (#{action_names_string})"
-      puts
-    end
-
     private
 
     def self.get_spec(spec)
