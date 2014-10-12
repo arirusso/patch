@@ -5,7 +5,7 @@ class Patch::ActionTest < Test::Unit::TestCase
   context "Action" do
 
     setup do
-      @action_path = File.join(__dir__,"config/action.yml")
+      @patches_path = File.join(__dir__,"config/patches.yml")
     end
 
     context "#initialize" do
@@ -13,14 +13,16 @@ class Patch::ActionTest < Test::Unit::TestCase
       context "from files" do
 
         setup do
-          @action_file = File.new(@action_path)
-          @action = Patch::Action.new(@action_file)
+          @patches_file = File.new(@patches_path)
+          @patches = Patch::Patch.all_from_spec(@patches_file)
         end
 
         should "populate" do
-          assert_not_nil @action.spec
-          assert_not_empty @action.spec
-          assert @action.spec.kind_of?(Hash)
+          assert_not_nil @patches
+          assert_not_empty @patches
+          assert_not_nil @patches.first.action
+          assert_not_nil @patches.first.action.spec
+           assert @patches.first.action.spec.kind_of?(Array)
         end
 
       end
@@ -28,13 +30,15 @@ class Patch::ActionTest < Test::Unit::TestCase
       context "from strings" do
 
         setup do
-          @action = Patch::Action.new(@action_path)
+          @patches = Patch::Patch.all_from_spec(@patches_path)
         end
 
         should "populate" do
-          assert_not_nil @action.spec
-          assert_not_empty @action.spec
-          assert @action.spec.kind_of?(Hash)
+          assert_not_nil @patches
+          assert_not_empty @patches
+          assert_not_nil @patches.first.action
+          assert_not_nil @patches.first.action.spec
+          assert @patches.first.action.spec.kind_of?(Array)
         end
 
       end
@@ -42,32 +46,36 @@ class Patch::ActionTest < Test::Unit::TestCase
       context "from hashes" do
 
         setup do
-          @action_hash = {
-            :controls => [
-              { 
-                :name=>"Zoom", 
-                :midi=> {
-                  :channel=>0, 
-                  :type=>"ControlChange", 
-                  :scale=>0.1..5.0
-                }, 
-                :osc => {
-                  :address=>"/1/rotaryA", 
-                  :scale=> { 
-                    :from=>0..1, 
-                    :to=>0.1..5.0
+          @patches_hash = {
+            :test_patch => {
+              :action => [
+                { 
+                  :name=>"Zoom", 
+                  :midi=> {
+                    :channel=>0, 
+                    :type=>"ControlChange", 
+                    :scale=>0.1..5.0
+                  }, 
+                  :osc => {
+                    :address=>"/1/rotaryA", 
+                    :scale=> { 
+                      :from=>0..1, 
+                      :to=>0.1..5.0
+                    }
                   }
                 }
-              }
-            ]
+              ]
+            }
           }
-          @action = Patch::Action.new(@action_hash)
+          @patches = Patch::Patch.all_from_spec(@patches_hash)
         end
 
         should "populate" do
-          assert_not_nil @action.spec
-          assert_not_empty @action.spec
-          assert @action.spec.kind_of?(Hash)
+          assert_not_nil @patches
+          assert_not_empty @patches
+          assert_not_nil @patches.first.action
+          assert_not_nil @patches.first.action.spec
+          assert @patches.first.action.spec.kind_of?(Array)
         end
       end
 
@@ -76,7 +84,9 @@ class Patch::ActionTest < Test::Unit::TestCase
     context "#by_type" do
 
       setup do
-        @action = Patch::Action.new(@action_path)
+        @patches = Patch::Patch.all_from_spec(@patches_path)
+        @patch = @patches.first
+        @action = @patch.action
       end
 
       context "midi" do
@@ -84,8 +94,8 @@ class Patch::ActionTest < Test::Unit::TestCase
         should "be populated" do
           assert_not_nil @action.find_all_by_type(:midi)
           assert_not_empty @action.find_all_by_type(:midi)
-          assert_not_nil @action.find_all_by_type(:midi)[:test_patch]
-          assert_not_nil @action.find_all_by_type(:midi)[:test_patch].first[:midi][:channel]
+          assert_not_nil @action.find_all_by_type(:midi)
+          assert_not_nil @action.find_all_by_type(:midi).first[:midi][:channel]
         end
       end
 
@@ -94,8 +104,8 @@ class Patch::ActionTest < Test::Unit::TestCase
         should "be populated" do
           assert_not_nil @action.find_all_by_type(:osc)
           assert_not_empty @action.find_all_by_type(:osc)
-          assert_not_nil @action.find_all_by_type(:osc)[:test_patch]
-          assert_not_nil @action.find_all_by_type(:osc)[:test_patch].first[:osc][:address]
+          assert_not_nil @action.find_all_by_type(:osc)
+          assert_not_nil @action.find_all_by_type(:osc).first[:osc][:address]
         end
 
       end

@@ -1,20 +1,20 @@
 require "helper"
 
-class Patch::NodesTest < Test::Unit::TestCase
+class Patch::NodeTest < Test::Unit::TestCase
 
-  context "Nodes" do
+  context "Node" do
 
     setup do
       @nodes_path = File.join(__dir__,"config/nodes.yml")
     end
 
-    context "#initialize" do
+    context ".new_from_spec" do
 
       context "from files" do
 
         setup do
           @nodes_file = File.new(@nodes_path)
-          @nodes = Patch::Nodes.new(@nodes_file)
+          @nodes = Patch::Node.all_from_spec(@nodes_file)
         end
 
         should "populate" do
@@ -27,7 +27,7 @@ class Patch::NodesTest < Test::Unit::TestCase
       context "from strings" do
 
         setup do
-          @nodes = Patch::Nodes.new(@nodes_path)
+          @nodes = Patch::Node.all_from_spec(@nodes_path)
         end
 
         should "populate" do
@@ -48,7 +48,7 @@ class Patch::NodesTest < Test::Unit::TestCase
               :port =>9006
             }]
           }
-          @nodes = Patch::Nodes.new(@nodes_hash)
+          @nodes = Patch::Node.all_from_spec(@nodes_hash)
         end
 
         should "populate" do
@@ -63,7 +63,7 @@ class Patch::NodesTest < Test::Unit::TestCase
 
       context "osc" do
         should "be true" do
-          @nodes = Patch::Nodes.new(@nodes_path)
+          @nodes = Patch::Node.all_from_spec(@nodes_path)
           assert_not_empty @nodes.find_all_by_type(:osc)
         end
 
@@ -72,7 +72,7 @@ class Patch::NodesTest < Test::Unit::TestCase
       context "midi" do
 
         should "be true" do
-          @nodes = Patch::Nodes.new(@nodes_path)
+          @nodes = Patch::Node.all_from_spec(@nodes_path)
           assert_not_empty @nodes.find_all_by_type(:midi)
         end
       end

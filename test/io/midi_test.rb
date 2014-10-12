@@ -2,19 +2,16 @@ require "helper"
 
 class Patch::IO::MIDITest < Test::Unit::TestCase
 
-  include Patch
-
   context "MIDI" do
 
     context "Input" do
 
       setup do
-        @action_file = File.join(__dir__,"../config/action.yml")
+        @patch_file = File.join(__dir__,"../config/patches.yml")
         @nodes_file = File.join(__dir__,"../config/nodes.yml")
-        @nodes = Patch::Nodes.new(@nodes_file)
-        @action = Patch::Action.new(@action_file)
+        @nodes = Patch::Node.all_from_spec(@nodes_file)
+        @patches = Patch::Patch.all_from_spec(@patch_file)
         @input = @nodes.find_all_by_type(:midi).first
-        @input.action = @action.find_all_by_type(:midi)
       end
 
       context "#initialize" do
@@ -29,10 +26,6 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
         should "initialize midi listener" do
           assert_not_nil @input.instance_variable_get("@listener")
-        end
-
-        should "create control mapping" do
-          assert_not_nil @input.instance_variable_get("@action")
         end
 
       end
@@ -50,6 +43,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
         setup do
           @message = MIDIMessage::ControlChange.new(0, 0x01, 0x30)
+          @patch = @patches.first
         end
 
         should "perform scaling on value" do
@@ -57,18 +51,18 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
           Scale.expects(:transform).once.returns(scale)
           scale.expects(:from).once.returns(scale)
           scale.expects(:to).once
-          @result = @input.send(:handle_event_received, { :message => @message })
+          @result = @input.send(:handle_event_received, @patch, { :message => @message })
         end
 
         should "return array of messages" do
           Scale.unstub(:transform)
-          @result = @input.send(:handle_event_received, { :message => @message })
+          @result = @input.send(:handle_event_received, @patch, { :message => @message })
           assert_not_nil @result
           assert_equal Array, @result.class
           assert_not_empty @result
 
           @result.each do |message|
-            assert_equal Message, message.class
+            assert_equal ::Patch::Message, message.class
             assert_equal :test_patch, message.patch_name
             assert_not_nil message.index
             assert_not_nil message.value
@@ -77,14 +71,14 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
         should "yield array of messages" do
           Scale.unstub(:transform)
-          @input.send(:handle_event_received, { :message => @message }) do |hash|
+          @input.send(:handle_event_received, @patch, { :message => @message }) do |hash|
             @result = hash
             assert_not_nil @result
             assert_equal Array, @result.class
             assert_not_empty @result
 
             @result.each do |message|
-              assert_equal Message, message.class
+              assert_equal ::Patch::Message, message.class
               assert_equal :test_patch, message.patch_name
               assert_not_nil message.index
               assert_not_nil message.value

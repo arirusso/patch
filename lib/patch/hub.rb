@@ -3,21 +3,17 @@ module Patch
   # An application object; connects the inputs and output
   class Hub
 
-    attr_reader :nodes
+    attr_reader :patches, :nodes
 
     # @param [File, String] nodes_spec
     # @param [Hash] options
     # @option options [File, String] :control
     def initialize(nodes_spec, options = {})
       @debug = Debug.new($>)
-      @nodes = []
       @threads = []
-      @nodes = Nodes.new(nodes_spec, :debug => @debug)
-      unless options[:action].nil?
-        @action = Action.new(options[:action]) 
-        @nodes.action = @action
-      end
-      @map = Map.new(@nodes)
+      @nodes = Node.all_from_spec(nodes_spec, :debug => @debug)
+      @patches = Patch.all_from_spec(options[:patches]) unless options[:patches].nil?
+      @patches ||= []
     end
 
     def ips
@@ -36,22 +32,14 @@ module Patch
         puts "#{node.id}: #{node.class.name}"
       end
       puts
-      puts "Map"
-      @map.each do |from, to|
-        puts "#{from} => #{to}"
-      end
-      puts
-      puts "Actions"
-      @action.each do |name, actions|
-        action_names = actions.map { |action| action[:name] }.join(', ')
-        puts "#{name} (#{action_names})"
-      end
+      puts "Patches"
+      @patches.each(&:print_report)
     end
 
     # Start the hub
     # @return [Boolean]
     def listen
-      @map.enable
+      @patches.each { |patch| patch.enable(@nodes) }
       begin
         EM.epoll
         EM.run { @nodes.enable }

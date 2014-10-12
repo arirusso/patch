@@ -27,8 +27,10 @@ require "patch/action"
 require "patch/debug"
 require "patch/hub"
 require "patch/map"
-require "patch/nodes"
 require "patch/message"
+require "patch/node"
+require "patch/nodes"
+require "patch/patch"
 
 # patches
 require "patch/em_patch"

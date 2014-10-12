@@ -2,13 +2,11 @@ require "helper"
 
 class Patch::IO::WebsocketTest < Test::Unit::TestCase
 
-  include Patch
-
   context "Websocket" do
 
     setup do
       @nodes_path = File.join(__dir__,"../config/nodes.yml")
-      @nodes = Patch::Nodes.new(@nodes_path)
+      @nodes = Patch::Node.all_from_spec(@nodes_path)
       @server = @nodes.find_all_by_type(:websocket).first
     end
 
@@ -21,7 +19,7 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
 
       should "convert from String to Message" do
         assert_not_nil @result
-        assert_equal Message, @result.class
+        assert_equal ::Patch::Message, @result.class
         assert_equal "blah", @result.value
       end
 

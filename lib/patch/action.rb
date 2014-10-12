@@ -6,10 +6,10 @@ module Patch
     extend Forwardable
 
     attr_reader :spec
-    def_delegators :@spec, :empty?
+    def_delegators :@spec, :empty?, :index
     
     def initialize(spec)
-      populate(spec)
+      @spec = spec
     end
 
     def each(&block)
@@ -20,25 +20,8 @@ module Patch
     # @param [Symbol, String] type The type of control eg :osc, :midi
     # @return [Hash]
     def find_all_by_type(type)
-      action = {}
-      @spec.each do |patch_name, patch_schema|
-        action[patch_name] = patch_schema.select { |mapping| mapping.keys.map(&:to_s).include?(type.to_s) }
-      end
-      action
+      @spec.select { |action| action.keys.map(&:to_s).include?(type.to_s) }
     end
-
-    private
-
-    def populate(spec)
-      spec_file = case spec
-                      when File, String then spec
-                      end
-      @spec = case spec_file
-                 when nil then spec
-                 else YAML.load_file(spec_file)
-                 end
-    end
-
 
   end
 end

@@ -16,6 +16,32 @@ module Patch
         klass.new(spec, :action => options[:action], :debug => options[:debug])
       end
 
+      module Message
+ 
+        extend self
+
+        def to_hub_messages(patch, raw_message)
+          index = raw_message.index - 1
+          patch.action.find_all_by_type(:midi).map do |mapping| 
+            message = ::Patch::Message.new
+            message.index = index
+            message.patch_name = patch.name
+            message.value = get_value(mapping[:midi], raw_message)
+            message
+          end
+        end
+
+        def get_value(mapping, message)
+          if !mapping[:scale].nil?
+            Scale.transform(message.value).from(0..127).to(mapping[:scale])
+          else
+            message.value
+          end
+        end
+
+
+      end
+
       class Input
 
         attr_reader :id, :input, :listener
@@ -42,9 +68,9 @@ module Patch
 
         # Specify a handler callback for when messages are received
         # @return [Boolean] Whether adding the callback was successful
-        def listen(&block)
+        def listen(patch, &block)
           if !@listener.nil?
-            configure_listener(&block)
+            configure_listener(patch, &block)
             true
           else
             false
@@ -53,36 +79,10 @@ module Patch
 
         private
 
-        def handle_event_received(event, options = {}, &block)
-          messages = get_hub_messages(event[:message])
+        def handle_event_received(patch, event, options = {}, &block)
+          messages = ::Patch::IO::MIDI::Message.to_hub_messages(patch, event[:message])
           yield(messages) if block_given?
           messages
-        end
-
-        def get_hub_messages(raw_message)
-          index = raw_message.index - 1
-          messages = []
-          @action.each do |patch_name, patch_schema| 
-            mapping = patch_schema.at(index)
-            message = Patch::Message.new
-            message.index = index
-            message.patch_name = patch_name
-            message.value = get_value(mapping[:midi], raw_message)
-            messages << message
-          end
-          messages
-        end
-
-        def get_value(mapping, message)
-          if !mapping[:scale].nil?
-            Scale.transform(message.value).from(0..127).to(mapping[:scale])
-          else
-            message.value
-          end
-        end
-
-        def process_values(message)
-          values = {}
         end
 
         def extract_message(event)
@@ -103,9 +103,9 @@ module Patch
           end
         end
 
-        def configure_listener(&block)
+        def configure_listener(patch, &block)
           @listener.listen_for(:class => [MIDIMessage::ControlChange]) do |event|
-            handle_event_received(event, &block)
+            handle_event_received(patch, event, &block)
           end
         end
 

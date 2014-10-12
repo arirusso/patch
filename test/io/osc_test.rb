@@ -2,17 +2,14 @@ require "helper"
 
 class Patch::IO::OSCTest < Test::Unit::TestCase
 
-  include Patch
-
   context "OSC" do
 
     setup do
-      @action_path = File.join(__dir__,"../config/action.yml")
+      @patches_path = File.join(__dir__,"../config/patches.yml")
       @nodes_path = File.join(__dir__,"../config/nodes.yml")
-      @nodes = Patch::Nodes.new(@nodes_path)
-      @action = Patch::Action.new(@action_path)
+      @nodes = Patch::Node.all_from_spec(@nodes_path)
+      @patches = Patch::Patch.all_from_spec(@patches_path)
       @osc = @nodes.find_all_by_type(:osc).first
-      @osc.action = @action.find_all_by_type(:osc)
       @osc.instance_variable_get("@server").stubs(:run).returns(:true)
     end
 
@@ -37,17 +34,18 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
       setup do
         @client = @osc.instance_variable_get("@client").instance_variable_get("@client")
         @message = ::OSC::Message.new( "/1/rotaryA" , 0.5 )
+        @patch = @patches.first
       end
 
       should "return array of messages" do
         @client.expects(:send).once.with(@message)
-        @results = @osc.send(:handle_message_received, @message)
+        @results = @osc.send(:handle_message_received, @patch, @message)
         assert_not_nil @results
         assert_equal Array, @results.class
         assert_not_empty @results
 
         @results.each do |message|
-          assert_equal Message, message.class
+          assert_equal Patch::Message, message.class
           assert_equal :test_patch, message.patch_name
           assert_not_nil message.index
           assert_not_nil message.value
@@ -56,14 +54,14 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
       should "yield array of messages" do
         @client.expects(:send).once.with(@message)
-        @osc.send(:handle_message_received, @message) do |messages|
+        @osc.send(:handle_message_received, @patch, @message) do |messages|
           @results = messages
           assert_not_nil @results
           assert_equal Array, @results.class
           assert_not_empty @results
 
           @results.each do |message|
-            assert_equal Message, message.class
+            assert_equal Patch::Message, message.class
             assert_equal :test_patch, message.patch_name
             assert_not_nil message.index
             assert_not_nil message.value
@@ -76,7 +74,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
         scale = Object.new
         scale.expects(:from).once.returns(scale)
         scale.expects(:to).once
-        @results = @osc.send(:handle_message_received, @message)
+        @results = @osc.send(:handle_message_received, @patch, @message)
         Scale.unstub(:transform)
       end
     end

@@ -4,25 +4,20 @@ module Patch
 
     include Enumerable
 
-    def initialize(nodes)
-      @map = nodes.spec[:map]
-      @nodes = nodes
+    def all_from_spec(spec)
+      maps = []
+      spec.each do |name, schema|
+        maps << new(schema[:map])
+      end
+      maps
+    end
+
+    def initialize(spec)
+      @map = spec
     end
 
     def each(&block)
       @map.each(&block)
-    end
-
-    def enable
-      @map.each do |from, to|
-        to_node = @nodes.find_by_id(to)
-        from.each do |id|
-          from_node = @nodes.find_by_id(id)
-          from_node.listen do |messages| 
-            to_node.out(messages)
-          end
-        end
-      end
     end
 
   end
