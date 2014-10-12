@@ -16,7 +16,7 @@ module Patch
       # Send a message over the socket
       # @param [Array<Message>] messages A message or messages to send
       # @return [String, nil] If a message was sent, its JSON string; otherwise nil
-      def out(messages)
+      def puts(messages)
         messages = Array(messages)
         if !@socket.nil?
           json = messages.to_json

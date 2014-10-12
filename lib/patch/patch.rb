@@ -45,7 +45,7 @@ module Patch
         from.map do |id|
           from_node = nodes.find_by_id(id)
           from_node.listen(self) do |messages|
-            to_node.out(messages)
+            to_node.puts(messages)
           end
           true
         end

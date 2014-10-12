@@ -132,7 +132,7 @@ module Patch
         # @return [Boolean] Whether the echo was successful
         def echo(osc_message)
           begin
-            @client.out(osc_message)
+            @client.puts(osc_message)
             true
           rescue Exception => exception # failsafe
             @debug.exception(exception) if @debug
@@ -163,7 +163,7 @@ module Patch
         # Convert message objects to OSC messages and send
         # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send
         # @return [Boolean]
-        def out(messages)
+        def puts(messages)
           messages = [messages].flatten
           osc_messages = messages.map do |message| 
             message = get_osc_messages(message) unless message.kind_of?(::OSC::Message)

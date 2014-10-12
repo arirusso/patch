@@ -143,6 +143,7 @@ module Patch
         # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send via MIDI
         # @return [Array<MIDIMessage>]
         def puts(patch, patch_messages)
+          patch_messages = [patch_messages].flatten
           messages = ::Patch::IO::MIDI::Message.to_midi_messages(patch, patch_messages)
           @output.puts(messages) unless messages.empty?
           messages
