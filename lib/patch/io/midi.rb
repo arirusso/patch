@@ -2,13 +2,13 @@ module Patch
 
   module IO
 
+    # MIDI IO
     module MIDI
 
+      # Instantiate a MIDI device based on the given spec
+      # @param [Hash] spec
+      # @return [MIDI::Input, MIDI::Output]
       def self.new(spec, options = {})
-        directions = {
-          :input => Input, 
-          :output => Output
-        }
         klass = case spec[:direction].to_sym
           when :input then Input
           when :output then Output
@@ -16,46 +16,59 @@ module Patch
         klass.new(spec, :action => options[:action], :debug => options[:debug])
       end
 
+      # Convert MIDI messages to Patch::Message objects
       module Message
  
         extend self
 
-        def to_hub_messages(patch, raw_message)
-          index = raw_message.index - 1
+        # Convert the given MIDI message to Patch::Message objects using the context of the given patch
+        # @param [::Patch::Patch] patch
+        # @param [MIDIMessage] midi_message
+        # @return [Array<::Patch::Message>]
+        def to_patch_messages(patch, midi_message)
+          index = midi_message.index - 1
           patch.action.find_all_by_type(:midi).map do |mapping| 
             message = ::Patch::Message.new
             message.index = index
             message.patch_name = patch.name
-            message.value = get_value(mapping[:midi], raw_message)
+            message.value = get_value(mapping[:midi], midi_message)
             message
           end
         end
 
-        def get_value(mapping, message)
-          if !mapping[:scale].nil?
-            Scale.transform(message.value).from(0..127).to(mapping[:scale])
+        private
+
+        # Get the message value given the MIDI message and patch context
+        # @param [Hash] context
+        # @param [MIDIMessage] midi_message
+        # @return [Fixnum]
+        def get_value(context, midi_message)
+          if !context[:scale].nil?
+            Scale.transform(midi_message.value).from(0..127).to(context[:scale])
           else
-            message.value
+            midi_message.value
           end
         end
 
-
       end
 
+      # MIDI Input functions
       class Input
 
         attr_reader :id, :input, :listener
-        attr_writer :action
 
+        # @param [Hash] spec A hash describing the input
+        # @param [Hash] options
+        # @option options [Debug] :debug A destination for debug messages
+        # @option options [Fixnum] :id An ID for this device
         def initialize(spec, options = {})
-          @action = options[:action]
           @debug = options[:debug]
           @id = spec[:id]
           @input = get_input(spec)
           @listener = MIDIEye::Listener.new(@input) unless @input.nil?
         end
 
-        # Start listening for MIDI input
+        # Start listening for MIDI messages
         # @return [Boolean] Whether the listener was started
         def start
           if !@listener.nil?
@@ -66,11 +79,15 @@ module Patch
           end
         end
 
-        # Specify a handler callback for when messages are received
+        # Specify a patch context and handler callback to use when messages are received
+        # @param [::Patch::Patch] patch
+        # @param [Proc] callback
         # @return [Boolean] Whether adding the callback was successful
-        def listen(patch, &block)
+        def listen(patch, &callback)
           if !@listener.nil?
-            configure_listener(patch, &block)
+            @listener.listen_for(:class => [MIDIMessage::ControlChange]) do |event|
+              handle_event_received(patch, event, &callback)
+            end
             true
           else
             false
@@ -79,12 +96,20 @@ module Patch
 
         private
 
-        def handle_event_received(patch, event, options = {}, &block)
-          messages = ::Patch::IO::MIDI::Message.to_hub_messages(patch, event[:message])
+        # Handle receiving new MIDI messages from the input
+        # @param [::Patch::Patch] patch
+        # @param [Hash] event
+        # @param [Proc] callback
+        # @return [Array<::Patch::Message>]
+        def handle_event_received(patch, event, &callback)
+          messages = ::Patch::IO::MIDI::Message.to_patch_messages(patch, event[:message])
           yield(messages) if block_given?
           messages
         end
 
+        # Extract MIDI message objects from the input event
+        # @param [Hash] event
+        # @return [Hash]
         def extract_message(event)
           message = event[:message]
           index = (message.index - 1)
@@ -95,6 +120,10 @@ module Patch
           }
         end
 
+        # Initialize the input device specified in the spec.  If the name of the device is "choose" the user is prompted
+        # to select an available input.
+        # @param [Hash] spec
+        # @return [UniMIDI::Input]
         def get_input(spec)
           case spec[:name]
           when "choose" then UniMIDI::Input.gets
@@ -103,23 +132,22 @@ module Patch
           end
         end
 
-        def configure_listener(patch, &block)
-          @listener.listen_for(:class => [MIDIMessage::ControlChange]) do |event|
-            handle_event_received(patch, event, &block)
-          end
-        end
-
       end
 
+      # MIDI Output functions
       class Output
 
-        def initialize(output_info, options = {})
+        # @param [Hash] spec
+        # @param [Hash] options
+        # @option options [Debug] :debug A destination for debug messages
+        # @option options [Fixnum] :id An ID for this device
+        def initialize(spec, options = {})
           @debug = options[:debug]
-          @id = output_info[:id]
-          @output = get_output(output_info)
+          @id = spec[:id]
+          @output = get_output(spec)
         end
 
-        # Convert message objects to MIDI and send
+        # Convert Patch::Message objects to MIDI and send
         # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send via MIDI
         # @return [Boolean]
         def out(messages)
@@ -128,6 +156,10 @@ module Patch
 
         private
 
+        # Initialize the output device specified in the spec.  If the name of the device is "choose" the user is prompted
+        # to select an available output.
+        # @param [Hash] spec
+        # @return [UniMIDI::Output]
         def get_output(output_info)
           case output_info[:name]
           when "choose" then UniMIDI::Output.gets
