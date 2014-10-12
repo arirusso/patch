@@ -12,11 +12,11 @@ require "json"
 require "socket"
 require "yaml"
 
-require "colorize"
 require "em-websocket"
 require "midi-eye"
 require "osc-ruby"
 require "osc-ruby/em_server"
+require "rainbow"
 require "scale"
 
 # modules
@@ -31,6 +31,7 @@ require "patch/message"
 require "patch/node"
 require "patch/nodes"
 require "patch/patch"
+require "patch/report"
 
 # patches
 require "patch/em_patch"

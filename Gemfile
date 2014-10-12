@@ -8,8 +8,8 @@ group :test do
 end
 
 gem "analog", ">=0.3"
-gem "colorize"
 gem "em-websocket"
 gem "midi-eye"
 gem "osc-ruby"
+gem "rainbow"
 gem "web-repl"
