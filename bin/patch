@@ -28,5 +28,5 @@ end
 patches = File.new(options[:patches]) unless options[:patches].nil?
 
 hub = Patch::Hub.new(node_config_file, :patches => patches)
-hub.print_report
+Patch::Report.new(hub).print
 hub.listen
