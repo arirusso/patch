@@ -11,8 +11,8 @@ options = {}
 args = OptionParser.new do |opts|
   opts.banner = "Usage: patch [node config file] [options]"
 
-  opts.on("-a", "--action [FILE]", "Use action spec") do |file|
-    options[:action] = file
+  opts.on("-p", "--patches [FILE]", "Use patches spec") do |file|
+    options[:patches] = file
   end
 end
 
@@ -25,8 +25,8 @@ else
   node_config_file = File.new(node_config_path)
 end
 
-action = File.new(options[:action]) unless options[:action].nil?
+patches = File.new(options[:patches]) unless options[:patches].nil?
 
-hub = Patch.new(node_config_file, :action => action)
+hub = Patch::Hub.new(node_config_file, :patches => patches)
 hub.print_report
 hub.listen

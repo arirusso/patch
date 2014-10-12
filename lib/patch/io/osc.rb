@@ -84,8 +84,9 @@ module Patch
         # Listen for action
         # @return [Boolean] Whether any controls were configured
         def listen(patch, &block)
-          address_collection = patch.action.map do |mappings|
-            mappings.map { |mapping| mapping[:osc][:address].dup }
+          actions = patch.action.find_all_by_type(:osc)
+          address_collection = actions.map do |mapping|
+            mapping[:osc][:address].dup
           end
           addresses = address_collection.flatten.compact.uniq
           result = addresses.map do |address|

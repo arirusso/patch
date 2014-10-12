@@ -30,7 +30,7 @@ module Patch
         to_node = nodes.find_by_id(to)
         from.each do |id|
           from_node = nodes.find_by_id(id)
-          from_node.listen do |messages|
+          from_node.listen(self) do |messages|
             to_node.out(messages)
           end
         end
@@ -44,10 +44,9 @@ module Patch
       end
       puts
       puts "Actions"
-      @action.each do |name, actions|
-        action_names = actions.map { |action| action[:name] }.join(', ')
-        puts "#{name} (#{action_names})"
-      end
+      action_names = @action.map { |mapping| mapping[:name] }
+      action_names_string = action_names.join(", ")
+      puts "#{@name} (#{action_names_string})"
       puts
     end
 

@@ -39,13 +39,4 @@ module Patch
 
   VERSION = "0.1"
 
-  def self.new(*a)
-    Hub.new(*a)
-  end
-
-  def self.listen(*a)
-    @hub = new(*a)
-    @hub.listen
-  end
-
 end
