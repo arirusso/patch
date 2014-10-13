@@ -36,7 +36,7 @@ module Patch
         report[:patches].each_with_index do |patch, i|
           puts "#{i+1}. #{patch[:name]}"
           puts Rainbow("|").cyan
-          puts Rainbow("| Map").cyan
+          puts Rainbow("| Node Map").cyan
           puts Rainbow("| ———").cyan
           patch[:map].each { |map| puts Rainbow("| ").cyan + map }
           puts Rainbow("|").cyan

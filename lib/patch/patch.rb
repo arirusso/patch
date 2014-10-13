@@ -23,13 +23,13 @@ module Patch
     # @return [Patch]
     def self.from_spec(name, spec)
       action = Action.new(spec[:action])
-      map = Map.new(spec[:node_map])
+      map = Node::Map.new(spec[:node_map])
       new(name, action, map)
     end
 
     # @param [Symbol, String] name
     # @param [Action] action
-    # @param [Map] map
+    # @param [Node::Map] map
     def initialize(name, action, map)
       @name = name
       @action = action
@@ -37,7 +37,7 @@ module Patch
     end
 
     # Enable the given nodes to implement this patch
-    # @param [Nodes] nodes
+    # @param [Node::Container] nodes
     # @return 
     def enable(nodes)
       result = @map.map do |from, to|
