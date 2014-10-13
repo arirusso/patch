@@ -9,7 +9,7 @@ module Patch
     # @param [File, Hash, String] spec
     # @return [Array<Patch>]
     def self.all_from_spec(spec)
-      spec = get_spec(spec)
+      spec = Spec.new(spec)
       patches = []
       spec.each do |name, patch|
         patches << from_spec(name, patch)
@@ -51,21 +51,6 @@ module Patch
         end
       end
       result.flatten.any?
-    end
-
-    private
-
-    # Get a spec hash for the given file, filename or hash
-    # @param [File, Hash, String] spc
-    # @return [Hash]
-    def self.get_spec(spec)
-      spec_file = case spec
-                  when File, String then spec
-                  end
-      case spec_file
-      when nil then spec
-      else YAML.load_file(spec_file)
-      end
     end
 
   end

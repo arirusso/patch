@@ -21,6 +21,7 @@ require "scale"
 
 # modules
 require "patch/io"
+require "patch/spec"
 
 # classes
 require "patch/action"
