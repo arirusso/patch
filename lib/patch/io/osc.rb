@@ -10,11 +10,11 @@ module Patch
       # Instantiate an OSC server using the given spec
       # @param [Hash] spec
       # @param [Hash] options
-      # @option options [Action] :action
+      # @option options [Action::Container] :actions
       # @option options [Debug] :debug
       # @return [::Patch::IO::OSC::Server]
       def new(spec, options = {})
-        Server.new(spec, :action => options[:action], :debug => options[:debug])
+        Server.new(spec, :actions => options[:actions], :debug => options[:debug])
       end
 
       # Convert between OSC message and Patch::Message objects
@@ -27,7 +27,7 @@ module Patch
         # @param [::Patch::Message] message
         # @return [Array<::OSC::Message>]
         def to_osc_messages(patch, message)
-          action = patch.action.at(message.index)
+          action = patch.actions.at(message.index)
           address = action[:osc][:address]
           ::OSC::Message.new(address, message.value)
         end
@@ -39,10 +39,10 @@ module Patch
         def to_patch_messages(patch, raw_osc)
           # parse the message
           value = raw_osc.to_a[0].to_f
-          osc_actions = patch.action.find_all_by_type(:osc)
+          osc_actions = patch.actions.find_all_by_type(:osc)
           messages = osc_actions.map do |mapping|
-            mapping = patch.action.find { |mapping| mapping[:osc][:address] == raw_osc.address }
-            index = patch.action.index(mapping)
+            mapping = patch.actions.find { |mapping| mapping[:osc][:address] == raw_osc.address }
+            index = patch.actions.index(mapping)
             patch_message(patch.name, mapping[:osc], index, value) unless mapping.nil?
           end
           messages.compact
@@ -98,7 +98,6 @@ module Patch
       class Server
 
         attr_reader :id
-        attr_writer :action
 
         # @param [Hash] spec
         # @param [Hash] options
@@ -123,7 +122,7 @@ module Patch
         # Listen for messages
         # @return [Boolean] Whether any actions were configured
         def listen(patch, &block)
-          actions = patch.action.find_all_by_type(:osc)
+          actions = patch.actions.find_all_by_type(:osc)
           address_collection = actions.map do |mapping|
             mapping[:osc][:address].dup
           end
@@ -189,11 +188,11 @@ module Patch
         # Configure the echo client
         # @param [Hash] spec
         # @param [Hash] options
-        # @option options [Action] :action
+        # @option options [Action::Container] :actions
         # @option options [Debug] :debug
         # @return [::Patch::IO::OSC::Client]
         def configure_echo(spec, options = {})
-          @client = Client.new(spec, :action => options[:action], :debug => @debug)
+          @client = Client.new(spec, :actions => options[:actions], :debug => @debug)
         end
 
       end

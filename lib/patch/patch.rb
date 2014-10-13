@@ -3,7 +3,7 @@ module Patch
   # A single patch consisting of a node mapping and actions
   class Patch
 
-    attr_reader :action, :map, :name
+    attr_reader :actions, :map, :name
 
     # Instantiate patch objects from the given spec file, filename or hash
     # @param [File, Hash, String] spec
@@ -22,17 +22,17 @@ module Patch
     # @param [Hash] spec
     # @return [Patch]
     def self.from_spec(name, spec)
-      action = Action.new(spec[:action])
+      actions = Action::Container.new(spec[:action])
       map = Node::Map.new(spec[:node_map])
-      new(name, action, map)
+      new(name, actions, map)
     end
 
     # @param [Symbol, String] name
-    # @param [Action] action
+    # @param [Action::Container] actions
     # @param [Node::Map] map
-    def initialize(name, action, map)
+    def initialize(name, actions, map)
       @name = name
-      @action = action
+      @actions = actions
       @map = map
     end
 

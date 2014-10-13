@@ -13,7 +13,7 @@ module Patch
           when :input then Input
           when :output then Output
         end
-        klass.new(spec, :action => options[:action], :debug => options[:debug])
+        klass.new(spec, :actions => options[:actions], :debug => options[:debug])
       end
 
       # Convert between MIDI message objects and Patch::Message objects
@@ -26,7 +26,7 @@ module Patch
         # @return [Array<::MIDIMessage>]
         def to_midi_messages(patch, messages)
           messages = [messages].flatten
-          midi_actions = patch.action.find_all_by_type(:midi)
+          midi_actions = patch.actions.find_all_by_type(:midi)
           action = midi_actions.find { |action| action[:midi][:index] == message.index }
           #todo
           []
@@ -38,7 +38,7 @@ module Patch
         # @return [Array<::Patch::Message>]
         def to_patch_messages(patch, midi_message)
           index = midi_message.index - 1
-          patch.action.find_all_by_type(:midi).map do |mapping| 
+          patch.actions.find_all_by_type(:midi).map do |mapping| 
             message = ::Patch::Message.new
             message.index = index
             message.patch_name = patch.name

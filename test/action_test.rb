@@ -20,9 +20,9 @@ class Patch::ActionTest < Test::Unit::TestCase
         should "populate" do
           assert_not_nil @patches
           assert_not_empty @patches
-          assert_not_nil @patches.first.action
-          assert_not_nil @patches.first.action.spec
-           assert @patches.first.action.spec.kind_of?(Array)
+          assert_not_nil @patches.first.actions
+          assert_not_nil @patches.first.actions.spec
+           assert @patches.first.actions.spec.kind_of?(Array)
         end
 
       end
@@ -36,9 +36,9 @@ class Patch::ActionTest < Test::Unit::TestCase
         should "populate" do
           assert_not_nil @patches
           assert_not_empty @patches
-          assert_not_nil @patches.first.action
-          assert_not_nil @patches.first.action.spec
-          assert @patches.first.action.spec.kind_of?(Array)
+          assert_not_nil @patches.first.actions
+          assert_not_nil @patches.first.actions.spec
+          assert @patches.first.actions.spec.kind_of?(Array)
         end
 
       end
@@ -73,9 +73,9 @@ class Patch::ActionTest < Test::Unit::TestCase
         should "populate" do
           assert_not_nil @patches
           assert_not_empty @patches
-          assert_not_nil @patches.first.action
-          assert_not_nil @patches.first.action.spec
-          assert @patches.first.action.spec.kind_of?(Array)
+          assert_not_nil @patches.first.actions
+          assert_not_nil @patches.first.actions.spec
+          assert @patches.first.actions.spec.kind_of?(Array)
         end
       end
 
@@ -86,26 +86,26 @@ class Patch::ActionTest < Test::Unit::TestCase
       setup do
         @patches = Patch::Patch.all_from_spec(@patches_path)
         @patch = @patches.first
-        @action = @patch.action
+        @actions = @patch.actions
       end
 
       context "midi" do
 
         should "be populated" do
-          assert_not_nil @action.find_all_by_type(:midi)
-          assert_not_empty @action.find_all_by_type(:midi)
-          assert_not_nil @action.find_all_by_type(:midi)
-          assert_not_nil @action.find_all_by_type(:midi).first[:midi][:channel]
+          assert_not_nil @actions.find_all_by_type(:midi)
+          assert_not_empty @actions.find_all_by_type(:midi)
+          assert_not_nil @actions.find_all_by_type(:midi)
+          assert_not_nil @actions.find_all_by_type(:midi).first[:midi][:channel]
         end
       end
 
       context "osc" do
 
         should "be populated" do
-          assert_not_nil @action.find_all_by_type(:osc)
-          assert_not_empty @action.find_all_by_type(:osc)
-          assert_not_nil @action.find_all_by_type(:osc)
-          assert_not_nil @action.find_all_by_type(:osc).first[:osc][:address]
+          assert_not_nil @actions.find_all_by_type(:osc)
+          assert_not_empty @actions.find_all_by_type(:osc)
+          assert_not_nil @actions.find_all_by_type(:osc)
+          assert_not_nil @actions.find_all_by_type(:osc).first[:osc][:address]
         end
 
       end

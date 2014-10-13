@@ -42,7 +42,7 @@ module Patch
           puts Rainbow("|").cyan
           puts Rainbow("| Actions").cyan
           puts Rainbow("| ———").cyan
-          chunked_actions(patch[:action]).each do |chunk|
+          chunked_actions(patch[:actions]).each do |chunk|
             puts Rainbow("| ").cyan + chunk
           end
           puts Rainbow("|").cyan
@@ -117,7 +117,7 @@ module Patch
       report = {}
       report[:name] = patch.name
       report[:map] = patch.map.map { |from, to| "#{from} => #{to}" }
-      report[:action] = patch.action.map { |mapping| mapping[:name] }
+      report[:actions] = patch.actions.map { |mapping| mapping[:name] }
       report
     end
 
