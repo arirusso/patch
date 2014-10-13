@@ -3,13 +3,19 @@ module Patch
   # Terminal/Console output explaining the hub configuration
   class Report
 
+    # @param [Hub] hub The hub to print a report for
+    # @return [Report]
+    def self.print(hub)
+      new(hub).print
+    end
+
     # @param [Hub] hub The hub to report about
     def initialize(hub)
       @hub = hub
     end
 
     # Print a report to standard out
-    # @return [Hash]
+    # @return [Report] self
     def print
       report = self.report
       print_logo
@@ -45,7 +51,7 @@ module Patch
       else
         puts
       end
-      report
+      self
     end
 
     # Construct the report hash
