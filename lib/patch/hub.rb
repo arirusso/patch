@@ -19,7 +19,9 @@ module Patch
     # Collected IP addresses for the nodes
     # @return [Array<String>]
     def ips
-      Socket.ip_address_list.map(&:inspect_sockaddr).select { |ip| ip.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/) }
+      regex = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/
+      all_ips = Socket.ip_address_list.map(&:inspect_sockaddr)
+      all_ips.select { |ip| !!ip.match(regex) }
     end
 
     # Start the hub
