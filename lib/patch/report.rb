@@ -15,30 +15,35 @@ module Patch
       print_logo
       puts
       puts Rainbow("IPs").cyan
-      puts Rainbow("---").cyan
+      puts Rainbow("———").cyan
       report[:ips].each { |ip| puts ip }
       puts
       puts Rainbow("Nodes").cyan
-      puts Rainbow("---").cyan
+      puts Rainbow("———").cyan
       report[:nodes].each do |node|
         puts "#{node[:id]}: #{node[:name]}"
       end
       puts
-      puts Rainbow("Patches").cyan
-      puts Rainbow("---").cyan
-      report[:patches].each_with_index do |patch, i|
-        puts "#{i+1}. #{patch[:name]}"
-        puts Rainbow("|").cyan
-        puts Rainbow("| Map").cyan
-        puts Rainbow("| ---").cyan
-        patch[:map].each { |map| puts Rainbow("| ").cyan + map }
-        puts Rainbow("|").cyan
-        puts Rainbow("| Actions").cyan
-        puts Rainbow("| ---").cyan
-        chunked_actions(patch[:action]).each do |chunk|
-          puts Rainbow("| ").cyan + chunk
+      if report[:patches].count > 0
+        puts Rainbow("Patches").cyan
+        puts Rainbow("———").cyan
+        report[:patches].each_with_index do |patch, i|
+          puts "#{i+1}. #{patch[:name]}"
+          puts Rainbow("|").cyan
+          puts Rainbow("| Map").cyan
+          puts Rainbow("| ———").cyan
+          patch[:map].each { |map| puts Rainbow("| ").cyan + map }
+          puts Rainbow("|").cyan
+          puts Rainbow("| Actions").cyan
+          puts Rainbow("| ———").cyan
+          chunked_actions(patch[:action]).each do |chunk|
+            puts Rainbow("| ").cyan + chunk
+          end
+          puts Rainbow("|").cyan
+          puts
         end
-        puts Rainbow("|").cyan
+      else
+        puts
       end
       report
     end
