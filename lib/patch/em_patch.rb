@@ -1,3 +1,5 @@
+# These patches are useful for using both an OSC and Websocket server concurrently
+#
 module OSC
   class EMServer
 
