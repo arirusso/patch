@@ -21,7 +21,13 @@ module Patch
  
         extend self
 
-        def to_midi_messages(patch, message)
+        # @param [::Patch::Patch] patch
+        # @param [Array<::Patch::Message>, ::Patch::Message] messages
+        # @return [Array<::MIDIMessage>]
+        def to_midi_messages(patch, messages)
+          messages = [messages].flatten
+          midi_actions = patch.action.find_all_by_type(:midi)
+          action = midi_actions.find { |action| action[:midi][:index] == message.index }
           #todo
           []
         end
