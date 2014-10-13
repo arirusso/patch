@@ -21,6 +21,7 @@ require "scale"
 
 # modules
 require "patch/io"
+require "patch/node"
 require "patch/spec"
 
 # classes
@@ -28,7 +29,6 @@ require "patch/action"
 require "patch/debug"
 require "patch/hub"
 require "patch/message"
-require "patch/node"
 require "patch/patch"
 require "patch/report"
 
