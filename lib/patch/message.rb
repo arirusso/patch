@@ -15,9 +15,9 @@ module Patch
       @time ||= Time.now
     end
 
-    # Convert the message to a json hash
+    # Convert the message to a hash
     # @return [Hash]
-    def to_json(*args)
+    def to_h(*args)
       properties = {
         :index => @index, 
         :patch_name => @patch_name, 
@@ -25,10 +25,16 @@ module Patch
         :value => @value
       }
       properties.merge!(@other_properties) unless @other_properties.nil?
-      properties.to_json
+      properties
     end
 
-    # Get the message time as a js timestamp
+    # Convert the message to a JSON string
+    # @return [String]
+    def to_json(*args)
+      to_h(*args).to_json
+    end
+
+    # Get the message time as a JS timestamp
     # @return [Fixnum]
     def timestamp
       @time.to_i * 1000
@@ -55,13 +61,8 @@ module Patch
     # @param [String, Numeric] timestamp
     # @return [Time]
     def timestamp_to_time(timestamp)
-      Time.at(timestamp.to_i / 1000)
-    end
-
-    # Generate a new timestamp in js format
-    # @return [Fixnum]
-    def new_timestamp
-      Time.now.to_i * 1000 # javascript time int format
+      js_time = timestamp.to_i / 1000
+      Time.at(js_time)
     end
 
   end
