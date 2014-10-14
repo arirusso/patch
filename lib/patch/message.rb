@@ -11,23 +11,21 @@ module Patch
     # @option options [Hash] :raw_message
     def initialize(options = {})
       @debug = options[:debug]
-      @message = options[:raw_message] || {}
-      @index = @message[:index]
-      @patch_name = @message[:patch_name]
-      @value = @message[:value]
-      @time = get_time(@message[:timestamp])
+      populate_from_hash(options[:raw_message]) unless options[:raw_message].nil?
+      @time ||= Time.now
     end
 
     # Convert the message to a json hash
     # @return [Hash]
     def to_json(*args)
-      attrs = {
+      properties = {
         :index => @index, 
         :patch_name => @patch_name, 
         :timestamp => timestamp, #js format
         :value => @value
       }
-      @message.merge(attrs).to_json
+      properties.merge!(@other_properties) unless @other_properties.nil?
+      properties.to_json
     end
 
     # Get the message time as a js timestamp
@@ -38,14 +36,19 @@ module Patch
 
     private
 
-    # Get a numeric timestamp as a Ruby time object.  If the timestamp is nil, the current time will be returned.
-    # @param [Fixnum] timestamp
-    # @return [Time]
-    def get_time(timestamp)
-      case timestamp 
-        when nil then Time.now
-        when Numeric then timestamp_to_time(timestamp)
+    # Populate this message from a hash of properties
+    # @param [Hash] hash
+    # @return [Hash]
+    def populate_from_hash(hash)
+      hash = hash.dup
+      @index = hash.delete(:index)
+      @patch_name = hash.delete(:patch_name)
+      @value = hash.delete(:value)
+      if !(timestamp = hash.delete(:timestamp)).nil?
+        @time = timestamp_to_time(timestamp)
       end
+      @other_properties = hash
+      hash
     end
 
     # Convert a raw timestamp to a Ruby time
