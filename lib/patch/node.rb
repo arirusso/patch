@@ -109,9 +109,7 @@ module Patch
       # @param [Hash] spec
       # @return [Array<Map>]
       def self.all_from_spec(spec)
-        spec.map do |from, to|
-          new(from, to)
-        end
+        spec.map { |from, to| new(from, to) }
       end
 
       # @param [Array<Fixnum>, Fixnum] from
