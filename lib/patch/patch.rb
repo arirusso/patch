@@ -3,7 +3,7 @@ module Patch
   # A single patch consisting of a node mapping and actions
   class Patch
 
-    attr_reader :actions, :map, :name
+    attr_reader :actions, :maps, :name
 
     # Instantiate patch objects from the given spec file, filename or hash
     # @param [File, Hash, String] spec
@@ -23,34 +23,25 @@ module Patch
     # @return [Patch]
     def self.from_spec(name, spec)
       actions = Action::Container.new(spec[:action])
-      map = Node::Map.new(spec[:node_map])
-      new(name, actions, map)
+      maps = Node::Map.all_from_spec(spec[:node_map])
+      new(name, actions, maps)
     end
 
     # @param [Symbol, String] name
     # @param [Action::Container] actions
-    # @param [Node::Map] map
-    def initialize(name, actions, map)
+    # @param [Array<Node::Map>, Node::Map] maps
+    def initialize(name, actions, maps)
       @name = name
       @actions = actions
-      @map = map
+      @maps = [maps].flatten
     end
 
     # Enable the given nodes to implement this patch
     # @param [Node::Container] nodes
-    # @return 
+    # @return [Boolean]
     def enable(nodes)
-      result = @map.map do |from, to|
-        to_node = nodes.find_by_id(to)
-        from.map do |id|
-          from_node = nodes.find_by_id(id)
-          from_node.listen(self) do |messages|
-            to_node.puts(messages)
-          end
-          true
-        end
-      end
-      result.flatten.any?
+      result = @maps.map { |map| map.enable(nodes) }
+      result.any?
     end
 
   end
