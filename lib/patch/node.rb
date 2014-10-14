@@ -58,18 +58,8 @@ module Patch
       # Enable the nodes in this container
       # @return [Boolean]
       def enable
-        @nodes.map do |node|
-          thread = Thread.new do
-            begin
-              node.start if node.respond_to?(:start)
-            rescue Exception => exception
-              Thread.main.raise(exception)
-            end
-          end
-          thread.abort_on_exception = true
-          @threads << thread
-        end
-        true
+        result = @nodes.map { |node| enable_node(node) }
+        result.any?
       end
 
       # Get the nodes of the given type
@@ -85,6 +75,20 @@ module Patch
       # @return [IO::MIDI, IO::OSC, IO::Websocket]
       def find_by_id(id)
         @nodes.find { |node| node.id == id }
+      end
+
+      private
+
+      def enable_node(node)
+        thread = Thread.new do
+          begin
+            node.start if node.respond_to?(:start)
+          rescue Exception => exception
+            Thread.main.raise(exception)
+          end
+        end
+        thread.abort_on_exception = true
+        @threads << thread
       end
 
     end
