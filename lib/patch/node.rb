@@ -120,7 +120,8 @@ module Patch
       end
 
       # Enable this map for the given nodes
-      # @param [Node::Container] nodes Nodes to enable this map for
+      # @param [::Patch::Patch] patch The patch context to enable the map in
+      # @param [::Patch::Node::Container] nodes Nodes to enable this map for
       # @return [Boolean] Whether nodes were enabled
       def enable(patch, nodes)
         result = @to.map do |to_id|
