@@ -130,7 +130,6 @@ class Patch::ActionTest < Test::Unit::TestCase
 
           assert_not_nil index
           assert index.kind_of?(Fixnum)
-          assert index > 0
           assert_equal @patches.first.actions.spec.index(action), index
         end
 
