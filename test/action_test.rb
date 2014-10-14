@@ -64,6 +64,7 @@ class Patch::ActionTest < Test::Unit::TestCase
           setup do
             @patches_hash = {
               :test_patch => {
+                :node_map => { [1,2] => 3 },
                 :action => [
                   { 
                     :name=>"Zoom", 
