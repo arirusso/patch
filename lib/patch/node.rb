@@ -99,26 +99,42 @@ module Patch
     # A map of connections between nodes for a given patch
     class Map
 
-      include Enumerable
+      attr_reader :from, :to
 
       # Instantiate Map objects given a map spec hash
       # @param [Hash] spec
       # @return [Array<Map>]
-      def all_from_spec(spec)
+      def self.all_from_spec(spec)
         maps = []
-        spec.each do |name, schema|
-          maps << new(schema[:map])
+        spec.each do |from, to|
+          maps << new(from, to)
         end
         maps
       end
 
-      # @param [Hash] spec
-      def initialize(spec)
-        @map = spec
+      # @param [Array<Fixnum>, Fixnum] from
+      # @param [Array<Fixnum>, Fixnum] to
+      def initialize(from, to)
+        @from = [from].flatten
+        @to = [to].flatten
       end
 
-      def each(&block)
-        @map.each(&block)
+      # Enable this map for the given nodes
+      # @param [Node::Container] nodes Nodes to enable this map for
+      # @return [Boolean] Whether nodes were enabled
+      def enable(nodes)
+        result = @to.map do |to_id|
+          to_node = nodes.find_by_id(to_id)
+          enabled = @from.map do |from_id|
+            from_node = nodes.find_by_id(from_id)
+            from_node.listen(self) do |messages|
+              to_node.puts(messages)
+            end
+            true
+          end
+          enabled.any?
+        end
+        result.any?
       end
 
     end
