@@ -4,18 +4,29 @@ class Patch::HubTest < Test::Unit::TestCase
 
   context "Hub" do
 
-    context "#listen" do
+    setup do
+      @patches_path = File.join(__dir__, "config/patches.yml")
+      @nodes_path = File.join(__dir__, "config/nodes.yml")
+      @hub = Patch::Hub.new(@nodes_path, :patches => @patches_path)
+    end
 
-      setup do
-        @action_path = File.join(__dir__, "config/action.yml")
-        @nodes_path = File.join(__dir__, "config/nodes.yml")
+    context "#ips" do
+
+      should "have ips array" do
+        assert_not_nil @hub.ips
+        assert_not_empty @hub.ips
       end
 
+    end
+
+    context "#listen" do
+
       should "start listeners and controller" do
+        @hub.patches.each { |patch| patch.expects(:enable).once }
         Patch::IO::MIDI::Input.any_instance.expects(:listen).once
         Patch::IO::OSC::Server.any_instance.expects(:listen).once
         Patch::IO::Websocket.any_instance.expects(:start).once
-        @instance = Patch::Hub.new(@nodes_path, :action => @action_path)
+        assert @hub.listen(:background => true)
       end
 
     end
