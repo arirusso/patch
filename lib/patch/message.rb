@@ -17,7 +17,7 @@ module Patch
 
     # Convert the message to a hash
     # @return [Hash]
-    def to_h(*args)
+    def to_h
       properties = {
         :index => @index, 
         :patch_name => @patch_name, 
@@ -31,7 +31,7 @@ module Patch
     # Convert the message to a JSON string
     # @return [String]
     def to_json(*args)
-      to_h(*args).to_json
+      to_h.to_json(*args)
     end
 
     # Get the message time as a JS timestamp
