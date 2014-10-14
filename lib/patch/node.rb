@@ -3,38 +3,41 @@ module Patch
   # A network or hardware connection
   module Node
 
-    extend self
+    module ClassMethods
 
-    # Instantiate nodes from the given spec or spec file
-    # @param [File, Hash, String] spec
-    # @return [Array<Patch::IO>]
-    def all_from_spec(spec, options = {})
-      spec = Spec.new(spec)
-      get_nodes(spec, :debug => options[:debug])
-    end
-
-    # Mapping of node modules and names
-    # @return [Hash]
-    def modules
-      @modules ||= {
-        :midi => IO::MIDI,
-        :osc => IO::OSC,
-        :websocket => IO::Websocket
-      }
-    end
-
-    private
-
-    # All of the nodes from the spec
-    # @return [::Patch::Node::Container]
-    def get_nodes(spec, options = {})
-      node_array = spec[:nodes].map do |node|
-        type = node[:type].to_sym
-        mod = modules[type]
-        mod.new(node, :debug => options[:debug])
+      # Instantiate nodes from the given spec or spec file
+      # @param [File, Hash, String] spec
+      # @return [Array<Patch::IO>]
+      def all_from_spec(spec, options = {})
+        spec = Spec.new(spec)
+        get_nodes(spec, :debug => options[:debug])
       end
-      Container.new(node_array)
+
+      # Mapping of node modules and names
+      # @return [Hash]
+      def modules
+        @modules ||= {
+          :midi => IO::MIDI,
+          :osc => IO::OSC,
+          :websocket => IO::Websocket
+        }
+      end
+
+      private
+
+      # All of the nodes from the spec
+      # @return [::Patch::Node::Container]
+      def get_nodes(spec, options = {})
+        node_array = spec[:nodes].map do |node|
+          type = node[:type].to_sym
+          mod = modules[type]
+          mod.new(node, :debug => options[:debug])
+        end
+        Container.new(node_array)
+      end
+
     end
+    extend ClassMethods
 
     # A container for Patch::Node
     class Container
