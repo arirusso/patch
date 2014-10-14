@@ -82,6 +82,9 @@ module Patch
 
       private
 
+      # Enable the given node
+      # @param [Patch::Node] node
+      # @return [Boolean]
       def enable_node(node)
         thread = Thread.new do
           begin
@@ -92,6 +95,7 @@ module Patch
         end
         thread.abort_on_exception = true
         @threads << thread
+        true
       end
 
     end
