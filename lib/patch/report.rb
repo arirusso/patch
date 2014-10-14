@@ -38,7 +38,7 @@ module Patch
           puts Rainbow("|").cyan
           puts Rainbow("| Node Map").cyan
           puts Rainbow("| ———").cyan
-          patch[:map].each { |map| puts Rainbow("| ").cyan + map }
+          patch[:maps].each { |map| puts Rainbow("| ").cyan + map }
           puts Rainbow("|").cyan
           puts Rainbow("| Actions").cyan
           puts Rainbow("| ———").cyan
@@ -116,7 +116,7 @@ module Patch
     def patch_report(patch)
       report = {}
       report[:name] = patch.name
-      report[:map] = patch.map.map { |from, to| "#{from} => #{to}" }
+      report[:maps] = patch.maps.map { |map| "#{map.from} => #{map.to}" }
       report[:actions] = patch.actions.map { |mapping| mapping[:name] }
       report
     end
