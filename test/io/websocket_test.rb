@@ -10,10 +10,42 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
       @server = @nodes.find_all_by_type(:websocket).first
     end
 
+    context "#start" do
+
+      should "start server" do
+        Patch::IO::Websocket.any_instance.unstub(:start)
+        EM::WebSocket.expects(:run).once
+        assert @server.start
+      end
+
+    end
+
+    context "#puts" do
+
+      setup do
+        @message = Patch::Message.new
+        @message.index = 1
+        @message.value = 100
+        @message.patch_name = :test
+      end
+
+      should "convert message to json" do
+        @server.stubs(:running?).returns(true)
+        @server.instance_variable_set("@socket", Object.new)
+        @server.instance_variable_get("@socket").expects(:send).once
+        assert @server.puts(@message)
+      end
+
+    end
+
     context "#handle_input" do
 
       setup do
-        @message = { :value => "blah", :timestamp => 1396406728702 }.to_json
+        hash = { 
+          :value => "blah", 
+          :timestamp => 1396406728702 
+        }
+        @message = hash.to_json
         @result = @server.send(:handle_input, @message)
       end
 
@@ -37,4 +69,3 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
   end
 
 end
-
