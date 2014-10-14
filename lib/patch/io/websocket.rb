@@ -21,14 +21,15 @@ module Patch
       # @param [Array<::Patch::Message>] messages A message or messages to send
       # @return [String, nil] If a message was sent, its JSON string; otherwise nil
       def puts(messages)
-        messages = Array(messages)
-        if !@socket.nil?
+        messages = [messages].flatten
+        if running?
           json = messages.to_json
           @debug.puts("Sending messages: #{json}") if @debug
           begin
             @socket.send(json)
           rescue Exception => exception # failsafe
-            @debug.exception(exception)
+            @debug.exception(exception) if @debug
+            Thread.main.raise(exception)
           end
           json
         else
@@ -49,6 +50,12 @@ module Patch
           end
         end
         true
+      end
+
+      # Is the server active?
+      # @return [Boolean]
+      def running?
+        !@socket.nil?
       end
 
       private
