@@ -122,12 +122,12 @@ module Patch
       # Enable this map for the given nodes
       # @param [Node::Container] nodes Nodes to enable this map for
       # @return [Boolean] Whether nodes were enabled
-      def enable(nodes)
+      def enable(patch, nodes)
         result = @to.map do |to_id|
           to_node = nodes.find_by_id(to_id)
           enabled = @from.map do |from_id|
             from_node = nodes.find_by_id(from_id)
-            from_node.listen(self) do |messages|
+            from_node.listen(patch) do |messages|
               to_node.puts(messages)
             end
             true

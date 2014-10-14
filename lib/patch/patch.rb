@@ -40,7 +40,7 @@ module Patch
     # @param [Node::Container] nodes
     # @return [Boolean]
     def enable(nodes)
-      result = @maps.map { |map| map.enable(nodes) }
+      result = @maps.map { |map| map.enable(self, nodes) }
       result.any?
     end
 
