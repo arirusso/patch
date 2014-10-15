@@ -34,7 +34,8 @@ module Patch
     # Get the message time as a JS timestamp
     # @return [Fixnum]
     def timestamp
-      @time.to_i * 1000
+      js_time = @time.to_f * 1000
+      js_time.to_i
     end
 
     private
@@ -53,12 +54,12 @@ module Patch
       @other_properties = properties
     end
 
-    # Convert a raw timestamp to a Ruby time
+    # Convert a JS timestamp to a Ruby time
     # @param [String, Numeric] timestamp
     # @return [Time]
     def timestamp_to_time(timestamp)
-      js_time = timestamp.to_i / 1000
-      Time.at(js_time)
+      js_time = timestamp.to_f / 1000
+      Time.at(js_time.to_i)
     end
 
   end
