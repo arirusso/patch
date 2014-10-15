@@ -53,7 +53,7 @@ module Patch
         # Convert a patch message to a MIDI message
         # @param [Hash] action An action to contextualize the conversion
         # @param [::Patch::Message] patch_message
-        # @return [::MIDIMessage::ControlChange]
+        # @return [::MIDIMessage::ControlChange, nil]
         def to_midi_message(action, patch_message)
           if !action[:midi].nil?
             channel = action[:midi][:channel] || 0
@@ -66,7 +66,7 @@ module Patch
         # @param [Hash] action An action to contextualize the conversion
         # @param [Symbol] patch_name A patch name
         # @param [::MIDIMessage::ControlChange] midi_message
-        # @return [::Patch::Message]
+        # @return [::Patch::Message, nil]
         def to_patch_message(action, patch_name, midi_message)
           if !action[:midi].nil? && (action[:midi][:channel].nil? || action[:midi][:channel] == midi_message.channel)
             value = get_value(action[:midi], midi_message.value)
