@@ -10,15 +10,15 @@ module Patch
       # @return [MIDI::Input, MIDI::Output]
       def self.new(spec, options = {})
         klass = case spec[:direction].to_sym
-          when :input then Input
-          when :output then Output
-        end
+                when :input then Input
+                when :output then Output
+                end
         klass.new(spec, :actions => options[:actions], :debug => options[:debug])
       end
 
       # Convert between MIDI message objects and Patch::Message objects
       module Message
- 
+
         extend self
 
         # @param [::Patch::Patch] patch
@@ -28,7 +28,7 @@ module Patch
           messages = [messages].flatten
           midi_messages = messages.map do |message|
             action = patch.actions.at(message.index)
-            if !action.nil? && !action[:midi].nil?
+            if !action.nil? && !action[:midi].nil? && (action[:channel].nil? || action[:channel] == message.channel)
               channel = action[:channel] || 0
               index = message.index
               value = get_value(action, message.value, :direction => :midi)
@@ -40,17 +40,25 @@ module Patch
 
         # Convert the given MIDI message to Patch::Message objects using the context of the given patch
         # @param [::Patch::Patch] patch
-        # @param [MIDIMessage] midi_message
+        # @param [Array<MIDIMessage>, MIDIMessage] midi_messages
         # @return [Array<::Patch::Message>]
-        def to_patch_messages(patch, midi_message)
-          index = midi_message.index - 1
-          patch.actions.find_all_by_type(:midi).map do |mapping| 
-            message = ::Patch::Message.new
-            message.index = index
-            message.patch_name = patch.name
-            message.value = get_value(mapping[:midi], midi_message.value)
-            message
+        def to_patch_messages(patch, midi_messages)
+          midi_messages = [midi_messages].flatten
+          patch_messages = midi_messages.map do |midi_message|
+            index = midi_message.index
+            action = patch.actions.at(index)
+            if !action.nil? && !action[:midi].nil? && (action[:midi][:channel].nil? || action[:midi][:channel] == midi_message.channel)
+              value = get_value(action[:midi], midi_message.value)
+              properties = {
+                :index => index, 
+                :midi_channel => midi_message.channel,
+                :patch_name => patch.name,
+                :value => value
+              }
+              ::Patch::Message.new(properties)
+            end
           end
+          patch_messages.compact
         end
 
         private
@@ -79,7 +87,7 @@ module Patch
       # MIDI Input functions
       class Input
 
-        attr_reader :id, :input, :listener
+        attr_reader :device, :id, :listener
 
         # @param [Hash] spec A hash describing the input
         # @param [Hash] options
@@ -88,8 +96,8 @@ module Patch
         def initialize(spec, options = {})
           @debug = options[:debug]
           @id = spec[:id]
-          @input = get_input(spec)
-          @listener = MIDIEye::Listener.new(@input) unless @input.nil?
+          @device = get_input(spec)
+          @listener = MIDIEye::Listener.new(@device) unless @device.nil?
         end
 
         # Start listening for MIDI messages
@@ -126,9 +134,10 @@ module Patch
         # @param [Proc] callback
         # @return [Array<::Patch::Message>]
         def handle_event_received(patch, event, &callback)
-          messages = ::Patch::IO::MIDI::Message.to_patch_messages(patch, event[:message])
-          yield(messages) if block_given?
-          messages
+          messages = event[:message]
+          patch_messages = ::Patch::IO::MIDI::Message.to_patch_messages(patch, messages)
+          yield(patch_messages) if block_given?
+          patch_messages
         end
 
         # Initialize the input device specified in the spec.  If the name of the device is "choose" the user is prompted
@@ -148,6 +157,8 @@ module Patch
       # MIDI Output functions
       class Output
 
+        attr_reader :id, :device
+
         # @param [Hash] spec
         # @param [Hash] options
         # @option options [Debug] :debug A destination for debug messages
@@ -155,7 +166,7 @@ module Patch
         def initialize(spec, options = {})
           @debug = options[:debug]
           @id = spec[:id]
-          @output = get_output(spec)
+          @device = get_output(spec)
         end
 
         # Convert Patch::Message objects to MIDI and send
@@ -164,7 +175,7 @@ module Patch
         def puts(patch, patch_messages)
           patch_messages = [patch_messages].flatten
           messages = ::Patch::IO::MIDI::Message.to_midi_messages(patch, patch_messages)
-          @output.puts(messages) unless messages.empty?
+          @device.puts(messages) unless messages.empty?
           messages
         end
 
