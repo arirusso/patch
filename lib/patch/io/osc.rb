@@ -26,10 +26,15 @@ module Patch
         # @param [::Patch::Patch] patch
         # @param [::Patch::Message] message
         # @return [Array<::OSC::Message>]
-        def to_osc_messages(patch, message)
-          action = patch.actions.at(message.index)
-          address = action[:osc][:address]
-          ::OSC::Message.new(address, message.value)
+        def to_osc_messages(patch, patch_message)
+          messages = []
+          action = patch.actions.at(patch_message.index)
+          if !action.nil? && !action[:osc].nil?
+            address = action[:osc][:address]
+            value = get_value(action[:osc], patch_message.value, :destination => :osc)
+            messages << ::OSC::Message.new(address, value)
+          end
+          messages
         end
 
         # Convert the given OSC message to Patch::Message objects using the context of the given patch
@@ -37,32 +42,22 @@ module Patch
         # @param [MIDIMessage] midi_message
         # @return [Array<::Patch::Message>]
         def to_patch_messages(patch, raw_osc)
-          # parse the message
-          value = raw_osc.to_a[0].to_f
-          osc_actions = patch.actions.find_all_by_type(:osc)
-          messages = osc_actions.map do |mapping|
-            mapping = patch.actions.find { |mapping| mapping[:osc][:address] == raw_osc.address }
-            index = patch.actions.index(mapping)
-            patch_message(patch.name, mapping[:osc], index, value) unless mapping.nil?
+          messages = []
+          action = patch.actions.find_all_by_type(:osc).find { |action| action[:osc][:address] == raw_osc.address }
+          if !action.nil?
+            index = patch.actions.index(action)
+            value = get_value(action[:osc], raw_osc.to_a[0].to_f, :destination => :hub)
+            properties = {
+              :index => index,
+              :patch_name => patch.name, 
+              :value => value
+            }
+            messages << ::Patch::Message.new(properties)
           end
-          messages.compact
+          messages
         end
 
         private
-
-        # Instantiate a new Patch::Message using the given patch context and OSC message
-        # @param [Symbol, String] patch_name
-        # @param [Hash] context
-        # @param [Fixnum] index
-        # @param [Fixnum] value
-        # @return [::Patch::Message]
-        def patch_message(patch_name, context, index, value)
-          message = ::Patch::Message.new
-          message.index = index
-          message.patch_name = patch_name.to_sym
-          message.value = get_value(context, value, :destination => :hub)
-          message
-        end
 
         # Translate an OSC value for use by Patch::Message
         # @param [Hash] context
@@ -71,25 +66,17 @@ module Patch
         # @option options [Symbol] :destination (default: :hub)
         # @return [Fixnum]
         def get_value(context, value, options = {})
-          scale = context[:scale]
-          if scale.nil?
+          if (spec = context[:scale]).nil?
             value
           else
-            get_scaled_value(scale, value, options)
+            scale = Scale.transform(value)
+            if options[:destination] == :osc
+              from, to = spec[:hub], spec[:osc]
+            else
+              from, to = spec[:osc], spec[:hub]
+            end
+            scale.from(from).to(to)
           end
-        end
-
-        # Scale a value
-        # @param [Scale] scale
-        # @param [Fixnum] value
-        # @param [Hash] options
-        # @option options [Symbol] :destination (default: :hub)
-        # @return [Fixnum]
-        def get_scaled_value(scale, value, options = {})
-          destination = options[:destination] || :hub
-          direction = [:osc, :hub]
-          direction.reverse! if destination != :hub
-          Scale.transform(value).from(scale[direction.first]).to(scale[direction.last]) 
         end
 
       end
