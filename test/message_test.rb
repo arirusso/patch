@@ -30,7 +30,7 @@ class Patch::MessageTest < Test::Unit::TestCase
       end
 
       should "have properties from hash" do
-        @message.send(:populate_from_hash, { :a_property => "hello!" })
+        @message.send(:populate_from_properties, { :a_property => "hello!" })
         @result = @message.to_h
         assert_not_nil @result
         assert_not_nil @result[:a_property]
@@ -70,7 +70,7 @@ class Patch::MessageTest < Test::Unit::TestCase
 
     end
 
-    context "#populate_from_hash" do
+    context "#populate_from_properties" do
 
       setup do
         @hash = { 
@@ -79,7 +79,7 @@ class Patch::MessageTest < Test::Unit::TestCase
           :patch_name => :test, 
           :another_property => "something" 
         }
-        @message.send(:populate_from_hash, @hash)
+        @message.send(:populate_from_properties, @hash)
       end
 
       should "have properties from hash" do
