@@ -132,11 +132,6 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
           assert_equal ::Patch::Message, message.class
           assert_equal 0, message.index
           assert_equal 5, message.value
-
-          hash = message.to_h
-          assert_not_nil hash
-          assert_not_nil hash[:midi_channel]
-          assert_equal 0, hash[:midi_channel]
         end
 
       end

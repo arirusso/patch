@@ -51,7 +51,6 @@ module Patch
               value = get_value(action[:midi], midi_message.value)
               properties = {
                 :index => index, 
-                :midi_channel => midi_message.channel,
                 :patch_name => patch.name,
                 :value => value
               }
