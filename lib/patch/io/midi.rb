@@ -26,10 +26,16 @@ module Patch
         # @return [Array<::MIDIMessage>]
         def to_midi_messages(patch, messages)
           messages = [messages].flatten
-          midi_actions = patch.actions.find_all_by_type(:midi)
-          action = midi_actions.find { |action| action[:midi][:index] == message.index }
-          #todo
-          []
+          midi_messages = messages.map do |message|
+            action = patch.actions.at(message.index)
+            if !action.nil? && !action[:midi].nil?
+              channel = action[:channel] || 0
+              index = message.index
+              value = get_value(action, message.value, :direction => :midi)
+              MIDIMessage::ControlChange.new(channel, index, value)
+            end
+          end
+          midi_messages.compact
         end
 
         # Convert the given MIDI message to Patch::Message objects using the context of the given patch
@@ -42,22 +48,29 @@ module Patch
             message = ::Patch::Message.new
             message.index = index
             message.patch_name = patch.name
-            message.value = get_value(mapping[:midi], midi_message)
+            message.value = get_value(mapping[:midi], midi_message.value)
             message
           end
         end
 
         private
 
-        # Get the message value given the MIDI message and patch context
+        # Get the message value given the value and patch context
         # @param [Hash] context
-        # @param [MIDIMessage] midi_message
+        # @param [Numeric] value
+        # @param [Hash] options
+        # @option options [Symbol] :direction (default: :hub)
         # @return [Fixnum]
-        def get_value(context, midi_message)
+        def get_value(context, value, options = {})
           if !context[:scale].nil?
-            Scale.transform(midi_message.value).from(0..127).to(context[:scale])
+            scale = Scale.transform(value)
+            if options[:direction] == :midi
+              scale.from(context[:scale]).to(0..127)
+            else
+              scale.from(0..127).to(context[:scale])
+            end
           else
-            midi_message.value
+            value
           end
         end
 
