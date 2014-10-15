@@ -60,12 +60,23 @@ class Patch::MessageTest < Test::Unit::TestCase
 
     context "#timestamp" do
       
-      should "be js int time format" do
+      should "return js int time format" do
         result = @message.timestamp
         assert_not_nil result
         assert_equal Fixnum, result.class
         assert result.to_s.size > Time.new.to_i.to_s.size
         assert_equal (result / 1000).to_s.size, Time.new.to_i.to_s.size
+      end
+
+    end
+
+    context "#timestamp_to_time" do
+
+      should "return Ruby time format" do
+        result = @message.send(:timestamp_to_time, 1413332943271)
+        assert_not_nil result
+        assert_equal Time, result.class
+        assert_equal 2014, result.year
       end
 
     end
