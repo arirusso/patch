@@ -107,16 +107,15 @@ module Patch
         end
 
         # Listen for messages
+        # @param [::Patch::Patch] patch The patch to use for context 
+        # @param [Proc] callback A callback to fire when messages are received
         # @return [Boolean] Whether any actions were configured
-        def listen(patch, &block)
+        def listen(patch, &callback)
           actions = patch.actions.find_all_by_type(:osc)
-          address_collection = actions.map do |mapping|
-            mapping[:osc][:address].dup
-          end
-          addresses = address_collection.flatten.compact.uniq
+          addresses = actions.map { |action| action[:osc][:address].dup }.compact.uniq
           result = addresses.map do |address|
             @server.add_method(address) do |message|
-              handle_message_received(patch, message, &block)
+              handle_message_received(patch, message, &callback)
             end
             true
           end
