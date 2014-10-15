@@ -10,7 +10,7 @@ module Patch
       extend Forwardable
 
       attr_reader :spec
-      def_delegators :@spec, :empty?, :index
+      def_delegators :@spec, :at, :empty?, :index
 
       # @param [Array<Hash>] spec
       def initialize(spec)
