@@ -66,7 +66,7 @@ module Patch
       # @return [Message]
       def handle_input(json_message, &callback)
         message_hash = JSON.parse(json_message, :symbolize_names => true)
-        message = Message.new(:raw_message => message_hash)
+        message = Message.new(message_hash)
         @debug.puts("Recieved message: #{message_hash.to_json}") if @debug
         yield(message) if block_given?
         message
@@ -92,8 +92,8 @@ module Patch
           puts "Connection closed"
         end
 
-        @socket.onmessage do |raw_message|
-          handle_input(raw_message, &block)
+        @socket.onmessage do |data|
+          handle_input(data, &block)
         end
         true
       end
