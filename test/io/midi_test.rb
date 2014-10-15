@@ -4,13 +4,17 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
   context "MIDI" do
 
+    setup do
+      @patches_path = File.join(__dir__, "../config/patches.yml")
+      @patches_file = File.new(@patches_path)
+      @patches = Patch::Patch.all_from_spec(@patches_file)
+    end
+
     context "Input" do
 
       setup do
-        @patch_file = File.join(__dir__,"../config/patches.yml")
         @nodes_file = File.join(__dir__,"../config/nodes.yml")
         @nodes = Patch::Node.all_from_spec(@nodes_file)
-        @patches = Patch::Patch.all_from_spec(@patch_file)
         @input = @nodes.find_all_by_type(:midi).first
       end
 
@@ -19,7 +23,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
         should "have id" do
           assert_not_nil @input.id
         end
-        
+
         should "have midi input" do
           assert_not_nil @input
         end
@@ -42,7 +46,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
       context "#handle_event_received" do
 
         setup do
-          @message = MIDIMessage::ControlChange.new(0, 0x01, 0x30)
+          @message = MIDIMessage::ControlChange.new(0, 0x00, 0x30)
           @patch = @patches.first
         end
 
@@ -88,5 +92,90 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
       end
     end
+
+    context "Message" do
+
+      context ".to_midi_messages" do
+
+        setup do
+          @message = Patch::Message.new
+          @message.index = 0
+          @message.value = 100
+          @message.patch_name = @patches.first.name
+          @result = ::Patch::IO::MIDI::Message.to_midi_messages(@patches.first, @message)
+        end
+
+        should "have correct properties" do
+          assert_not_nil @result
+          assert_not_empty @result
+          message = @result.first
+
+          assert_equal ::MIDIMessage::ControlChange, message.class
+          assert_equal 0, message.index
+          assert_equal 100, message.value
+        end
+
+      end
+
+      context ".to_patch_messages" do
+
+        setup do
+          @message = MIDIMessage::ControlChange.new(0, 0, 127)
+          @result = ::Patch::IO::MIDI::Message.to_patch_messages(@patches.first, @message)
+        end
+
+        should "have correct values" do
+          assert_not_nil @result
+          assert_not_empty @result
+          message = @result.first
+
+          assert_equal ::Patch::Message, message.class
+          assert_equal 0, message.index
+          assert_equal 5, message.value
+
+          hash = message.to_h
+          assert_not_nil hash
+          assert_not_nil hash[:midi_channel]
+          assert_equal 0, hash[:midi_channel]
+        end
+
+      end
+
+    end
+
+    context "Output" do
+
+      setup do
+        @patch = @patches.first
+        @output = ::Patch::IO::MIDI::Output.new(:id => 0)
+      end
+
+      context "#initialize" do
+
+        should "have id" do
+          assert_not_nil @output.id
+        end
+
+      end
+
+      context "#puts" do
+
+        setup do
+          @message = Patch::Message.new
+          @message.index = 0
+          @message.value = 100
+          @message.patch_name = @patch.name
+        end
+
+        should "send midi message" do
+          @output.instance_variable_set("@device", Object.new)
+          @output.device.expects(:puts).once
+          @output.puts(@patch, @message)
+        end
+
+      end
+
+    end
+
   end
 end
