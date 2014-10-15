@@ -23,9 +23,7 @@ class Patch::HubTest < Test::Unit::TestCase
 
       should "start listeners and controller" do
         @hub.patches.each { |patch| patch.expects(:enable).once }
-        Patch::IO::MIDI::Input.any_instance.expects(:listen).once
-        Patch::IO::OSC::Server.any_instance.expects(:listen).once
-        Patch::IO::Websocket.any_instance.expects(:start).once
+        @hub.nodes.each { |node| node.expects(:enable).once }
         assert @hub.listen(:background => true)
       end
 
