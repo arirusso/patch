@@ -50,29 +50,29 @@ A node is a single source/destination of control messages.  The first configurat
 A patch describes how nodes are used exactly, and are defined in a second configuration file:
 
 ```yaml
----
-:simple:
-  :node_map:
-    [2, 3]: 1
-  :actions:
-  - :name: Zoom
-    :key: zoom
-    :midi:
-      :channel: 0
-      :index: 0
-      :scale: !ruby/range 0.1..5.0
-    :osc:
-      :address: /1/rotaryA
-      :scale:
-        :osc: !ruby/range 0..1
-        :hub: !ruby/range 10..200
+:patches:
+  :simple:
+    :node_map:
+      [2, 3]: 1
+    :actions:
+    - :name: Zoom
+      :key: zoom
+      :midi:
+        :channel: 0
+        :index: 0
+        :scale: !ruby/range 0.1..5.0
+      :osc:
+        :address: /1/rotaryA
+        :scale:
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 10..200
 ```
 
-The top level `simple` is the name of the first patch.  A patch then consists of two parts, node map and actions.
+A patch consists of two parts, node map and actions.
 
 ###### Node Map
 
-The `node_map` defines where messages should go to and from.  
+The node map defines where messages should go to and from.  
 
 In this case, when the nodes with the IDs 2 (MIDI) and 3 (OSC) receive messages, echo those messages to the node with the ID 1 (JSON over Websocket).
 
