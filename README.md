@@ -2,7 +2,9 @@
 
 Patch is a hub for controlling [things](http://en.wikipedia.org/wiki/Internet_of_Things). 
 
-It enables universal translation and routing of messages via these protocols
+It enables universal translation and transport of control messages.
+
+These message protocols are supported
 
 * MIDI
 * OSC
