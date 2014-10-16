@@ -11,7 +11,7 @@ module Patch
     def self.all_from_spec(spec)
       spec = Spec.new(spec)
       patches = []
-      spec.each do |name, patch|
+      spec[:patches].each do |name, patch|
         patches << from_spec(name, patch)
       end
       patches
