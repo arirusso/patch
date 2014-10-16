@@ -63,25 +63,27 @@ class Patch::ActionTest < Test::Unit::TestCase
 
           setup do
             @patches_hash = {
-              :test_patch => {
-                :node_map => { [1,2] => 3 },
-                :action => [
-                  { 
-                    :name=>"Zoom", 
-                    :midi=> {
-                      :channel=>0, 
-                      :type=>"ControlChange", 
-                      :scale=>0.1..5.0
-                    }, 
-                    :osc => {
-                      :address=>"/1/rotaryA", 
-                      :scale=> { 
-                        :from=>0..1, 
-                        :to=>0.1..5.0
+              :patches => {
+                :test_patch => {
+                  :node_map => { [1,2] => 3 },
+                  :action => [
+                    { 
+                      :name=>"Zoom", 
+                      :midi=> {
+                        :channel=>0, 
+                        :type=>"ControlChange", 
+                        :scale=>0.1..5.0
+                      }, 
+                      :osc => {
+                        :address=>"/1/rotaryA", 
+                        :scale=> { 
+                          :from=>0..1, 
+                          :to=>0.1..5.0
+                        }
                       }
                     }
-                  }
-                ]
+                  ]
+                }
               }
             }
             @patches = Patch::Patch.all_from_spec(@patches_hash)

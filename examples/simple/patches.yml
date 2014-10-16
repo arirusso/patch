@@ -1,16 +1,16 @@
----
-:simple:
-  :node_map:
-    [2, 3]: 1
-  :actions:
-  - :name: Zoom
-    :key: zoom
-    :midi:
-      :channel: 0
-      :index: 0
-      :scale: !ruby/range 0.1..5.0
-    :osc:
-      :address: /1/rotaryA
-      :scale:
-        :osc: !ruby/range 0..1
-        :hub: !ruby/range 10..200
+:patches:
+  :simple:
+    :node_map:
+      [2, 3]: 1
+    :actions:
+    - :name: Zoom
+      :key: zoom
+      :midi:
+        :channel: 0
+        :index: 0
+        :scale: !ruby/range 0.1..5.0
+      :osc:
+        :address: /1/rotaryA
+        :scale:
+          :osc: !ruby/range 0..1
+          :hub: !ruby/range 10..200

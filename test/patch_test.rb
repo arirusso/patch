@@ -26,7 +26,7 @@ class Patch::PatchTest < Test::Unit::TestCase
     context ".from_spec" do
 
       setup do
-        spec = { 
+        spec = {
           :node_map => [{ [1,2] => 3 }],
           :action => []
         }

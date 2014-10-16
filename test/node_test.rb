@@ -135,7 +135,7 @@ class Patch::NodeTest < Test::Unit::TestCase
         setup do
           @patches_path = File.join(__dir__, "config/patches.yml")
           @hash = YAML.load(File.new(@patches_path))
-          @map_spec = @hash[:test_patch][:node_map]
+          @map_spec = @hash[:patches][:test_patch][:node_map]
         end
 
         should "instantiate maps" do
