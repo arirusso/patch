@@ -18,6 +18,7 @@ module Patch
     # @return [Report] self
     def print
       report = self.report
+      puts
       print_logo
       puts
       puts Rainbow("IPs").cyan
@@ -98,7 +99,8 @@ module Patch
       puts Rainbow("██████╔╝███████║   ██║   ██║     ███████║").send(color)
       puts Rainbow("██╔═══╝ ██╔══██║   ██║   ██║     ██╔══██║").send(color)
       puts Rainbow("██║     ██║  ██║   ██║   ╚██████╗██║  ██║").send(color)
-      puts Rainbow("╚═╝     ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝").send(color)
+      puts Rainbow("╚═╝     ╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╣").send(color)
+      puts Rainbow("═≡≡≡▓▓▓═════════════════════════════════╝").send(color)
       true
     end
 
