@@ -2,7 +2,7 @@
 :test_patch:
   :node_map:
     [2, 3]: 1
-  :action:
+  :actions:
   - :name: Zoom
     :key: zoom
     :midi:

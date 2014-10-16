@@ -22,7 +22,8 @@ module Patch
     # @param [Hash] spec
     # @return [Patch]
     def self.from_spec(name, spec)
-      actions = Action::Container.new(spec[:action])
+      action_spec = spec[:actions] || spec[:action]
+      actions = Action::Container.new(action_spec)
       maps = Node::Map.all_from_spec(spec[:node_map])
       new(name, actions, maps)
     end
