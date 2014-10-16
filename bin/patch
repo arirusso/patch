@@ -4,29 +4,24 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require "optparse"
 require "patch"
 
-node_config_path = ARGV.first
+nodes_config_path, patches_config_path = *ARGV
 
 options = {}
 
 args = OptionParser.new do |opts|
-  opts.banner = "Usage: patch [node config file] [options]"
-
-  opts.on("-p", "--patches [FILE]", "Use patches spec") do |file|
-    options[:patches] = file
-  end
+  opts.banner = "Usage: patch [nodes config file] [patches config file]"
 end
 
 args.parse!
 
-if node_config_path.nil? || !File.exist?(node_config_path)
+if nodes_config_path.nil? || !File.exist?(nodes_config_path) || patches_config_path.nil? || !File.exist?(patches_config_path)
   puts args.help
   exit 0
 else
-  node_config_file = File.new(node_config_path)
+  nodes_config_file = File.new(nodes_config_path)
+  patches_config_file = File.new(patches_config_path)
 end
 
-patches = File.new(options[:patches]) unless options[:patches].nil?
-
-hub = Patch::Hub.new(node_config_file, :patches => patches)
+hub = Patch::Hub.new(nodes_config_file, :patches => patches_config_file)
 Patch::Report.print(hub)
 hub.listen
