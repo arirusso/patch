@@ -7,7 +7,7 @@ module Patch
 
       extend self
 
-      # Instantiate an OSC server using the given spec
+      # Instantiate an OSC server and/or client using the given spec
       # @param [Hash] spec
       # @param [Hash] options
       # @option options [Action::Container] :actions
