@@ -22,12 +22,12 @@ class Patch::ActionTest < Test::Unit::TestCase
           should "populate" do
             assert_not_nil @patches
             assert_not_empty @patches
-            assert_not_nil @patches.first.actions
           end
 
-          should "store the spec hash" do
-            assert_not_nil @patches.first.actions.spec
-            assert @patches.first.actions.spec.kind_of?(Array)
+          should "store the actions" do
+            assert_not_nil @patches.first.actions
+            assert_not_empty @patches.first.actions
+            assert_equal Hash, @patches.first.actions.first.class
           end
 
           should "not be empty" do
@@ -48,9 +48,10 @@ class Patch::ActionTest < Test::Unit::TestCase
             assert_not_nil @patches.first.actions
           end
 
-          should "store the spec hash" do
-            assert_not_nil @patches.first.actions.spec
-            assert @patches.first.actions.spec.kind_of?(Array)
+          should "store the actions" do
+            assert_not_nil @patches.first.actions
+            assert_not_empty @patches.first.actions
+            assert_equal Hash, @patches.first.actions.first.class
           end
 
           should "not be empty" do
@@ -95,9 +96,10 @@ class Patch::ActionTest < Test::Unit::TestCase
             assert_not_nil @patches.first.actions
           end
 
-          should "store the spec hash" do
-            assert_not_nil @patches.first.actions.spec
-            assert @patches.first.actions.spec.kind_of?(Array)
+          should "store the actions" do
+            assert_not_nil @patches.first.actions
+            assert_not_empty @patches.first.actions
+            assert_equal Hash, @patches.first.actions.first.class
           end
 
           should "not be empty" do
@@ -126,14 +128,14 @@ class Patch::ActionTest < Test::Unit::TestCase
         end
 
         should "return an index" do
-          action = @patches.first.actions.spec.sample
+          action = @patches.first.actions.sample
           assert_not_nil action
 
           index = @patches.first.actions.index(action)
 
           assert_not_nil index
           assert index.kind_of?(Fixnum)
-          assert_equal @patches.first.actions.spec.index(action), index
+          assert_equal @patches.first.actions.index(action), index
         end
 
       end

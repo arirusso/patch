@@ -23,7 +23,7 @@ module Patch
     # @return [Patch]
     def self.from_spec(name, spec)
       action_spec = spec[:actions] || spec[:action]
-      actions = Action::Container.new(action_spec)
+      actions = Action.all_from_spec(action_spec)
       maps = Node::Map.all_from_spec(spec[:node_map])
       new(name, actions, maps)
     end
