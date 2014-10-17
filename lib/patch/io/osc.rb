@@ -31,7 +31,11 @@ module Patch
           action = patch.actions.at(patch_message.index)
           if !action.nil? && !action[:osc].nil?
             address = action[:osc][:address]
-            value = get_value(action[:osc], patch_message.value, :destination => :osc)
+            to = action[:osc][:scale]
+            to ||= 0..1.0
+            from = action[:default][:scale] unless action[:default].nil?
+            from ||= to
+            value = get_value(patch_message.value, from, to)
             messages << ::OSC::Message.new(address, value)
           end
           messages
@@ -46,7 +50,11 @@ module Patch
           action = patch.actions.find_all_by_type(:osc).find { |action| action[:osc][:address] == raw_osc.address }
           if !action.nil?
             index = patch.actions.index(action)
-            value = get_value(action[:osc], raw_osc.to_a[0].to_f, :destination => :hub)
+            from = action[:osc][:scale]
+            from ||= 0..1.0
+            to = action[:default][:scale] unless action[:default].nil?
+            to ||= from
+            value = get_value(raw_osc.to_a[0].to_f, from, to)
             properties = {
               :index => index,
               :patch_name => patch.name, 
@@ -59,23 +67,16 @@ module Patch
 
         private
 
-        # Translate an OSC value for use by Patch::Message
-        # @param [Hash] context
+        # Translate a value
         # @param [Fixnum] value
-        # @param [Hash] options
-        # @option options [Symbol] :destination (default: :hub)
+        # @param [Range] from
+        # @param [Range] to
         # @return [Fixnum]
-        def get_value(context, value, options = {})
-          if (spec = context[:scale]).nil?
+        def get_value(value, from, to)
+          if from == to
             value
           else
-            scale = Scale.transform(value)
-            if options[:destination] == :osc
-              from, to = spec[:hub], spec[:osc]
-            else
-              from, to = spec[:osc], spec[:hub]
-            end
-            scale.from(from).to(to)
+            Scale.transform(value).from(from).to(to)
           end
         end
 

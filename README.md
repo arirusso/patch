@@ -59,15 +59,16 @@ A patch describes how nodes are used exactly, and are defined in a second config
     :actions:
     - :name: Zoom
       :key: zoom
+      :default:
+        :scale: !ruby/range 10..200
       :midi:
         :channel: 0
         :index: 0
         :scale: !ruby/range 0.1..5.0
       :osc:
         :address: /1/rotaryA
-        :scale:
-          :osc: !ruby/range 0..1
-          :hub: !ruby/range 10..200
+        :scale: !ruby/range 0..1
+
 ```
 
 A patch consists of two parts, node map and actions.

@@ -5,36 +5,37 @@
     :actions:
     - :name: Zoom
       :key: zoom
+      :default:
+        :scale: !ruby/range 0.1..5.0
       :midi:
         :channel: 0
         :index: 0
-        :scale: !ruby/range 0.1..5.0
       :osc:
         :address: /1/rotaryA
-        :scale:
-          :osc: !ruby/range 0..1
-          :hub: !ruby/range 0.1..5.0
+        :scale: !ruby/range 0..1
 
     - :name: Contrast
       :key: contrast
+      :default:
+        :scale: !ruby/range 0..5.0
       :osc:
         :address: /1/rotaryD
-        :scale: 
-          :osc: !ruby/range 0..1
-          :hub: !ruby/range 0..5.0
+        :scale: !ruby/range 0..1
 
     - :name: Saturation
       :key: saturation
+      :default:
+        :scale: !ruby/range 0..2.0
       :osc:
         :address: /faderM
         :scale: 
           :osc: !ruby/range 0..1
-          :hub: !ruby/range 0..2.0
 
     - :name: Z Depth
       :key: zDepth
+      :default:
+        :scale: !ruby/range 0..1000
       :osc:
         :address: /1/faderA
         :scale: 
           :osc: !ruby/range 0..1
-          :hub: !ruby/range 0..1000

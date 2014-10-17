@@ -57,7 +57,11 @@ module Patch
         def to_midi_message(action, patch_message)
           if !action[:midi].nil?
             channel = action[:midi][:channel] || 0
-            value = get_value(action, patch_message.value, :direction => :midi)
+            to = action[:midi][:scale]
+            to ||= 0..127
+            from = action[:default][:scale] unless action[:default].nil?
+            from ||= to
+            value = get_value(patch_message.value, from, to)
             MIDIMessage::ControlChange.new(channel, patch_message.index, value)
           end
         end
@@ -69,7 +73,11 @@ module Patch
         # @return [::Patch::Message, nil]
         def to_patch_message(action, patch_name, midi_message)
           if !action[:midi].nil? && (action[:midi][:channel].nil? || action[:midi][:channel] == midi_message.channel)
-            value = get_value(action[:midi], midi_message.value)
+            from = action[:midi][:scale]
+            from ||= 0..127
+            to = action[:default][:scale] unless action[:default].nil?
+            to ||= from
+            value = get_value(midi_message.value, from, to)
             properties = {
               :index => midi_message.index, 
               :patch_name => patch_name,
@@ -79,22 +87,16 @@ module Patch
           end
         end
 
-        # Get the message value given the value and patch context
-        # @param [Hash] context
-        # @param [Numeric] value
-        # @param [Hash] options
-        # @option options [Symbol] :direction (default: :hub)
+        # Translate a value
+        # @param [Fixnum] value
+        # @param [Range] from
+        # @param [Range] to
         # @return [Fixnum]
-        def get_value(context, value, options = {})
-          if !context[:scale].nil?
-            scale = Scale.transform(value)
-            if options[:direction] == :midi
-              scale.from(context[:scale]).to(0..127)
-            else
-              scale.from(0..127).to(context[:scale])
-            end
-          else
+        def get_value(value, from, to)
+          if from == to
             value
+          else
+            Scale.transform(value).from(from).to(to)
           end
         end
 

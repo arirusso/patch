@@ -98,7 +98,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
       context ".to_midi_messages" do
 
         setup do
-          @message = Patch::Message.new(:index => 0, :patch_name => @patches.first.name, :value => 100)
+          @message = Patch::Message.new(:index => 0, :patch_name => @patches.first.name, :value => 3.0)
           @result = ::Patch::IO::MIDI::Message.to_midi_messages(@patches.first, @message)
         end
 
@@ -109,7 +109,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
           assert_equal ::MIDIMessage::ControlChange, message.class
           assert_equal 0, message.index
-          assert_equal 100, message.value
+          assert_equal 75, message.value
         end
 
       end
