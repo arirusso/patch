@@ -62,7 +62,6 @@ A patch describes how nodes are used exactly, and are defined in a second config
       :midi:
         :channel: 0
         :index: 0
-        :scale: !ruby/range 0.1..5.0
       :osc:
         :address: /1/rotaryA
         :scale: !ruby/range 0..1
