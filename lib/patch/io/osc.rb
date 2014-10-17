@@ -11,10 +11,10 @@ module Patch
       # @param [Hash] spec
       # @param [Hash] options
       # @option options [Action::Container] :actions
-      # @option options [Debug] :debug
+      # @option options [Log] :log
       # @return [::Patch::IO::OSC::Server]
       def new(spec, options = {})
-        Server.new(spec, :actions => options[:actions], :debug => options[:debug])
+        Server.new(spec, :actions => options[:actions], :log => options[:log])
       end
 
       # Convert between OSC message and Patch::Message objects
@@ -89,9 +89,9 @@ module Patch
 
         # @param [Hash] spec
         # @param [Hash] options
-        # @option options [Debug] :debug
+        # @option options [Log] :log
         def initialize(spec, options = {})
-          @debug = options[:debug]
+          @log = options[:log]
           @server = nil
           @active = false
           @id = spec[:id]
@@ -145,8 +145,8 @@ module Patch
         # @return [::OSC::Server]
         def configure_server(spec)
           @server = ::OSC::EMServer.new(spec[:port])
-          if @debug
-            @server.add_method(/.*/) { |msg| @debug.puts("Received: #{msg.address}") }
+          if @log
+            @server.add_method(/.*/) { |message| @log.puts("Received: #{message.address}") }
           end
           @server
         end
@@ -166,7 +166,7 @@ module Patch
             @client.puts(patch, osc_message)
             true
           rescue Exception => exception # failsafe
-            @debug.exception(exception) if @debug
+            @log.exception(exception) if @log
             Thread.main.raise(exception)
             false
           end
@@ -176,10 +176,9 @@ module Patch
         # @param [Hash] spec
         # @param [Hash] options
         # @option options [Action::Container] :actions
-        # @option options [Debug] :debug
         # @return [::Patch::IO::OSC::Client]
         def configure_echo(spec, options = {})
-          @client = Client.new(spec, :actions => options[:actions], :debug => @debug)
+          @client = Client.new(spec, :actions => options[:actions], :log => @log)
         end
 
       end
@@ -189,9 +188,9 @@ module Patch
 
         # @param [Hash] spec
         # @param [Hash] options
-        # @option options [Debug] :debug
+        # @option options [Log] :log
         def initialize(spec, options = {})
-          @debug = options[:debug]
+          @log = options[:log]
           @client = ::OSC::Client.new(spec[:host], spec[:port])
         end
 

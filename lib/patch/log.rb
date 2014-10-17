@@ -1,7 +1,7 @@
 module Patch
 
-  # Debugging util
-  class Debug
+  # Logging
+  class Log
 
     # @param [IO] out
     # @param [Hash] options

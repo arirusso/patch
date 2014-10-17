@@ -9,11 +9,11 @@ module Patch
 
       # @param [Hash] spec
       # @param [Hash] options
-      # @option options [Debug] :debug
+      # @option options [Log] :log
       def initialize(spec, options = {})
         @config = spec
         @id = spec[:id]
-        @debug = options[:debug]
+        @log = options[:log]
         @socket = nil
       end
 
@@ -24,16 +24,16 @@ module Patch
         messages = [messages].flatten
         if running?
           json = messages.to_json
-          @debug.puts("Sending messages: #{json}") if @debug
+          @log.puts("Sending messages: #{json}") if @log
           begin
             @socket.send(json)
           rescue Exception => exception # failsafe
-            @debug.exception(exception) if @debug
+            @log.exception(exception) if @log
             Thread.main.raise(exception)
           end
           json
         else
-          @debug.puts("Warning: No connection") if @debug
+          @log.puts("Warning: No connection") if @log
           nil
         end
       end
@@ -67,7 +67,7 @@ module Patch
       def handle_input(json_message, &callback)
         message_hash = JSON.parse(json_message, :symbolize_names => true)
         message = Message.new(message_hash)
-        @debug.puts("Recieved message: #{message_hash.to_json}") if @debug
+        @log.puts("Recieved message: #{message_hash.to_json}") if @log
         yield(message) if block_given?
         message
       end

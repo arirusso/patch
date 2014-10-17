@@ -26,8 +26,8 @@ require "patch/spec"
 
 # classes
 require "patch/action"
-require "patch/debug"
 require "patch/hub"
+require "patch/log"
 require "patch/message"
 require "patch/patch"
 require "patch/report"

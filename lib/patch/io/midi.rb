@@ -7,13 +7,15 @@ module Patch
 
       # Instantiate a MIDI device based on the given spec
       # @param [Hash] spec
+      # @param [Hash] options
+      # @option options [Log] :log
       # @return [MIDI::Input, MIDI::Output]
       def self.new(spec, options = {})
         klass = case spec[:direction].to_sym
                 when :input then Input
                 when :output then Output
                 end
-        klass.new(spec, :actions => options[:actions], :debug => options[:debug])
+        klass.new(spec, :actions => options[:actions], :log => options[:log])
       end
 
       # Convert between MIDI message objects and Patch::Message objects
@@ -109,10 +111,10 @@ module Patch
 
         # @param [Hash] spec A hash describing the input
         # @param [Hash] options
-        # @option options [Debug] :debug A destination for debug messages
+        # @option options [Log] :log 
         # @option options [Fixnum] :id An ID for this device
         def initialize(spec, options = {})
-          @debug = options[:debug]
+          @log = options[:log]
           @id = spec[:id]
           @device = get_input(spec)
           @listener = MIDIEye::Listener.new(@device) unless @device.nil?
@@ -179,10 +181,10 @@ module Patch
 
         # @param [Hash] spec
         # @param [Hash] options
-        # @option options [Debug] :debug A destination for debug messages
+        # @option options [Debug] :log
         # @option options [Fixnum] :id An ID for this device
         def initialize(spec, options = {})
-          @debug = options[:debug]
+          @log = options[:log]
           @id = spec[:id]
           @device = get_output(spec)
         end

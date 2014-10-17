@@ -7,10 +7,12 @@ module Patch
 
       # Instantiate nodes from the given spec or spec file
       # @param [File, Hash, String] spec
+      # @param [Hash] options
+      # @option options [Log] :log
       # @return [Array<Patch::IO>]
       def all_from_spec(spec, options = {})
         spec = Spec.new(spec)
-        get_nodes(spec, :debug => options[:debug])
+        get_nodes(spec, :log => options[:log])
       end
 
       # Mapping of node modules and names
@@ -26,12 +28,15 @@ module Patch
       private
 
       # All of the nodes from the spec
+      # @param [Hash] spec
+      # @param [Hash] options
+      # @option options [Log] :log
       # @return [::Patch::Node::Container]
       def get_nodes(spec, options = {})
         node_array = spec[:nodes].map do |node|
           type = node[:type].to_sym
           mod = modules[type]
-          mod.new(node, :debug => options[:debug])
+          mod.new(node, :log => options[:log])
         end
         Container.new(node_array)
       end

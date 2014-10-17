@@ -1,8 +1,8 @@
 require "helper"
 
-class Patch::DebugTest < Test::Unit::TestCase
+class Patch::LogTest < Test::Unit::TestCase
 
-  context "Debug" do
+  context "Log" do
 
     setup do
       @out = Object.new
@@ -13,11 +13,11 @@ class Patch::DebugTest < Test::Unit::TestCase
       should "display exception" do
         message = "blah blah"
         @out.expects(:puts).once
-        @debug = Patch::Debug.new(@out)
+        @log = Patch::Log.new(@out)
         begin
           raise(message)
         rescue Exception => e
-          @debug.exception(e)
+          @log.exception(e)
         end
       end
 
@@ -28,8 +28,8 @@ class Patch::DebugTest < Test::Unit::TestCase
       should "display message" do
         message = "blah blah"
         @out.expects(:puts).once
-        @debug = Patch::Debug.new(@out)
-        @debug.info(message)
+        @log = Patch::Log.new(@out)
+        @log.info(message)
       end
 
     end
@@ -42,50 +42,50 @@ class Patch::DebugTest < Test::Unit::TestCase
       end
 
       should "only output info" do
-        @debug = Patch::Debug.new(@out, :show => :info)
-        refute @debug.instance_variable_get("@exception")
-        assert @debug.instance_variable_get("@info")
+        @log = Patch::Log.new(@out, :show => :info)
+        refute @log.instance_variable_get("@exception")
+        assert @log.instance_variable_get("@info")
         @out.expects(:puts).once
         output = Object.new
         output.expects(:colorize).once.with(:blue)
-        @debug.expects(:format).once.with(@message, :type => :info).returns(output)
-        @debug.info(@message)
+        @log.expects(:format).once.with(@message, :type => :info).returns(output)
+        @log.info(@message)
         begin
           raise(@error)
         rescue Exception => e
-          @debug.exception(e)
+          @log.exception(e)
         end
       end
 
       should "only output exception" do
-        @debug = Patch::Debug.new(@out, :show => :exception)
-        assert @debug.instance_variable_get("@exception")
-        refute @debug.instance_variable_get("@info")
+        @log = Patch::Log.new(@out, :show => :exception)
+        assert @log.instance_variable_get("@exception")
+        refute @log.instance_variable_get("@info")
         @out.expects(:puts).once
         output = Object.new
         output.expects(:colorize).once.with(:red)
-        @debug.expects(:format).once.with(@error, :type => :exception).returns(output)
+        @log.expects(:format).once.with(@error, :type => :exception).returns(output)
         begin
           raise(@error)
         rescue Exception => e
-          @debug.exception(e)
+          @log.exception(e)
         end
       end
 
       should "show everything" do
-        @debug = Patch::Debug.new(@out)
-        assert @debug.instance_variable_get("@exception")
-        assert @debug.instance_variable_get("@info")
+        @log = Patch::Log.new(@out)
+        assert @log.instance_variable_get("@exception")
+        assert @log.instance_variable_get("@info")
         @out.expects(:puts).twice
         output = Object.new
         output.expects(:colorize).once.with(:red)
         output.expects(:colorize).once.with(:blue)
-        @debug.expects(:format).once.with(@error, :type => :exception).returns(output)
-        @debug.expects(:format).once.with(@message, :type => :info).returns(output)
+        @log.expects(:format).once.with(@error, :type => :exception).returns(output)
+        @log.expects(:format).once.with(@message, :type => :info).returns(output)
         begin
           raise(@error)
         rescue Exception => e
-          @debug.exception(e)
+          @log.exception(e)
         end
       end
 
