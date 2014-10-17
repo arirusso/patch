@@ -1,8 +1,8 @@
 # Patch
 
-Patch is a hub for controlling [things](http://en.wikipedia.org/wiki/Internet_of_Things). 
+Patch is a hub for controlling [things](http://en.wikipedia.org/wiki/Internet_of_Things).
 
-It enables universal translation and transport of control messages.
+It provides a resource for universally translating and transporting control messages.  
 
 These message protocols are supported
 
