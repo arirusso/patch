@@ -28,21 +28,21 @@ A node is a single source/destination of control messages.  The first configurat
 
 ```yaml
 :nodes:
-  - :type: websocket
-    :id: 1
+  - :id: 1
+    :type: websocket
     :host: localhost
     :port: 9006
-  - :type: midi
+  - :id: 2
+    :type: midi
     :direction: input
-    :id: 2
     :name: Apple Inc. IAC Driver
-  - :type: osc
+  - :id: 3
+    :type: osc
     :server:
       :port: 8000
     :client:
       :host: 192.168.1.136
       :port: 9000
-    :id: 3
 ```
 
 ##### Patches
