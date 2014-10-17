@@ -14,7 +14,11 @@ module Patch
       # @option options [Log] :log
       # @return [::Patch::IO::OSC::Server]
       def new(spec, options = {})
-        Server.new(spec, :actions => options[:actions], :log => options[:log])
+        if spec[:server].nil?
+          Client.new(spec[:client], :log => options[:log]) if !spec[:client].nil?
+        else
+          Server.new(spec, :actions => options[:actions], :log => options[:log])   
+        end
       end
 
       # Convert between OSC message and Patch::Message objects
