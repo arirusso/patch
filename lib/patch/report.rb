@@ -90,7 +90,7 @@ module Patch
     # The number of columns of the terminal
     # @return [Fixnum]
     def columns
-      `tput cols`.to_i
+      `tput cols`.to_i rescue 80
     end
 
     # Output the patch logo
