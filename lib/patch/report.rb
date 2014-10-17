@@ -52,6 +52,8 @@ module Patch
       else
         puts
       end
+      puts "Logging to #{report[:log_file]}"
+      puts
       self
     end
 
@@ -62,6 +64,7 @@ module Patch
       report[:ips] = @hub.ips
       report[:nodes] = @hub.nodes.map { |node| node_report(node) }
       report[:patches] = @hub.patches.map { |patch| patch_report(patch) }
+      report[:log_file] = @hub.log_file.path
       report
     end
 

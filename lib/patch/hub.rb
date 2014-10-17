@@ -3,13 +3,14 @@ module Patch
   # The main application object
   class Hub
 
-    attr_reader :patches, :nodes
+    attr_reader :log_file, :patches, :nodes
 
     # @param [File, String] nodes_spec
     # @param [Hash] options
     # @option options [File, String] :patches
     def initialize(nodes_spec, options = {})
-      @debug = Debug.new($>)
+      @log_file = options[:log]
+      @debug = Debug.new(@log_file || $>)
       @threads = []
       @nodes = Node.all_from_spec(nodes_spec, :debug => @debug)
       @patches = Patch.all_from_spec(options[:patches]) unless options[:patches].nil?

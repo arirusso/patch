@@ -9,7 +9,11 @@ nodes_config_path, patches_config_path = *ARGV
 options = {}
 
 args = OptionParser.new do |opts|
-  opts.banner = "Usage: patch [nodes config file] [patches config file]"
+  opts.banner = "Usage: patch [nodes config file] [patches config file] [options]"
+
+  opts.on("-l", "--log [FILE]", "Specify log file") do |file|
+    options[:log] = file
+  end
 end
 
 args.parse!
@@ -22,6 +26,9 @@ else
   patches_config_file = File.new(patches_config_path)
 end
 
-hub = Patch::Hub.new(nodes_config_file, :patches => patches_config_file)
+log_filename = options[:log] || "patch_#{Time.now.to_i}.log"
+log_file = File.open(log_filename, "w")
+
+hub = Patch::Hub.new(nodes_config_file, :log => log_file, :patches => patches_config_file)
 Patch::Report.print(hub)
 hub.listen

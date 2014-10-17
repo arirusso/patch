@@ -48,7 +48,7 @@ class Patch::DebugTest < Test::Unit::TestCase
         @out.expects(:puts).once
         output = Object.new
         output.expects(:colorize).once.with(:blue)
-        @debug.expects(:format).once.with(@message).returns(output)
+        @debug.expects(:format).once.with(@message, :type => :info).returns(output)
         @debug.info(@message)
         begin
           raise(@error)
@@ -64,7 +64,7 @@ class Patch::DebugTest < Test::Unit::TestCase
         @out.expects(:puts).once
         output = Object.new
         output.expects(:colorize).once.with(:red)
-        @debug.expects(:format).once.with(@error).returns(output)
+        @debug.expects(:format).once.with(@error, :type => :exception).returns(output)
         begin
           raise(@error)
         rescue Exception => e
@@ -80,8 +80,8 @@ class Patch::DebugTest < Test::Unit::TestCase
         output = Object.new
         output.expects(:colorize).once.with(:red)
         output.expects(:colorize).once.with(:blue)
-        @debug.expects(:format).once.with(@error).returns(output)
-        @debug.expects(:format).once.with(@message).returns(output)
+        @debug.expects(:format).once.with(@error, :type => :exception).returns(output)
+        @debug.expects(:format).once.with(@message, :type => :info).returns(output)
         begin
           raise(@error)
         rescue Exception => e
