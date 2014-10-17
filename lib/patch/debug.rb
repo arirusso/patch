@@ -22,8 +22,8 @@ module Patch
     # @param [String] message
     # @return [String]
     def puts(message)
-      message_for_output = Rainbow(format(message)).blue
-      @out.puts(message_for_output) if @info
+      message = format(message, :type => :info)
+      @out.puts(message) if @info
       message
     end
     alias_method :info, :puts
@@ -33,9 +33,8 @@ module Patch
     # @return [String]
     def exception(exception)
       if @exception
-        message = format(exception.message)
-        message_for_output = Rainbow(message).red
-        @out.puts(message_for_output)
+        message = format(exception.message, :type => :exception)
+        @out.puts(message)
       end
       exception
     end
@@ -59,9 +58,16 @@ module Patch
 
     # Format a message for output
     # @param [String] message
+    # @param [Hash] options
+    # @option options [Symbol] type
     # @return [String]
-    def format(message)
-      "[#{time.seconds.round(2)} #{caller_method.upcase}] #{message}"
+    def format(message, options = {})
+      {
+        :timestamp => time.seconds.round(2),
+        :caller => caller_method,
+        :message => message,
+        :type => options[:type]
+      }.to_json
     end
 
     # Get the caller method where a message originated
