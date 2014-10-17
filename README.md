@@ -82,9 +82,9 @@ Message formats like MIDI and OSC have no implicit way to translate information 
 
 Given this particular example above, these are the actions in more plain terms:
 
-1. When a MIDI control change message is received on channel 0 with index 0, send a JSON over websocket message with the key "zoom".  The value of the MIDI message should be converted from an int between 0 to 127 to a float between 0 to 5.
+1. When a MIDI control change message is received on channel 0 with index 0, send a JSON over websocket message with the key "zoom".  The value of the MIDI message should be scaled from the standard, an int between 0 to 127, to a float between 10 and 200.
 
-2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Convert the 0 to 1 OSC float value to a float between 10 and 200.
+2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Scale the OSC value, a float between 0 and 1 to a float between 10 and 200.
 
 Once these configuration files are in place, you can run patch by executing `patch nodes.yml patches.yml` at the command line.
 
