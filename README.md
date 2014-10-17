@@ -73,21 +73,25 @@ A patch consists of two parts, node map and actions.
 
 ###### Node Map
 
-The node map defines where messages should go to and from.  
+The node map defines where messages should flow to and from.  
 
-In this case, when the nodes with the IDs 2 (MIDI) and 3 (OSC) receive messages, echo those messages to the node with the ID 1 (JSON over Websocket).
+In this case, when the nodes with the IDs 2 (MIDI) and 3 (OSC) receive messages, those messages will then be echoed to the node with the ID 1 (JSON over Websocket).
 
 ###### Actions
 
-Message formats like MIDI and OSC have no implicit way to translate information between each other.  Therefore, we need to describe a list of actions to define how to do that. 
+Message formats like MIDI and OSC have no implicit way to translate information between each other.  Therefore, we provide a list of actions that describe how to do that.
 
-Given this particular example above:
+Given this particular example above, these are the actions in more plain terms:
 
-- When a MIDI control change message is received on channel 0 with index 0, send a JSON over websocket message with the key "zoom", converting the 0 to 127 MIDI value to a float between 0 to 5.
+1. When a MIDI control change message is received on channel 0 with index 0, send a JSON over websocket message with the key "zoom".  The value of the MIDI message should be converted from an int between 0 to 127 to a float between 0 to 5.
 
-- When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom", converting the 0 to 1 OSC float value to a float between 10 and 200.
+2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Convert the 0 to 1 OSC float value to a float between 10 and 200.
 
-Once these configuration files are in place, you can run patch by doing `patch nodes.yml patches.yml` at the command line.
+Once these configuration files are in place, you can run patch by executing `patch nodes.yml patches.yml` at the command line.
+
+Patch can also be configured in Ruby.
+
+TODO: more
 
 ## Author
 
