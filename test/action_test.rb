@@ -66,21 +66,22 @@ class Patch::ActionTest < Test::Unit::TestCase
             @patches_hash = {
               :patches => {
                 :test_patch => {
-                  :node_map => { [1,2] => 3 },
+                  :node_map => [
+                    { [1,2] => 3 }
+                  ],
                   :action => [
                     { 
-                      :name=>"Zoom", 
+                      :name => "Zoom",
+                      :key => "zoom",
+                      :default => {
+                        :scale => 0.1..5.0
+                      },
                       :midi=> {
-                        :channel=>0, 
-                        :type=>"ControlChange", 
-                        :scale=>0.1..5.0
+                        :channel=>0
                       }, 
                       :osc => {
                         :address=>"/1/rotaryA", 
-                        :scale=> { 
-                          :from=>0..1, 
-                          :to=>0.1..5.0
-                        }
+                        :scale=> 0..1.0
                       }
                     }
                   ]
