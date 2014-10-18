@@ -85,14 +85,14 @@ class Patch::SpecTest < Test::Unit::TestCase
         setup do
           @patches_path = File.join(__dir__, "config/patches.yml")
           @hash = YAML.load(File.new(@patches_path))
-          @map_spec = @hash[:patches][:test_patch][:node_map]
+          @map_config = @hash[:patches][:test_patch][:node_map]
         end
 
         should "instantiate maps" do
-          @maps = Patch::Config.to_node_maps(@map_spec)
+          @maps = Patch::Config.to_node_maps(@map_config)
           assert_not_nil @maps
           assert_not_empty @maps
-          assert_equal @map_spec.size, @maps.size
+          assert_equal @map_config.size, @maps.size
           assert @maps.first.kind_of?(Patch::Node::Map)
         end
 
@@ -115,11 +115,11 @@ class Patch::SpecTest < Test::Unit::TestCase
       context ".to_patch" do
 
         setup do
-          spec = {
+          config = {
             :node_map => [{ [1,2] => 3 }],
             :action => []
           }
-          @patch = Patch::Config.send(:to_patch, :test, spec)
+          @patch = Patch::Config.send(:to_patch, :test, config)
         end
 
         should "create patch" do
@@ -147,14 +147,14 @@ class Patch::SpecTest < Test::Unit::TestCase
         context "path" do
 
           setup do
-            @spec = Patch::Config.send(:to_h, @path)
+            @config = Patch::Config.send(:to_h, @path)
           end
 
           should "populate" do
-            assert_not_nil @spec
-            assert_not_empty @spec
-            assert_equal Hash, @spec.class
-            assert_equal 1, @spec.keys.count
+            assert_not_nil @config
+            assert_not_empty @config
+            assert_equal Hash, @config.class
+            assert_equal 1, @config.keys.count
           end
 
         end
@@ -162,14 +162,14 @@ class Patch::SpecTest < Test::Unit::TestCase
         context "file" do
 
           setup do
-            @spec = Patch::Config.send(:to_h, @file)
+            @config = Patch::Config.send(:to_h, @file)
           end
 
           should "populate" do
-            assert_not_nil @spec
-            assert_not_empty @spec
-            assert_equal Hash, @spec.class
-            assert_equal 1, @spec.keys.count
+            assert_not_nil @config
+            assert_not_empty @config
+            assert_equal Hash, @config.class
+            assert_equal 1, @config.keys.count
           end
 
         end
@@ -177,14 +177,14 @@ class Patch::SpecTest < Test::Unit::TestCase
         context "hash" do
 
           setup do
-            @spec = Patch::Config.send(:to_h, @hash)
+            @config = Patch::Config.send(:to_h, @hash)
           end
 
           should "populate" do
-            assert_not_nil @spec
-            assert_not_empty @spec
-            assert_equal Hash, @spec.class
-            assert_equal 1, @spec.keys.count
+            assert_not_nil @config
+            assert_not_empty @config
+            assert_equal Hash, @config.class
+            assert_equal 1, @config.keys.count
           end
 
         end
