@@ -13,7 +13,7 @@ module Patch
       log = Log.new(options.fetch(:log, $>))
       nodes = to_nodes(nodes_config, :log => log)
       patches = to_patches(nodes, options[:patches]) unless options[:patches].nil?
-      Hub.new(:log => log, :nodes => nodes, :patches => patches)
+      Hub.new(:log => log, :patches => patches)
     end
 
     # Instantiate actions from an action config
