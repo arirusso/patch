@@ -40,7 +40,7 @@ module Patch
       maps = [maps] unless maps.kind_of?(Array)
       maps = maps.map do |map| 
         if map.kind_of?(Hash)
-          Node::Map.new(maps.keys.first, maps.values.first)
+          Node::Map.new(map.keys.first, map.values.first)
         else
           map
         end
