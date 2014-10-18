@@ -66,7 +66,7 @@ A patch describes how to use the nodes.  We specify this in a second configurati
         :scale: !ruby/range 10..200.0
       :midi:
         :channel: 0
-        :index: 0
+        :index: 1
       :osc:
         :address: /1/rotaryA
         :scale: !ruby/range 0..1.0
