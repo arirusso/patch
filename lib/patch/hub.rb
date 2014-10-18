@@ -10,7 +10,7 @@ module Patch
     # @option options [Node::Container] :nodes
     # @option options [Array<Patch>] :patches
     def initialize(options = {})
-      @log = Log.new(options.fetch(:log, $>))
+      @log = Log.new(options[:log]) unless options[:log].nil?
       @nodes = options.fetch(:nodes, Node::Container.new)
       @patches = options.fetch(:patches, [])
       @threads = []
