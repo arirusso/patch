@@ -4,11 +4,12 @@ Patch is a universal hub for controlling [things](http://en.wikipedia.org/wiki/I
 
 These message protocols are supported
 
-* MIDI
-* OSC
-* JSON over Websocket
+* [MIDI](http://en.wikipedia.org/wiki/MIDI)
+* [OSC](http://en.wikipedia.org/wiki/Open_Sound_Control)
+* JSON over [Websocket](http://en.wikipedia.org/wiki/WebSocket)
+* [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp) (in progress)
 * HTTP (in progress)
-* RPC (in progress)
+* [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC) (in progress)
 
 ## Usage
 
@@ -20,11 +21,15 @@ It can be installed by using `gem install patch` on the command line or by addin
 
 ### Configuration
 
-Running patch requires two configuration files:
+Patch can be configured in Ruby code or by using two YAML configuration files.  Since the configuration files reflect the overall structure of Patch in a straightforward way, that method is explained here.  
 
-##### Nodes
+A tutorial on programming Patch in Ruby can be found [here].
 
-A node is a single source/destination of control messages.  The first configuration file describes what nodes to use.  Notice that each node is given an ID number.
+##### nodes.yml
+
+A node is a single source/destination of control messages.  `nodes.yml` describes plainly what nodes to use and how to configure them.  
+
+In addition, each node is given an ID number for reference later.
 
 ```yaml
 :nodes:
@@ -45,9 +50,9 @@ A node is a single source/destination of control messages.  The first configurat
       :port: 9000
 ```
 
-##### Patches
+##### patches.yml
 
-A patch describes how nodes are used exactly, and are defined in a second configuration file:
+A patch describes how to use the nodes.  We specify this in a second configuration file `patches.yml`.
 
 ```yaml
 :patches:
@@ -78,7 +83,7 @@ In this case, when the nodes with the IDs 2 (MIDI) and 3 (OSC) receive messages,
 
 ###### Actions
 
-Message formats like MIDI and OSC have no implicit way to translate information between each other.  Therefore, we provide a list of actions that describe how to do that.
+The message protocols used by Patch (such as MIDI and OSC) have no implicit way to translate between each other.  Therefore, we have to provide a list of actions to describe how to do that.
 
 Given this particular example above, these are the actions in more plain terms:
 
@@ -86,11 +91,9 @@ Given this particular example above, these are the actions in more plain terms:
 
 2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Scale the OSC value, a float between 0 and 1 to a float between 10 and 200.
 
-Once these configuration files are in place, you can run patch by executing `patch nodes.yml patches.yml` at the command line.
+### Run
 
-Patch can also be configured in Ruby.
-
-TODO: more
+Once these configuration files are in place, you can run patch by executing `patch nodes.yml patches.yml` at the command line.  
 
 ## Author
 
