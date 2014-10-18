@@ -12,7 +12,7 @@
         :index: 0
       :osc:
         :address: /1/rotaryA
-        :scale: !ruby/range 0..1
+        :scale: !ruby/range 0..1.0
 
     - :name: Contrast
       :key: contrast
@@ -20,7 +20,7 @@
         :scale: !ruby/range 0..5.0
       :osc:
         :address: /1/rotaryD
-        :scale: !ruby/range 0..1
+        :scale: !ruby/range 0..1.0
 
     - :name: Saturation
       :key: saturation
@@ -29,7 +29,7 @@
       :osc:
         :address: /faderM
         :scale: 
-          :osc: !ruby/range 0..1
+          :osc: !ruby/range 0..1.0
 
     - :name: Z Depth
       :key: zDepth
@@ -38,4 +38,4 @@
       :osc:
         :address: /1/faderA
         :scale: 
-          :osc: !ruby/range 0..1
+          :osc: !ruby/range 0..1.0
