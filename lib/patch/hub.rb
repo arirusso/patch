@@ -5,16 +5,25 @@ module Patch
 
     attr_reader :log, :patches, :nodes
 
-    # @param [File, String] nodes_spec
+    # @param [Hash] nodes_spec
     # @param [Hash] options
     # @option options [IO] :log
-    # @option options [File, String] :patches
-    def initialize(nodes_spec, options = {})
+    def self.new_from_spec(nodes_spec, options = {})
+      log = Log.new(options.fetch(:log, $>))
+      nodes = Node.all_from_spec(nodes_spec, :log => log)
+      patches = Patch.all_from_spec(options[:patches]) unless options[:patches].nil?
+      new(:log => log, :nodes => nodes, :patches => patches)
+    end
+
+    # @param [Hash] options
+    # @option options [IO] :log
+    # @option options [Node::Container] :nodes
+    # @option options [Array<Patch>] :patches
+    def initialize(options = {})
       @log = Log.new(options.fetch(:log, $>))
+      @nodes = options.fetch(:nodes, Node::Container.new)
+      @patches = options.fetch(:patches, [])
       @threads = []
-      @nodes = Node.all_from_spec(nodes_spec, :log => @log)
-      @patches = Patch.all_from_spec(options[:patches]) unless options[:patches].nil?
-      @patches ||= []
     end
 
     # Collected IP addresses for the nodes
