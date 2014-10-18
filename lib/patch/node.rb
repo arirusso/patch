@@ -82,8 +82,8 @@ module Patch
       # @param [Array<Fixnum>, Fixnum] from
       # @param [Array<Fixnum>, Fixnum] to
       def initialize(from, to)
-        @from = [from].flatten
-        @to = [to].flatten
+        @from = [from].flatten.compact
+        @to = [to].flatten.compact
       end
 
       # Enable this map for the given nodes
