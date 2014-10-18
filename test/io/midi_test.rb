@@ -5,16 +5,15 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
   context "MIDI" do
 
     setup do
+      @nodes_path = File.join(__dir__,"../config/nodes.yml")
+      @nodes = Patch::Config.to_nodes(@nodes_path)
       @patches_path = File.join(__dir__, "../config/patches.yml")
-      @patches_file = File.new(@patches_path)
-      @patches = Patch::Config.to_patches(@patches_file)
+      @patches = Patch::Config.to_patches(@nodes, @patches_path)
     end
 
     context "Input" do
 
       setup do
-        @nodes_file = File.join(__dir__,"../config/nodes.yml")
-        @nodes = Patch::Config.to_nodes(@nodes_file)
         @input = @nodes.find_all_by_type(:midi).first
       end
 

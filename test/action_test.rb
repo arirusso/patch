@@ -7,7 +7,9 @@ class Patch::ActionTest < Test::Unit::TestCase
     context "Container" do
 
       setup do
+        @nodes_path = File.join(__dir__,"/config/nodes.yml")
         @patches_path = File.join(__dir__,"config/patches.yml")
+        @nodes = Patch::Config.to_nodes(@nodes_path)
       end
 
       context "#empty?" do
@@ -16,7 +18,7 @@ class Patch::ActionTest < Test::Unit::TestCase
 
           setup do
             @patches_file = File.new(@patches_path)
-            @patches = Patch::Config.to_patches(@patches_file)
+            @patches = Patch::Config.to_patches(@nodes, @patches_file)
           end
 
           should "populate" do
@@ -39,7 +41,7 @@ class Patch::ActionTest < Test::Unit::TestCase
         context "from strings" do
 
           setup do
-            @patches = Patch::Config.to_patches(@patches_path)
+            @patches = Patch::Config.to_patches(@nodes, @patches_path)
           end
 
           should "populate" do
@@ -88,7 +90,7 @@ class Patch::ActionTest < Test::Unit::TestCase
                 }
               }
             }
-            @patches = Patch::Config.to_patches(@patches_hash)
+            @patches = Patch::Config.to_patches(@nodes, @patches_hash)
           end
 
           should "populate" do
@@ -115,7 +117,7 @@ class Patch::ActionTest < Test::Unit::TestCase
 
         setup do
           @patches_file = File.new(@patches_path)
-          @patches = Patch::Config.to_patches(@patches_file)
+          @patches = Patch::Config.to_patches(@nodes, @patches_file)
         end
 
         should "populate" do
@@ -144,7 +146,7 @@ class Patch::ActionTest < Test::Unit::TestCase
       context "#find_all_by_type" do
 
         setup do
-          @patches = Patch::Config.to_patches(@patches_path)
+          @patches = Patch::Config.to_patches(@nodes, @patches_path)
           @patch = @patches.first
           @actions = @patch.actions
         end

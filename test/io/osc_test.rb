@@ -5,8 +5,10 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
   context "OSC" do
 
     setup do
+      @nodes_path = File.join(__dir__,"../config/nodes.yml")
       @patches_path = File.join(__dir__,"../config/patches.yml")
-      @patches = Patch::Config.to_patches(@patches_path)
+      @nodes = Patch::Config.to_nodes(@nodes_path)
+      @patches = Patch::Config.to_patches(@nodes, @patches_path)
     end
 
     context "Message" do

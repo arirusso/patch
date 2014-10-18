@@ -8,10 +8,11 @@ module Patch
     # @param [Hash] nodes_config
     # @param [Hash] options
     # @option options [IO] :log
+    # @return [Hub]
     def to_hub(nodes_config, options = {})
       log = Log.new(options.fetch(:log, $>))
       nodes = to_nodes(nodes_config, :log => log)
-      patches = to_patches(options[:patches]) unless options[:patches].nil?
+      patches = to_patches(nodes, options[:patches]) unless options[:patches].nil?
       Hub.new(:log => log, :nodes => nodes, :patches => patches)
     end
 
@@ -23,13 +24,14 @@ module Patch
     end
 
     # Instantiate patch objects from the given patch config file, filename or hash
+    # @param [NodeContainer] nodes
     # @param [File, Hash, String] config
     # @return [Array<Patch>]
-    def to_patches(config)
+    def to_patches(nodes, config)
       config = to_h(config)
       patches = []
       config[:patches].each do |name, patch|
-        patches << to_patch(name, patch)
+        patches << to_patch(nodes, name, patch)
       end
       patches
     end
@@ -38,7 +40,7 @@ module Patch
     # @param [File, Hash, String] config
     # @param [Hash] options
     # @option options [Log] :log
-    # @return [Array<Patch::IO>]
+    # @return [Node::Container]
     def to_nodes(config, options = {})
       config = to_h(config)
       node_array = config[:nodes].map { |node_config| to_node(node_config, options) }
@@ -46,10 +48,17 @@ module Patch
     end
 
     # Instantiate Node::Map objects given a map config hash
+    # @param [NodeContainer] nodes
     # @param [Hash] config
     # @return [Array<Node::Map>]
-    def to_node_maps(config)
-      config.map { |from, to| Node::Map.new(from, to) }
+    def to_node_maps(nodes, config)
+      config.map do |from, to|
+        from_ids = [from].flatten
+        to_ids = [to].flatten
+        from_nodes = from_ids.map { |id| nodes.find_by_id(id) }
+        to_nodes = to_ids.map { |id| nodes.find_by_id(id) }
+        Node::Map.new(from_nodes, to_nodes)
+      end
     end
 
     private
@@ -66,13 +75,14 @@ module Patch
     end
 
     # Instantiate a patch object for the given config hash
+    # @param [NodeContainer] nodes
     # @param [Symbol, String] name
     # @param [Hash] config
     # @return [Patch]
-    def to_patch(name, config)
+    def to_patch(nodes, name, config)
       action_config = config[:actions] || config[:action]
       actions = to_actions(action_config)
-      maps = to_node_maps(config[:node_map])
+      maps = to_node_maps(nodes, config[:node_map])
       Patch.new(name, actions, maps)
     end
 

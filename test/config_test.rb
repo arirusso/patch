@@ -85,11 +85,12 @@ class Patch::SpecTest < Test::Unit::TestCase
         setup do
           @patches_path = File.join(__dir__, "config/patches.yml")
           @hash = YAML.load(File.new(@patches_path))
+          @nodes = Patch::Config.to_nodes(@nodes_file)
           @map_config = @hash[:patches][:test_patch][:node_map]
         end
 
         should "instantiate maps" do
-          @maps = Patch::Config.to_node_maps(@map_config)
+          @maps = Patch::Config.to_node_maps(@nodes, @map_config)
           assert_not_nil @maps
           assert_not_empty @maps
           assert_equal @map_config.size, @maps.size
@@ -101,7 +102,8 @@ class Patch::SpecTest < Test::Unit::TestCase
       context ".to_patches" do
 
         setup do
-          @patches = Patch::Config.to_patches(@patches_file)
+          @nodes = Patch::Config.to_nodes(@nodes_file)
+          @patches = Patch::Config.to_patches(@nodes, @patches_file)
         end
 
         should "create patches" do
@@ -115,11 +117,12 @@ class Patch::SpecTest < Test::Unit::TestCase
       context ".to_patch" do
 
         setup do
+          @nodes = Patch::Config.to_nodes(@nodes_file)
           config = {
             :node_map => [{ [1,2] => 3 }],
             :action => []
           }
-          @patch = Patch::Config.send(:to_patch, :test, config)
+          @patch = Patch::Config.send(:to_patch, @nodes, :test, config)
         end
 
         should "create patch" do

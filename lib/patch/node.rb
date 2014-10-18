@@ -79,8 +79,8 @@ module Patch
 
       attr_reader :from, :to
 
-      # @param [Array<Fixnum>, Fixnum] from
-      # @param [Array<Fixnum>, Fixnum] to
+      # @param [Array<Object>, Object] from
+      # @param [Array<Object>, Object] to
       def initialize(from, to)
         @from = [from].flatten
         @to = [to].flatten
@@ -91,10 +91,8 @@ module Patch
       # @param [::Patch::Node::Container] nodes Nodes to enable this map for
       # @return [Boolean] Whether nodes were enabled
       def enable(patch, nodes)
-        result = @to.map do |to_id|
-          to_node = nodes.find_by_id(to_id)
-          enabled = @from.map do |from_id|
-            from_node = nodes.find_by_id(from_id)
+        result = @to.map do |to_node|
+          enabled = @from.map do |from_node|
             from_node.listen(patch) do |messages|
               to_node.puts(messages)
             end

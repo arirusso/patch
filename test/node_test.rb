@@ -74,8 +74,8 @@ class Patch::NodeTest < Test::Unit::TestCase
 
         setup do
           @patches_path = File.join(__dir__, "config/patches.yml")
-          @patches = Patch::Config.to_patches(@patches_path)
           @nodes = Patch::Config.to_nodes(@nodes_path)
+          @patches = Patch::Config.to_patches(@nodes, @patches_path)
           @maps = @patches.first.maps
         end
 
