@@ -11,8 +11,8 @@ module Patch
     # @option options [Array<Patch>] :patches
     def initialize(options = {})
       @log = Log.new(options[:log]) unless options[:log].nil?
-      @nodes = options.fetch(:nodes, Node::Container.new)
-      @patches = options.fetch(:patches, [])
+      populate_nodes(options[:nodes])
+      populate_patches(options[:patches])
       @threads = []
     end
 
@@ -63,6 +63,31 @@ module Patch
       EM.epoll
       EM.run { @nodes.enable }
       !@nodes.empty?
+    end
+
+    # Populate the nodes given various arg formats
+    # @param [Array<IO::MIDI, IO::OSC, IO::Websocket>, IO::MIDI, IO::OSC, IO::Websocket] nodes
+    # @return [Array<IO::MIDI, IO::OSC, IO::Websocket>]
+    def populate_nodes(nodes)
+      if nodes.nil?
+        nodes = Node::Container.new
+      else
+        nodes = [nodes] if !nodes.kind_of?(Array) && !nodes.kind_of?(Node::Container)
+        nodes = Node::Container.new(nodes) if nodes.kind_of?(Array)
+      end
+      @nodes = nodes
+    end
+
+    # Populate the patches given various arg formats
+    # @param [Array<Patch>, Patch] patches
+    # @return [Array<Patch>]
+    def populate_patches(patches)
+      if patches.nil?
+        patches = []
+      else
+        patches = [patches] if patches.kind_of?(::Patch::Patch)
+      end
+      @patches = patches
     end
 
   end
