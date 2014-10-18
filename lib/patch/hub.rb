@@ -11,8 +11,8 @@ module Patch
     # @option options [Array<Patch>] :patches
     def initialize(options = {})
       @log = Log.new(options[:log]) unless options[:log].nil?
-      populate_nodes(options[:nodes])
-      populate_patches(options[:patches])
+      populate_nodes(options[:nodes] || options[:node])
+      populate_patches(options[:patches] || options[:patch])
       @threads = []
     end
 
