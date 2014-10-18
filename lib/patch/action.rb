@@ -13,7 +13,7 @@ module Patch
 
       # @param [Array<Hash>, Hash] actions
       def initialize(actions)
-        @actions = [actions].flatten
+        @actions = [actions].flatten.compact
       end
 
       def each(&block)
