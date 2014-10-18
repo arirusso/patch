@@ -9,8 +9,7 @@
         :scale: !ruby/range 10..200
       :midi:
         :channel: 0
-        :index: 0
-        :scale: !ruby/range 0.1..5.0
+        :index: 1
       :osc:
         :address: /1/rotaryA
-        :scale: !ruby/range 0..1
+        :scale: !ruby/range 0..1.0
