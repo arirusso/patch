@@ -96,6 +96,8 @@ module Patch
         result.flatten.any?
       end
 
+      # The nodes for this map, collected
+      # @return [NodeContainer]
       def nodes
         (@from | @to)
       end
