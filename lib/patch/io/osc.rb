@@ -7,17 +7,17 @@ module Patch
 
       extend self
 
-      # Instantiate an OSC server and/or client using the given spec
-      # @param [Hash] spec
+      # Instantiate an OSC server and/or client using the given config
+      # @param [Hash] config
       # @param [Hash] options
       # @option options [Action::Container] :actions
       # @option options [Log] :log
       # @return [::Patch::IO::OSC::Server]
-      def new_from_spec(spec, options = {})
-        if spec[:server].nil?
-          Client.new(spec[:client], :id => spec[:id], :log => options[:log]) if !spec[:client].nil?
+      def new_from_config(config, options = {})
+        if config[:server].nil?
+          Client.new(config[:client], :id => config[:id], :log => options[:log]) if !config[:client].nil?
         else
-          Server.new(spec[:id], spec[:server][:port], :echo => spec[:client], :log => options[:log])   
+          Server.new(config[:id], config[:server][:port], :echo => config[:client], :log => options[:log])   
         end
       end
 

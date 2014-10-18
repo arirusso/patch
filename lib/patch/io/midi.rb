@@ -5,17 +5,17 @@ module Patch
     # MIDI IO
     module MIDI
 
-      # Instantiate a MIDI device based on the given spec
-      # @param [Hash] spec
+      # Instantiate a MIDI device based on the given config
+      # @param [Hash] config
       # @param [Hash] options
       # @option options [Log] :log
       # @return [MIDI::Input, MIDI::Output]
-      def self.new_from_spec(spec, options = {})
-        klass = case spec[:direction].to_sym
+      def self.new_from_config(config, options = {})
+        klass = case config[:direction].to_sym
                 when :input then Input
                 when :output then Output
                 end
-        klass.new(spec[:id], spec[:name], :log => options[:log])
+        klass.new(config[:id], config[:name], :log => options[:log])
       end
 
       # Convert between MIDI message objects and Patch::Message objects

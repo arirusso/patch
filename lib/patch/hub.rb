@@ -5,16 +5,6 @@ module Patch
 
     attr_reader :log, :patches, :nodes
 
-    # @param [Hash] nodes_spec
-    # @param [Hash] options
-    # @option options [IO] :log
-    def self.new_from_spec(nodes_spec, options = {})
-      log = Log.new(options.fetch(:log, $>))
-      nodes = Node.all_from_spec(nodes_spec, :log => log)
-      patches = Patch.all_from_spec(options[:patches]) unless options[:patches].nil?
-      new(:log => log, :nodes => nodes, :patches => patches)
-    end
-
     # @param [Hash] options
     # @option options [IO] :log
     # @option options [Node::Container] :nodes

@@ -20,9 +20,9 @@ require "rainbow"
 require "scale"
 
 # modules
+require "patch/config"
 require "patch/io"
 require "patch/node"
-require "patch/spec"
 
 # classes
 require "patch/action"

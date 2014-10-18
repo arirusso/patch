@@ -7,13 +7,13 @@ module Patch
 
       attr_reader :id
 
-      # Construct a websocket from a node spec
-      # @param [Hash] spec
+      # Construct a websocket from a node config
+      # @param [Hash] config
       # @param [Hash] options
       # @param [Hash]
       # @option properties [Log] :log
-      def self.new_from_spec(spec, options = {})
-        new(spec[:id], spec[:host], spec[:port], options)
+      def self.new_from_config(config, options = {})
+        new(config[:id], config[:host], config[:port], options)
       end
 
       # @param [Fixnum] id

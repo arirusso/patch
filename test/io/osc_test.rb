@@ -6,7 +6,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
     setup do
       @patches_path = File.join(__dir__,"../config/patches.yml")
-      @patches = Patch::Patch.all_from_spec(@patches_path)
+      @patches = Patch::Config.to_patches(@patches_path)
     end
 
     context "Message" do
@@ -55,7 +55,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
 
       setup do
         @nodes_path = File.join(__dir__,"../config/nodes.yml")
-        @nodes = Patch::Node.all_from_spec(@nodes_path)
+        @nodes = Patch::Config.to_nodes(@nodes_path)
         @server = @nodes.find_all_by_type(:osc).first
         @server.instance_variable_get("@server").stubs(:run).returns(:true)
       end

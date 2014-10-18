@@ -3,46 +3,15 @@ module Patch
   # A network or hardware connection
   module Node
 
-    module ClassMethods
-
-      # Instantiate nodes from the given spec or spec file
-      # @param [File, Hash, String] spec
-      # @param [Hash] options
-      # @option options [Log] :log
-      # @return [Array<Patch::IO>]
-      def all_from_spec(spec, options = {})
-        spec = Spec.to_h(spec)
-        get_nodes(spec, :log => options[:log])
-      end
-
-      # Mapping of node modules and names
-      # @return [Hash]
-      def modules
-        @modules ||= {
-          :midi => IO::MIDI,
-          :osc => IO::OSC,
-          :websocket => IO::Websocket
-        }
-      end
-
-      private
-
-      # All of the nodes from the spec
-      # @param [Hash] spec
-      # @param [Hash] options
-      # @option options [Log] :log
-      # @return [::Patch::Node::Container]
-      def get_nodes(spec, options = {})
-        node_array = spec[:nodes].map do |node|
-          type = node[:type].to_sym
-          mod = modules[type]
-          mod.new_from_spec(node, :log => options[:log])
-        end
-        Container.new(node_array)
-      end
-
+    # Mapping of node modules and names
+    # @return [Hash]
+    def self.modules
+      @modules ||= {
+        :midi => IO::MIDI,
+        :osc => IO::OSC,
+        :websocket => IO::Websocket
+      }
     end
-    extend ClassMethods
 
     # A container for Patch::Node
     class Container
@@ -109,13 +78,6 @@ module Patch
     class Map
 
       attr_reader :from, :to
-
-      # Instantiate Map objects given a map spec hash
-      # @param [Hash] spec
-      # @return [Array<Map>]
-      def self.all_from_spec(spec)
-        spec.map { |from, to| new(from, to) }
-      end
 
       # @param [Array<Fixnum>, Fixnum] from
       # @param [Array<Fixnum>, Fixnum] to

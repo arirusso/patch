@@ -6,7 +6,7 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
 
     setup do
       @nodes_path = File.join(__dir__,"../config/nodes.yml")
-      @nodes = Patch::Node.all_from_spec(@nodes_path)
+      @nodes = Patch::Config.to_nodes(@nodes_path)
       @server = @nodes.find_all_by_type(:websocket).first
     end
 

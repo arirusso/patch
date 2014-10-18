@@ -16,7 +16,7 @@ class Patch::ActionTest < Test::Unit::TestCase
 
           setup do
             @patches_file = File.new(@patches_path)
-            @patches = Patch::Patch.all_from_spec(@patches_file)
+            @patches = Patch::Config.to_patches(@patches_file)
           end
 
           should "populate" do
@@ -39,7 +39,7 @@ class Patch::ActionTest < Test::Unit::TestCase
         context "from strings" do
 
           setup do
-            @patches = Patch::Patch.all_from_spec(@patches_path)
+            @patches = Patch::Config.to_patches(@patches_path)
           end
 
           should "populate" do
@@ -87,7 +87,7 @@ class Patch::ActionTest < Test::Unit::TestCase
                 }
               }
             }
-            @patches = Patch::Patch.all_from_spec(@patches_hash)
+            @patches = Patch::Config.to_patches(@patches_hash)
           end
 
           should "populate" do
@@ -114,7 +114,7 @@ class Patch::ActionTest < Test::Unit::TestCase
 
         setup do
           @patches_file = File.new(@patches_path)
-          @patches = Patch::Patch.all_from_spec(@patches_file)
+          @patches = Patch::Config.to_patches(@patches_file)
         end
 
         should "populate" do
@@ -143,7 +143,7 @@ class Patch::ActionTest < Test::Unit::TestCase
       context "#find_all_by_type" do
 
         setup do
-          @patches = Patch::Patch.all_from_spec(@patches_path)
+          @patches = Patch::Config.to_patches(@patches_path)
           @patch = @patches.first
           @actions = @patch.actions
         end
