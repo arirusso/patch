@@ -36,7 +36,6 @@ module Patch
           if !action.nil? && !action[:osc].nil?
             address = action[:osc][:address]
             to = action[:osc][:scale]
-            to ||= 0..1.0
             from = action[:default][:scale] unless action[:default].nil?
             from ||= to
             value = get_value(patch_message.value, from, to)
@@ -55,7 +54,6 @@ module Patch
           if !action.nil?
             index = patch.actions.index(action)
             from = action[:osc][:scale]
-            from ||= 0..1.0
             to = action[:default][:scale] unless action[:default].nil?
             to ||= from
             value = get_value(raw_osc.to_a[0].to_f, from, to)
