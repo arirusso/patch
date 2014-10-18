@@ -11,9 +11,9 @@ module Patch
 
       def_delegators :@actions, :at, :empty?, :index, :sample
 
-      # @param [Array<Hash>] actions
+      # @param [Array<Hash>, Hash] actions
       def initialize(actions)
-        @actions = actions
+        @actions = [actions].flatten
       end
 
       def each(&block)
