@@ -8,7 +8,7 @@ module Patch
     # Given a file name, file or hash, populate a spec hash
     # @param [File, Hash, String] object
     # @return [Hash]
-    def new(object)
+    def to_h(object)
       spec_file = case object
                   when File, String then object
                   end

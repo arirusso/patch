@@ -11,7 +11,7 @@ module Patch
       # @option options [Log] :log
       # @return [Array<Patch::IO>]
       def all_from_spec(spec, options = {})
-        spec = Spec.new(spec)
+        spec = Spec.to_h(spec)
         get_nodes(spec, :log => options[:log])
       end
 

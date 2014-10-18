@@ -4,7 +4,7 @@ class Patch::SpecTest < Test::Unit::TestCase
 
   context "Spec" do
 
-    context ".new" do
+    context ".to_h" do
 
       setup do
         @path = File.join(__dir__, "config/patches.yml")
@@ -20,7 +20,7 @@ class Patch::SpecTest < Test::Unit::TestCase
       context "path" do
 
         setup do
-          @spec = Patch::Spec.new(@path)
+          @spec = Patch::Spec.to_h(@path)
         end
 
         should "populate" do
@@ -35,7 +35,7 @@ class Patch::SpecTest < Test::Unit::TestCase
       context "file" do
 
         setup do
-          @spec = Patch::Spec.new(@file)
+          @spec = Patch::Spec.to_h(@file)
         end
 
         should "populate" do
@@ -50,7 +50,7 @@ class Patch::SpecTest < Test::Unit::TestCase
       context "hash" do
 
         setup do
-          @spec = Patch::Spec.new(@hash)
+          @spec = Patch::Spec.to_h(@hash)
         end
 
         should "populate" do

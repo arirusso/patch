@@ -9,7 +9,7 @@ module Patch
     # @param [File, Hash, String] spec
     # @return [Array<Patch>]
     def self.all_from_spec(spec)
-      spec = Spec.new(spec)
+      spec = Spec.to_h(spec)
       patches = []
       spec[:patches].each do |name, patch|
         patches << from_spec(name, patch)
