@@ -63,13 +63,13 @@ A patch describes how to use the nodes.  We specify this in a second configurati
     - :name: Zoom
       :key: zoom
       :default:
-        :scale: !ruby/range 10..200
+        :scale: !ruby/range 10..200.0
       :midi:
         :channel: 0
         :index: 0
       :osc:
         :address: /1/rotaryA
-        :scale: !ruby/range 0..1
+        :scale: !ruby/range 0..1.0
 
 ```
 
