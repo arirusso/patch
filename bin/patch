@@ -29,6 +29,6 @@ end
 log_filename = options[:log] || "patch_#{Time.now.to_i}.log"
 log_file = File.open(log_filename, "w")
 
-hub = Patch::Hub.new_from_spec(nodes_config_file, :log => log_file, :patches => patches_config_file)
+hub = Patch::Config.to_hub(nodes_config_file, :log => log_file, :patches => patches_config_file)
 Patch::Report.print(hub)
 hub.listen
