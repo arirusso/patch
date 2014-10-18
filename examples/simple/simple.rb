@@ -3,7 +3,7 @@ $:.unshift File.join( File.dirname( __FILE__ ), '../../lib')
 
 require "patch"
 
-nodes = Patch::Node::Container.new
+nodes = []
 nodes << Patch::IO::Websocket.new(1, "localhost", 9006)
 nodes << Patch::IO::OSC::Server.new(2, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
 
@@ -23,9 +23,11 @@ action = {
   }
 }
 
-patch = Patch::Patch.new(:simple, action, { 2 => 1 })
+map = { nodes[1] => nodes[0] }
 
-hub = Patch::Hub.new(:nodes => nodes, :patches => patch)
+patch = Patch::Patch.new(:simple, map, action)
+
+hub = Patch::Hub.new(:nodes => nodes, :patch => patch)
 Patch::Report.print(hub)
 hub.listen
 
