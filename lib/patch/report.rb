@@ -62,7 +62,7 @@ module Patch
     def report
       report = {}
       report[:ips] = @hub.ips
-      report[:nodes] = @hub.nodes.map { |node| node_report(node) }
+      report[:nodes] = @hub.nodes.sort_by(&:id).map { |node| node_report(node) }
       report[:patches] = @hub.patches.map { |patch| patch_report(patch) }
       report[:log] = @hub.log.inspect
       report
@@ -121,7 +121,7 @@ module Patch
     def patch_report(patch)
       report = {}
       report[:name] = patch.name
-      report[:maps] = patch.maps.map { |map| "#{map.from} => #{map.to}" }
+      report[:maps] = patch.maps.map { |map| "#{map.from.map(&:id)} => #{map.to.map(&:id)}" }
       report[:actions] = patch.actions.map { |mapping| mapping[:name] }
       report
     end

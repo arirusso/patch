@@ -6,9 +6,9 @@ module Patch
     attr_reader :actions, :maps, :name
 
     # @param [Symbol, String] name
-    # @param [Array<Hash>, Action::Container, Hash] actions An action or actions
     # @param [Array<Node::Map>, Node::Map] maps A node map or maps
-    def initialize(name, actions, maps)
+    # @param [Array<Hash>, Action::Container, Hash] actions An action or actions
+    def initialize(name, maps, actions)
       @name = name
       populate_maps(maps)
       populate_actions(actions)
@@ -17,8 +17,8 @@ module Patch
     # Enable the given nodes to implement this patch
     # @param [Node::Container] nodes
     # @return [Boolean]
-    def enable(nodes)
-      result = @maps.map { |map| map.enable(self, nodes) }
+    def enable
+      result = @maps.map { |map| map.enable(self) }
       result.any?
     end
 

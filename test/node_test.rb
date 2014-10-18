@@ -83,7 +83,7 @@ class Patch::NodeTest < Test::Unit::TestCase
           Patch::IO::MIDI::Input.any_instance.expects(:listen).once
           Patch::IO::OSC::Server.any_instance.expects(:listen).once
           Patch::IO::Websocket.any_instance.expects(:listen).once
-          assert @maps.first.enable(@patches.first, @nodes)
+          assert @maps.first.enable(@patches.first)
         end
 
       end

@@ -83,7 +83,7 @@ module Patch
       action_config = config[:actions] || config[:action]
       actions = to_actions(action_config)
       maps = to_node_maps(nodes, config[:node_map])
-      Patch.new(name, actions, maps)
+      Patch.new(name, maps, actions)
     end
 
     # Given a file name, file or hash, populate a config hash

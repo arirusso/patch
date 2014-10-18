@@ -29,6 +29,22 @@ class Patch::HubTest < Test::Unit::TestCase
 
     end
 
+    context "#nodes" do
+
+      should "be populated" do
+        assert_not_nil @hub.nodes
+      end
+
+      should "have nodes" do
+        assert_not_empty @hub.nodes
+      end
+
+      should "be node container" do
+        assert_equal Patch::Node::Container, @hub.nodes.class
+      end
+
+    end
+
   end
 
 end

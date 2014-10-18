@@ -3,15 +3,13 @@ module Patch
   # The main application object
   class Hub
 
-    attr_reader :log, :patches, :nodes
+    attr_reader :log, :patches
 
     # @param [Hash] options
     # @option options [IO] :log
-    # @option options [Node::Container] :nodes
     # @option options [Array<Patch>] :patches
     def initialize(options = {})
       @log = Log.new(options[:log]) unless options[:log].nil?
-      populate_nodes(options[:nodes] || options[:node])
       populate_patches(options[:patches] || options[:patch])
       @threads = []
     end
@@ -29,7 +27,7 @@ module Patch
     # @option options [Boolean] :background Run in a background thread (default: false)
     # @return [Boolean]
     def listen(options = {})
-      @patches.each { |patch| patch.enable(@nodes) }
+      @patches.each { |patch| patch.enable }
       begin
         if !!options[:background]
           enable_nodes_in_background
@@ -39,6 +37,13 @@ module Patch
       rescue SystemExit, Interrupt => exception
         exit 0
       end
+    end
+
+    # All of the nodes used by the patches
+    # @return [Node::Container]
+    def nodes
+      nodes = @patches.map { |patch| patch.maps.map(&:nodes) }.flatten.compact.uniq
+      Node::Container.new(nodes)
     end
 
     private
@@ -61,21 +66,8 @@ module Patch
     # @return [Boolean] Whether nodes were enabled
     def enable_nodes
       EM.epoll
-      EM.run { @nodes.enable }
-      !@nodes.empty?
-    end
-
-    # Populate the nodes given various arg formats
-    # @param [Array<IO::MIDI, IO::OSC, IO::Websocket>, IO::MIDI, IO::OSC, IO::Websocket] nodes
-    # @return [Array<IO::MIDI, IO::OSC, IO::Websocket>]
-    def populate_nodes(nodes)
-      if nodes.nil?
-        nodes = Node::Container.new
-      else
-        nodes = [nodes] if !nodes.kind_of?(Array) && !nodes.kind_of?(Node::Container)
-        nodes = Node::Container.new(nodes) if nodes.kind_of?(Array)
-      end
-      @nodes = nodes
+      EM.run { nodes.enable }
+      !nodes.empty?
     end
 
     # Populate the patches given various arg formats

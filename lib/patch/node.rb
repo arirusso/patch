@@ -14,28 +14,22 @@ module Patch
     end
 
     # A container for Patch::Node
-    class Container
+    class Container < Array
 
-      include Enumerable
-      extend Forwardable
-
-      def_delegators :@nodes, :[], :<<, :+, :*, :-, :empty?, :push
-
-      # @param [Node, nil] nodes
-      def initialize(nodes = nil)
+      def initialize(*args)
         @threads = []
-        @nodes = []
-        @nodes += nodes unless nodes.nil?
+        super
       end
 
-      def each(&block)
-        @nodes.each(&block)
-      end
+      # Union operator
+      #def |(container)
+      #  Node::Container.new(send(:|, container))
+      #end
 
       # Enable the nodes in this container
       # @return [Boolean]
       def enable
-        result = @nodes.map { |node| enable_node(node) }
+        result = map { |node| enable_node(node) }
         result.any?
       end
 
@@ -44,14 +38,14 @@ module Patch
       # @return [Array<IO::MIDI, IO::OSC, IO::Websocket>]
       def find_all_by_type(type)
         klass = Node.modules[type]
-        @nodes.select { |node| node.class.name.match(/\A#{klass}.*/) }
+        select { |node| node.class.name.match(/\A#{klass}.*/) }
       end
 
       # Find the node with the given id
       # @param [Fixnum] id
       # @return [IO::MIDI, IO::OSC, IO::Websocket]
       def find_by_id(id)
-        @nodes.find { |node| node.id == id }
+        find { |node| node.id == id }
       end
 
       private
@@ -79,18 +73,17 @@ module Patch
 
       attr_reader :from, :to
 
-      # @param [Array<Object>, Object] from
-      # @param [Array<Object>, Object] to
+      # @param [Array<Object>, NodeContainer, Object] from
+      # @param [Array<Object>, NodeContainer, Object] to
       def initialize(from, to)
-        @from = [from].flatten
-        @to = [to].flatten
+        @from = to_node_container(from)
+        @to = to_node_container(to)
       end
 
       # Enable this map for the given nodes
       # @param [::Patch::Patch] patch The patch context to enable the map in
-      # @param [::Patch::Node::Container] nodes Nodes to enable this map for
       # @return [Boolean] Whether nodes were enabled
-      def enable(patch, nodes)
+      def enable(patch)
         result = @to.map do |to_node|
           enabled = @from.map do |from_node|
             from_node.listen(patch) do |messages|
@@ -100,7 +93,26 @@ module Patch
           end
           enabled.any?
         end
-        result.any?
+        result.flatten.any?
+      end
+
+      def nodes
+        (@from | @to)
+      end
+
+      private
+
+      # Convert the given arg to a node container
+      # @param [Object] object
+      # @return [NodeContainer]
+      def to_node_container(object)
+        if !object.kind_of?(Array) || !object.kind_of?(Node::Container)
+          object = [object].flatten.compact
+        end
+        if object.kind_of?(Array)
+          object = Node::Container.new(object)
+        end
+        object
       end
 
     end

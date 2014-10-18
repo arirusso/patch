@@ -20,7 +20,7 @@ class Patch::PatchTest < Test::Unit::TestCase
         Patch::IO::MIDI::Input.any_instance.expects(:listen).once
         Patch::IO::OSC::Server.any_instance.expects(:listen).once
         Patch::IO::Websocket.any_instance.expects(:listen).once
-        assert @patches.first.enable(@nodes)
+        assert @patches.first.enable
       end
 
     end
