@@ -156,11 +156,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
     context "Client" do
 
       setup do
-        spec = {
-          :host => "blah",
-          :port => "9000"
-        }
-        @client = ::Patch::IO::OSC::Client.new(spec)
+        @client = ::Patch::IO::OSC::Client.new("blah", 9000)
       end
 
       context "#puts" do

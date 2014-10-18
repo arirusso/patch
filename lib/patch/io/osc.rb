@@ -13,11 +13,11 @@ module Patch
       # @option options [Action::Container] :actions
       # @option options [Log] :log
       # @return [::Patch::IO::OSC::Server]
-      def new(spec, options = {})
+      def new_from_spec(spec, options = {})
         if spec[:server].nil?
-          Client.new(spec[:client], :log => options[:log]) if !spec[:client].nil?
+          Client.new(spec[:client], :id => spec[:id], :log => options[:log]) if !spec[:client].nil?
         else
-          Server.new(spec, :actions => options[:actions], :log => options[:log])   
+          Server.new(spec[:id], spec[:server][:port], :echo => spec[:client], :log => options[:log])   
         end
       end
 
@@ -89,16 +89,18 @@ module Patch
 
         attr_reader :id
 
-        # @param [Hash] spec
+        # @param [Fixnum] id
+        # @param [Fixnum] port
         # @param [Hash] options
+        # @option options [Hash] :echo
         # @option options [Log] :log
-        def initialize(spec, options = {})
+        def initialize(id, port, options = {})
           @log = options[:log]
           @server = nil
           @active = false
-          @id = spec[:id]
-          configure_server(spec[:server])
-          configure_echo(spec[:client], options) if !spec[:client].nil?
+          @id = id
+          configure_server(port)
+          configure_echo(options[:echo][:host], options[:echo][:port]) if !options[:echo].nil?
         end
 
         # Start the server
@@ -143,10 +145,10 @@ module Patch
         private
 
         # Configure the underlying server
-        # @param [Hash] spec
+        # @param [Fixnum] port
         # @return [::OSC::Server]
-        def configure_server(spec)
-          @server = ::OSC::EMServer.new(spec[:port])
+        def configure_server(port)
+          @server = ::OSC::EMServer.new(port)
           if @log
             @server.add_method(/.*/) { |message| @log.puts("Received: #{message.address}") }
           end
@@ -175,12 +177,13 @@ module Patch
         end
 
         # Configure the echo client
-        # @param [Hash] spec
+        # @param [String] host
+        # @param [Fixnum] echo
         # @param [Hash] options
-        # @option options [Action::Container] :actions
+        # @param [Log] :log
         # @return [::Patch::IO::OSC::Client]
-        def configure_echo(spec, options = {})
-          @client = Client.new(spec, :actions => options[:actions], :log => @log)
+        def configure_echo(host, port, options = {})
+          @client = Client.new(host, port, :log => options.fetch(:log, @log))
         end
 
       end
@@ -188,12 +191,17 @@ module Patch
       # OSC Client
       class Client
 
-        # @param [Hash] spec
+        attr_reader :id
+
+        # @param [String] host
+        # @param [Fixnum] port
         # @param [Hash] options
+        # @option options [Fixnum] :id
         # @option options [Log] :log
-        def initialize(spec, options = {})
+        def initialize(host, port, options = {})
           @log = options[:log]
-          @client = ::OSC::Client.new(spec[:host], spec[:port])
+          @client = ::OSC::Client.new(host, port)
+          @id = options[:id]
         end
 
         # Convert message objects to OSC and send

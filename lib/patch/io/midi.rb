@@ -10,12 +10,12 @@ module Patch
       # @param [Hash] options
       # @option options [Log] :log
       # @return [MIDI::Input, MIDI::Output]
-      def self.new(spec, options = {})
+      def self.new_from_spec(spec, options = {})
         klass = case spec[:direction].to_sym
                 when :input then Input
                 when :output then Output
                 end
-        klass.new(spec, :actions => options[:actions], :log => options[:log])
+        klass.new(spec[:id], spec[:name], :log => options[:log])
       end
 
       # Convert between MIDI message objects and Patch::Message objects
@@ -109,14 +109,14 @@ module Patch
 
         attr_reader :device, :id, :listener
 
-        # @param [Hash] spec A hash describing the input
+        # @param [Fixnum] id
+        # @param [String, UniMIDI::Input] device
         # @param [Hash] options
         # @option options [Log] :log 
-        # @option options [Fixnum] :id An ID for this device
-        def initialize(spec, options = {})
+        def initialize(id, device, options = {})
           @log = options[:log]
-          @id = spec[:id]
-          @device = get_input(spec)
+          @id = id
+          @device = get_input(device)
           @listener = MIDIEye::Listener.new(@device) unless @device.nil?
         end
 
@@ -160,15 +160,22 @@ module Patch
           patch_messages
         end
 
-        # Initialize the input device specified in the spec.  If the name of the device is "choose" the user is prompted
-        # to select an available input.
-        # @param [Hash] spec
-        # @return [UniMIDI::Input]
-        def get_input(spec)
-          case spec[:name]
-          when "choose" then UniMIDI::Input.gets
-          when nil then nil
-          else UniMIDI::Input.find_by_name(spec[:name])
+        # Initialize the input device using the given string or input.  If the device is the string "choose", 
+        # the user is prompted to select an available MIDI input.
+        # @param [String, UniMIDI::Input, nil] device
+        # @return [UniMIDI::Input, nil]
+        def get_input(device)
+          if device.kind_of?(String)
+            if device == "choose"
+              UniMIDI::Input.gets
+            else
+              UniMIDI::Input.find_by_name(device)
+            end
+          elsif device.kind_of?(UniMIDI::Input)
+            device.open
+            device
+          elsif device.respond_to?(:gets)
+            device
           end
         end
 
@@ -179,14 +186,14 @@ module Patch
 
         attr_reader :id, :device
 
-        # @param [Hash] spec
+        # @param [Fixnum] id
+        # @param [String, UniMIDI::Output] device
         # @param [Hash] options
         # @option options [Debug] :log
-        # @option options [Fixnum] :id An ID for this device
-        def initialize(spec, options = {})
+        def initialize(id, device, options = {})
           @log = options[:log]
-          @id = spec[:id]
-          @device = get_output(spec)
+          @id = id
+          @device = get_output(device)
         end
 
         # Convert Patch::Message objects to MIDI and send
@@ -201,15 +208,22 @@ module Patch
 
         private
 
-        # Initialize the output device specified in the spec.  If the name of the device is "choose" the user is prompted
-        # to select an available output.
-        # @param [Hash] spec
+        # Initialize the output device given a name or device object.  If the name of the device is the string "choose",
+        # the user is prompted to select an availble MIDI output.
+        # @param [String, UniMIDI::Output, nil] device
         # @return [UniMIDI::Output]
-        def get_output(output_info)
-          case output_info[:name]
-          when "choose" then UniMIDI::Output.gets
-          when nil then nil
-          else UniMIDI::Output.find_by_name(output_info[:name])
+        def get_output(device)
+          if device.kind_of?(String)
+            if device == "choose"
+              UniMIDI::Output.gets
+            else
+              UniMIDI::Output.find_by_name(device)
+            end
+          elsif device.kind_of?(UniMIDI::Output)
+            device.open
+            device
+          elsif device.respond_to?(:puts)
+            device
           end
         end
 

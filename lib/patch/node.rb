@@ -36,7 +36,7 @@ module Patch
         node_array = spec[:nodes].map do |node|
           type = node[:type].to_sym
           mod = modules[type]
-          mod.new(node, :log => options[:log])
+          mod.new_from_spec(node, :log => options[:log])
         end
         Container.new(node_array)
       end

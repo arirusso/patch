@@ -139,7 +139,7 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
       setup do
         @patch = @patches.first
-        @output = ::Patch::IO::MIDI::Output.new(:id => 0)
+        @output = ::Patch::IO::MIDI::Output.new($>, :id => 0)
       end
 
       context "#initialize" do
