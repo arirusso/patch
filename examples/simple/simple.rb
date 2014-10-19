@@ -27,7 +27,7 @@ map = { nodes[1] => nodes[0] }
 
 patch = Patch::Patch.new(:simple, map, action)
 
-hub = Patch::Hub.new(:nodes => nodes, :patch => patch)
+hub = Patch::Hub.new(:patch => patch)
 Patch::Report.print(hub)
 hub.listen
 
