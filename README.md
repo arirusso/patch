@@ -7,9 +7,12 @@ These message protocols are supported
 * [MIDI](http://en.wikipedia.org/wiki/MIDI)
 * [OSC](http://en.wikipedia.org/wiki/Open_Sound_Control)
 * JSON over [Websocket](http://en.wikipedia.org/wiki/WebSocket)
-* [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp) (in progress)
-* HTTP (in progress)
-* [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC) (in progress)
+
+In progress:
+
+* [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp)
+* HTTP
+* [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC) 
 
 ## Usage
 
@@ -21,9 +24,50 @@ It can be installed by using `gem install patch` on the command line or by addin
 
 ### Configuration
 
-Patch can be configured in Ruby code or by using two YAML configuration files.  Since the configuration files reflect the overall structure of Patch in a straightforward way, that method is explained here.  
+Configuring Patch can be done two ways:
 
-A tutorial on programming Patch in Ruby can be found [here].
+* In Ruby code
+* Using configuration files
+
+### In Ruby
+
+```ruby
+require "patch"
+
+action = { 
+  :name => "Zoom",
+  :key => "zoom",
+  :default => {
+    :scale => 0.1..5.0
+  },
+  :midi => {
+    :channel => 0,
+    :index => 1
+  }, 
+  :osc => {
+    :address=>"/1/rotaryA", 
+    :scale => 0..1.0
+  }
+}
+
+websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
+midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
+osc = Patch::IO::OSC::Server.new(3, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
+
+map = { [midi, osc] => websocket }
+
+patch = Patch::Patch.new(:simple, map, action)
+
+hub = Patch::Hub.new(:patch => patch)
+hub.listen
+```
+
+### In Configuration Files
+
+It's also possible to configure patch using configuration files.  To do that, two files are necessary:
+
+* nodes.yml
+* patches.yml
 
 ##### nodes.yml
 
