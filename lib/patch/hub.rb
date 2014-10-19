@@ -25,7 +25,7 @@ module Patch
     # Start the hub
     # @param [Hash] options
     # @option options [Boolean] :background Run in a background thread (default: false)
-    # @return [Boolean]
+    # @return [Hub] self
     def listen(options = {})
       @patches.each { |patch| patch.enable }
       begin
@@ -34,6 +34,7 @@ module Patch
         else
           enable_nodes
         end
+        self
       rescue SystemExit, Interrupt => exception
         exit 0
       end
