@@ -33,20 +33,19 @@ Configuring Patch can be done two ways:
 
 ```ruby
 require "patch"
-
 ```
 
-A node is a single source/destination of control messages. Here, we define three nodes:
+A *node* is a single source/destination of control messages. Here, we define three nodes:
 
 ```ruby
 websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
 
 midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
 
-osc = Patch::IO::OSC::Server.new(3, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
+osc = Patch::IO::OSC::Server.new(3, 8000)
 ```
 
-A node map defines where messages should flow to and from.  
+A *node map* defines where messages should flow to and from.  
 
 In this case, when the MIDI and OSC nodes that we defined earlier receive messages, those messages will then be echoed to the Websocket node.
 
@@ -56,7 +55,7 @@ map = { [midi, osc] => websocket }
 
 All of the message protocols (MIDI, OSC, etc) used by Patch have no implicit way to translate between each other.  
 
-Therefore, we have to provide a list of actions to describe how to do that:
+Therefore, describe how to do that with *actions*:
 
 ```ruby
 
@@ -83,7 +82,7 @@ Given these actions,
 
 2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Scale the OSC value, which will be a float between 0 and 1 to a float between 10 and 200.
 
-Now that we've defined these things, we can start patch listening for messages:
+Now start Patch listening for messages:
 
 ```ruby
 patch = Patch::Patch.new(:simple, map, action)
@@ -100,6 +99,8 @@ It's also possible to configure Patch using configuration files.  To do that, tw
 
 * [nodes.yml](#nodesyml)
 * [patches.yml](#patchesyml)
+
+The configuration in these example files is similar to the one in Ruby above.
 
 ##### nodes.yml
 
