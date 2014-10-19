@@ -26,13 +26,39 @@ It can be installed by using `gem install patch` on the command line or by addin
 
 Configuring Patch can be done two ways:
 
-* In Ruby code
-* Using configuration files
+* [In Ruby code](#in-ruby)
+* [Using configuration files](#using-configuration-files)
 
 ### In Ruby
 
 ```ruby
 require "patch"
+
+```
+
+A node is a single source/destination of control messages. Here, we define three nodes:
+
+```ruby
+websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
+
+midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
+
+osc = Patch::IO::OSC::Server.new(3, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
+```
+
+A node map defines where messages should flow to and from.  
+
+In this case, when the MIDI and OSC nodes that we defined earlier receive messages, those messages will then be echoed to the Websocket node.
+
+```ruby
+map = { [midi, osc] => websocket }
+```
+
+All of the message protocols (MIDI, OSC, etc) used by Patch have no implicit way to translate between each other.  
+
+Therefore, we have to provide a list of actions to describe how to do that:
+
+```ruby
 
 action = { 
   :name => "Zoom",
@@ -49,29 +75,35 @@ action = {
     :scale => 0..1.0
   }
 }
+```
 
-websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
-midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
-osc = Patch::IO::OSC::Server.new(3, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
+Given these actions,
 
-map = { [midi, osc] => websocket }
+1. When a MIDI control change message is received on channel 0 with index 1, send a JSON over websocket message with the key "zoom".  The value of the MIDI message should be scaled to a float between 10 and 200.
 
+2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Scale the OSC value, which will be a float between 0 and 1 to a float between 10 and 200.
+
+Now that we've defined these things, we can start patch listening for messages:
+
+```ruby
 patch = Patch::Patch.new(:simple, map, action)
 
 hub = Patch::Hub.new(:patch => patch)
 hub.listen
 ```
 
-### In Configuration Files
+The full example can be found [here](https://github.com/arirusso/patch/blob/master/examples/simple/simple.rb).
 
-It's also possible to configure patch using configuration files.  To do that, two files are necessary:
+### Using Configuration Files
 
-* nodes.yml
-* patches.yml
+It's also possible to configure Patch using configuration files.  To do that, two files are necessary:
+
+* [nodes.yml](#nodesyml)
+* [patches.yml](#patchesyml)
 
 ##### nodes.yml
 
-A node is a single source/destination of control messages.  `nodes.yml` describes plainly what nodes to use and how to configure them.  
+`nodes.yml` describes what nodes to use and how to configure them.  
 
 In addition, each node is given an ID number for reference later.
 
@@ -96,7 +128,7 @@ In addition, each node is given an ID number for reference later.
 
 ##### patches.yml
 
-A patch describes how to use the nodes.  We specify this in a second configuration file `patches.yml`.
+Node maps and actions are specified in the second configuration file, `patches.yml`.
 
 ```yaml
 :patches:
@@ -117,27 +149,11 @@ A patch describes how to use the nodes.  We specify this in a second configurati
 
 ```
 
-A patch consists of two parts, node map and actions.
+The patches.yml file can contain any number of patches, they will all be run concurrently.
 
-###### Node Map
+### Command Line
 
-The node map defines where messages should flow to and from.  
-
-In this case, when the nodes with the IDs 2 (MIDI) and 3 (OSC) receive messages, those messages will then be echoed to the node with the ID 1 (JSON over Websocket).
-
-###### Actions
-
-The message protocols used by Patch (such as MIDI and OSC) have no implicit way to translate between each other.  Therefore, we have to provide a list of actions to describe how to do that.
-
-Given this particular example above, these are the actions in more plain terms:
-
-1. When a MIDI control change message is received on channel 0 with index 0, send a JSON over websocket message with the key "zoom".  The value of the MIDI message should be scaled from the standard, an int between 0 to 127, to a float between 10 and 200.
-
-2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Scale the OSC value, a float between 0 and 1 to a float between 10 and 200.
-
-### Run
-
-Once these configuration files are in place, you can run patch by executing `patch nodes.yml patches.yml` at the command line.  
+You can run Patch at the command line by executing `patch nodes.yml patches.yml`. 
 
 ## Author
 
