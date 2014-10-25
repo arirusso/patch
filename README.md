@@ -35,7 +35,7 @@ Configuring Patch can be done two ways:
 require "patch"
 ```
 
-A *node* is a single source/destination of control messages. Here, we define three nodes:
+A *node* is a single source and/or destination of control messages. Here, we define three nodes:
 
 ```ruby
 websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
@@ -53,7 +53,7 @@ In this case, when the MIDI and OSC nodes that we defined earlier receive messag
 map = { [midi, osc] => websocket }
 ```
 
-All of the message protocols (MIDI, OSC, etc) used by Patch have no implicit way to translate between each other.  
+The message protocols used by Patch have no implicit way to translate between each other.  
 
 Therefore, describe how to do that with *actions*:
 
@@ -63,7 +63,7 @@ action = {
   :name => "Zoom",
   :key => "zoom",
   :default => {
-    :scale => 0.1..5.0
+    :scale => 10..200.0
   },
   :midi => {
     :channel => 0,
