@@ -3,6 +3,12 @@ $:.unshift File.join( File.dirname( __FILE__ ), '../../lib')
 
 require "patch"
 
+websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
+midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
+osc = Patch::IO::OSC::Server.new(3, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
+
+map = { [midi, osc] => websocket }
+
 action = { 
   :name => "Zoom",
   :key => "zoom",
@@ -18,12 +24,6 @@ action = {
     :scale => 0..1.0
   }
 }
-
-websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
-midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
-osc = Patch::IO::OSC::Server.new(3, 8000, :echo => { :host => "192.168.1.118", :port => 9000})
-
-map = { [midi, osc] => websocket }
 
 patch = Patch::Patch.new(:simple, map, action)
 
