@@ -219,8 +219,7 @@ module Patch
         def puts(patch, messages)
           messages = [messages].flatten
           osc_messages = messages.map do |message|
-            message = ::Patch::IO::OSC::Message.to_osc_messages(patch, message) unless message.kind_of?(::OSC::Message)
-            message
+            ::Patch::IO::OSC::Message.to_osc_messages(patch, message) unless message.kind_of?(::OSC::Message)
           end
           osc_messages.each { |osc_message| @client.send(osc_message) }
           osc_messages
