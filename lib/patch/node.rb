@@ -3,14 +3,24 @@ module Patch
   # A network or hardware connection
   module Node
 
-    # Mapping of node modules and names
-    # @return [Hash]
-    def self.modules
-      @modules ||= {
-        :midi => IO::MIDI,
-        :osc => IO::OSC,
-        :websocket => IO::Websocket
-      }
+    module Module
+
+      extend self
+
+      def find_by_key(key)
+        all.find { |mod| mod.key == key }
+      end
+
+      # Mapping of node modules and names
+      # @return [Hash]
+      def all
+        @modules ||= [
+          IO::MIDI,
+          IO::OSC,
+          IO::Websocket
+        ]
+      end
+
     end
 
     # A container for Patch::Node
@@ -37,7 +47,7 @@ module Patch
       # @param [Symbol] :type The type of node (eg :midi)
       # @return [Array<IO::MIDI, IO::OSC, IO::Websocket>]
       def find_all_by_type(type)
-        klass = Node.modules[type]
+        klass = Node::Module.find_by_key(type)
         select { |node| node.class.name.match(/\A#{klass}.*/) }
       end
 

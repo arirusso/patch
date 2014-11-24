@@ -10,13 +10,11 @@ class Patch::NodeTest < Test::Unit::TestCase
 
     context ".modules" do
 
-      should "contain keys and modules" do
-        modules = Patch::Node.modules
+      should "contain modules" do
+        modules = Patch::Node::Module.all
         assert_not_nil modules
-        assert modules.kind_of?(Hash)
         assert_not_empty modules
-        assert modules.all? { |k, v| k.kind_of?(Symbol) }
-        assert modules.all? { |k, v| v.kind_of?(Module) }
+        assert modules.all? { |mod| mod.kind_of?(Module) }
       end
 
     end

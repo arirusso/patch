@@ -69,8 +69,8 @@ module Patch
     # @option options [Log] :log
     # @return [Patch::IO::MIDI, Patch::IO::OSC, Patch::IO::Websocket]
     def to_node(node_config, options = {})
-      type = node_config[:type].to_sym
-      mod = Node.modules[type]
+      module_key = node_config[:type].to_sym
+      mod = Node::Module.find_by_key(module_key)
       mod.new_from_config(node_config, :log => options[:log])
     end
 
