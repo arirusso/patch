@@ -28,6 +28,21 @@ module Patch
         end
       end
 
+      # Find and identify OSC Actions
+      module Action
+
+        extend self
+
+        # Find an action by its OSC address
+        # @param [Array<Hash>] actions
+        # @param [String] address
+        # @return [Hash]
+        def find_by_address(actions, address)
+          actions.find_all_by_type(:osc).find { |action| action[:osc][:address] == address }
+        end
+
+      end
+
       # Convert between OSC message and Patch::Message objects
       module Message
 
@@ -57,8 +72,7 @@ module Patch
         # @return [Array<::Patch::Message>]
         def to_patch_messages(patch, raw_osc)
           messages = []
-          action = patch.actions.find_all_by_type(:osc).find { |action| action[:osc][:address] == raw_osc.address }
-          unless action.nil?
+          unless (action = Action.find_by_address(patch.actions, raw_osc.address)).nil?
             index = patch.actions.index(action)
             from = action[:osc][:scale]
             to = action[:default][:scale] unless action[:default].nil?

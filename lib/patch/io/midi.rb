@@ -25,6 +25,31 @@ module Patch
         klass.new(config[:id], config[:name], :log => options[:log])
       end
 
+      # Find and identify MIDI Actions
+      module Action
+
+        extend self
+
+        # Is the given action MIDI?
+        # @param [Hash] action
+        # @return [Boolean]
+        def midi?(action)
+          !action[:midi].nil? && !action[:midi][:index].nil?
+        end
+
+        # Find an action in the given patch for the given index
+        # @param [Array<Hash>] actions
+        # @param [Fixnum] index
+        # @return [Hash]
+        def find_by_index(actions, index)
+          midi_actions = actions.select { |action| midi?(action) }
+          action = midi_actions.find { |action| action[:midi][:index] == index }
+          action ||= actions.at(index)
+          action
+        end
+
+      end
+
       # Convert between MIDI message objects and Patch::Message objects
       module Message
 
@@ -50,11 +75,7 @@ module Patch
         def to_patch_messages(patch, midi_messages)
           midi_messages = [midi_messages].flatten
           patch_messages = midi_messages.map do |midi_message|
-            action = patch.actions.find do |action|
-              !action[:midi].nil? && !action[:midi][:index].nil? && action[:midi][:index] == midi_message.index
-            end
-            action ||= patch.actions.at(midi_message.index)
-            unless action.nil?
+            unless (action = Action.find_by_index(patch.actions, midi_message.index)).nil?
               index = patch.actions.index(action)
               to_patch_message(action, index, patch.name, midi_message)
             end
