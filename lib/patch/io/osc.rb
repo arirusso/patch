@@ -79,11 +79,11 @@ module Patch
             from = action[:osc][:scale]
             to = action[:default][:scale] unless action[:default].nil?
             to ||= from
-            value = get_value(raw_osc.to_a[0].to_f, from, to)
+            values = raw_osc.to_a.map { |value| get_value(value.to_f, from, to) }
             properties = {
               :index => index,
               :patch_name => patch.name,
-              :value => value
+              :value => values[0]
             }
             messages << ::Patch::Message.new(properties)
           end
