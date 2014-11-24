@@ -1,4 +1,4 @@
-module Patch 
+module Patch
 
   # The main application object
   class Hub
@@ -75,12 +75,7 @@ module Patch
     # @param [Array<Patch>, Patch] patches
     # @return [Array<Patch>]
     def populate_patches(patches)
-      if patches.nil?
-        patches = []
-      else
-        patches = [patches] if patches.kind_of?(::Patch::Patch)
-      end
-      @patches = patches
+      @patches = [patches].flatten.compact
     end
 
   end
