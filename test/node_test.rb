@@ -8,17 +8,6 @@ class Patch::NodeTest < Test::Unit::TestCase
       @nodes_path = File.join(__dir__,"config/nodes.yml")
     end
 
-    context ".modules" do
-
-      should "contain modules" do
-        modules = Patch::Node::Module.all
-        assert_not_nil modules
-        assert_not_empty modules
-        assert modules.all? { |mod| mod.kind_of?(Module) }
-      end
-
-    end
-
     context "Container" do
 
       setup do

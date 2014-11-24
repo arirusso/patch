@@ -5,7 +5,10 @@ module Patch
     # MIDI IO
     module MIDI
 
+      ::Patch::IO::Module.add(self)
+
       class << self
+
         # Key that will be used by Patch to identify the module
         def key
           :midi

@@ -5,6 +5,8 @@ module Patch
     # Websocket IO
     class Websocket
 
+      ::Patch::IO::Module.add(self)
+
       class << self
         # Key that will be used by Patch to identify the module
         def key

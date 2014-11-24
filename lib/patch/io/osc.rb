@@ -5,6 +5,8 @@ module Patch
     # Receive OSC messages and do something with them
     module OSC
 
+      ::Patch::IO::Module.add(self)
+
       class << self
         # Key that will be used by Patch to identify the module
         def key
