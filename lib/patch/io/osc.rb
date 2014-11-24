@@ -142,13 +142,7 @@ module Patch
         def listen(patch, &callback)
           actions = patch.actions.find_all_by_type(:osc)
           addresses = actions.map { |action| action[:osc][:address].dup }.compact.uniq
-          result = addresses.map do |address|
-            @server.add_method(address) do |message|
-              handle_message_received(patch, message, &callback)
-            end
-            true
-          end
-          result.any?
+          addresses.select { |address| listen_for(address, patch, &callback) }.any?
         end
 
         protected
@@ -167,6 +161,17 @@ module Patch
         end
 
         private
+
+        # Listen for messages on the given address
+        # @param [::Patch::Patch] patch The patch to use for context
+        # @param [Proc] callback A callback to fire when messages are received
+        # @return [Boolean] Whether an action was configured
+        def listen_for(address, patch, &callback)
+          @server.add_method(address) do |message|
+            handle_message_received(patch, message, &callback)
+          end
+          true
+        end
 
         # Configure the underlying server
         # @param [Fixnum] port
@@ -235,7 +240,9 @@ module Patch
         def puts(patch, messages)
           messages = [messages].flatten
           osc_messages = messages.map do |message|
-            ::Patch::IO::OSC::Message.to_osc_messages(patch, message) unless message.kind_of?(::OSC::Message)
+            osc_message = ::Patch::IO::OSC::Message.to_osc_messages(patch, message) unless message.kind_of?(::OSC::Message)
+            osc_message ||= message
+            osc_message
           end
           osc_messages.each { |osc_message| @client.send(osc_message) }
           osc_messages
