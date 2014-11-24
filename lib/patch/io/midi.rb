@@ -1,9 +1,16 @@
-module Patch 
+module Patch
 
   module IO
 
     # MIDI IO
     module MIDI
+
+      class << self
+        # Key that will be used by Patch to identify the module
+        def key
+          :midi
+        end
+      end
 
       # Instantiate a MIDI device based on the given config
       # @param [Hash] config
@@ -43,7 +50,7 @@ module Patch
         def to_patch_messages(patch, midi_messages)
           midi_messages = [midi_messages].flatten
           patch_messages = midi_messages.map do |midi_message|
-            action = patch.actions.find do |action| 
+            action = patch.actions.find do |action|
               !action[:midi].nil? && !action[:midi][:index].nil? && action[:midi][:index] == midi_message.index
             end
             action ||= patch.actions.at(midi_message.index)
@@ -88,7 +95,7 @@ module Patch
             to ||= from
             value = get_value(midi_message.value, from, to)
             properties = {
-              :index => index, 
+              :index => index,
               :patch_name => patch_name,
               :value => value
             }
@@ -119,7 +126,7 @@ module Patch
         # @param [Fixnum] id
         # @param [String, UniMIDI::Input] device
         # @param [Hash] options
-        # @option options [Log] :log 
+        # @option options [Log] :log
         def initialize(id, device, options = {})
           @log = options[:log]
           @id = id
@@ -167,7 +174,7 @@ module Patch
           patch_messages
         end
 
-        # Initialize the input device using the given string or input.  If the device is the string "choose", 
+        # Initialize the input device using the given string or input.  If the device is the string "choose",
         # the user is prompted to select an available MIDI input.
         # @param [String, UniMIDI::Input, nil] device
         # @return [UniMIDI::Input, nil]

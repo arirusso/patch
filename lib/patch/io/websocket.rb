@@ -1,9 +1,16 @@
-module Patch 
+module Patch
 
   module IO
 
     # Websocket IO
     class Websocket
+
+      class << self
+        # Key that will be used by Patch to identify the module
+        def key
+          :websocket
+        end
+      end
 
       attr_reader :id
 
@@ -56,7 +63,7 @@ module Patch
       # @return [Boolean]
       def start
         Thread.abort_on_exception = true
-        EM::WebSocket.run(@config) do |websocket| 
+        EM::WebSocket.run(@config) do |websocket|
           begin
             enable(websocket)
           rescue Exception => exception
@@ -102,7 +109,7 @@ module Patch
           puts "Connection open"
         end
 
-        @socket.onclose do 
+        @socket.onclose do
           puts "Connection closed"
         end
 

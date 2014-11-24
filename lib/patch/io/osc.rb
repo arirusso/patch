@@ -5,6 +5,13 @@ module Patch
     # Receive OSC messages and do something with them
     module OSC
 
+      class << self
+        # Key that will be used by Patch to identify the module
+        def key
+          :osc
+        end
+      end
+
       extend self
 
       # Instantiate an OSC server and/or client using the given config
@@ -17,7 +24,7 @@ module Patch
         if config[:server].nil?
           Client.new(config[:client], :id => config[:id], :log => options[:log]) if !config[:client].nil?
         else
-          Server.new(config[:id], config[:server][:port], :echo => config[:client], :log => options[:log])   
+          Server.new(config[:id], config[:server][:port], :echo => config[:client], :log => options[:log])
         end
       end
 
@@ -59,7 +66,7 @@ module Patch
             value = get_value(raw_osc.to_a[0].to_f, from, to)
             properties = {
               :index => index,
-              :patch_name => patch.name, 
+              :patch_name => patch.name,
               :value => value
             }
             messages << ::Patch::Message.new(properties)
@@ -99,6 +106,7 @@ module Patch
           @server = nil
           @active = false
           @id = id
+          @is_failsafe = true
           configure_server(port)
           configure_echo(options[:echo][:host], options[:echo][:port]) if !options[:echo].nil?
         end
@@ -112,7 +120,7 @@ module Patch
         end
 
         # Listen for messages
-        # @param [::Patch::Patch] patch The patch to use for context 
+        # @param [::Patch::Patch] patch The patch to use for context
         # @param [Proc] callback A callback to fire when messages are received
         # @return [Boolean] Whether any actions were configured
         def listen(patch, &callback)
@@ -135,7 +143,7 @@ module Patch
         # @param [Proc] callback A callback to fire when a message or messages is received
         # @return [Array<Patch::Message>]
         def handle_message_received(patch, raw_osc, &callback)
-          messages = ::Patch::IO::OSC::Message.to_patch_messages(patch, raw_osc)        
+          messages = ::Patch::IO::OSC::Message.to_patch_messages(patch, raw_osc)
           echo(patch, raw_osc) if echo?
           # yield to custom behavior
           yield(messages) if block_given?
@@ -171,7 +179,7 @@ module Patch
             true
           rescue Exception => exception # failsafe
             @log.exception(exception) if @log
-            Thread.main.raise(exception)
+            Thread.main.raise(exception) unless @is_failsafe
             false
           end
         end
@@ -210,11 +218,11 @@ module Patch
         # @return [Array<::OSC::Message>]]
         def puts(patch, messages)
           messages = [messages].flatten
-          osc_messages = messages.map do |message| 
+          osc_messages = messages.map do |message|
             message = ::Patch::IO::OSC::Message.to_osc_messages(patch, message) unless message.kind_of?(::OSC::Message)
             message
           end
-          osc_messages.each { |osc_message| @client.send(osc_message) } 
+          osc_messages.each { |osc_message| @client.send(osc_message) }
           osc_messages
         end
 
