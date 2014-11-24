@@ -41,9 +41,10 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
     context "#handle_input" do
 
       setup do
-        hash = { 
-          :value => "blah", 
-          :timestamp => 1396406728702 
+        @timestamp = 1396406728702
+        hash = {
+          :value => "blah",
+          :timestamp => @timestamp
         }
         @message = hash.to_json
         @result = @server.send(:handle_input, @message)
@@ -58,12 +59,9 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
       should "convert timestamp from js time to ruby" do
         time = @result.time
         assert_not_nil time
-        assert_equal Time, time.class
-        assert_equal 2014, time.year
-        assert_equal 4, time.month
-        assert_equal 22, time.hour
+        assert_equal Time.at(@timestamp / 1000), time
       end
-      
+
     end
 
   end
