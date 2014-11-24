@@ -31,11 +31,6 @@ module Patch
         super
       end
 
-      # Union operator
-      #def |(container)
-      #  Node::Container.new(send(:|, container))
-      #end
-
       # Enable the nodes in this container
       # @return [Boolean]
       def enable
