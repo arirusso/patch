@@ -231,10 +231,8 @@ module Patch
             else
               UniMIDI::Output.find_by_name(device)
             end
-          elsif device.kind_of?(UniMIDI::Output)
-            device.open
-            device
           elsif device.respond_to?(:puts)
+            device.open if device.kind_of?(UniMIDI::Output)
             device
           end
         end
