@@ -40,7 +40,7 @@ module Patch
         def to_osc_messages(patch, patch_message)
           messages = []
           action = patch.actions.at(patch_message.index)
-          if !action.nil? && !action[:osc].nil?
+          unless action.nil? || action[:osc].nil?
             address = action[:osc][:address]
             to = action[:osc][:scale]
             from = action[:default][:scale] unless action[:default].nil?
@@ -58,7 +58,7 @@ module Patch
         def to_patch_messages(patch, raw_osc)
           messages = []
           action = patch.actions.find_all_by_type(:osc).find { |action| action[:osc][:address] == raw_osc.address }
-          if !action.nil?
+          unless action.nil?
             index = patch.actions.index(action)
             from = action[:osc][:scale]
             to = action[:default][:scale] unless action[:default].nil?
