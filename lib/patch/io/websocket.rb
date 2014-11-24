@@ -44,17 +44,18 @@ module Patch
       # @param [Array<::Patch::Message>] messages A message or messages to send
       # @return [String, nil] If a message was sent, its JSON string; otherwise nil
       def puts(messages)
-        messages = [messages].flatten.compact
-        if running? && !messages.empty?
-          json = messages.to_json
-          @log.puts("Sending messages: #{json}") if @log
-          begin
-            @socket.send(json)
-          rescue Exception => exception # failsafe
-            @log.exception(exception) if @log
-            Thread.main.raise(exception)
+        if running?
+          unless (messages = [messages].flatten.compact).empty?
+            json = messages.to_json
+            @log.puts("Sending messages: #{json}") if @log
+            begin
+              @socket.send(json)
+            rescue Exception => exception # failsafe
+              @log.exception(exception) if @log
+              Thread.main.raise(exception)
+            end
+            json
           end
-          json
         else
           @log.puts("Warning: No connection") if @log
           nil
