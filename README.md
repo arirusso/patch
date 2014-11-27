@@ -8,7 +8,7 @@ These message protocols are supported
 * [OSC](http://en.wikipedia.org/wiki/Open_Sound_Control)
 * JSON over [Websocket](http://en.wikipedia.org/wiki/WebSocket)
 
-In progress:
+Other possibilities:
 
 * [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp)
 * HTTP
@@ -78,9 +78,9 @@ action = {
 
 Given these actions,
 
-1. When a MIDI control change message is received on channel 0 with index 1, send a JSON over websocket message with the key "zoom".  The value of the MIDI message should be scaled to a float between 10 and 200.
+1. When a MIDI control change message is received on channel 0 with index 1, send a JSON over websocket message with the key `zoom`.  The value of the MIDI message should be scaled to a float between 10 and 200.
 
-2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key "zoom".  Scale the OSC value, which will be a float between 0 and 1 to a float between 10 and 200.
+2. When an OSC message is received for address `/1/rotaryA`, send a JSON over websocket message with the key `zoom`.  Scale the OSC value, which will be a float between 0 and 1 to a float between 10 and 200.
 
 Now start Patch listening for messages:
 
@@ -150,7 +150,7 @@ Node maps and actions are specified in the second configuration file, `patches.y
 
 ```
 
-The patches.yml file can contain any number of patches, they will all be run concurrently.
+The `patches.yml` file can contain any number of patches, they will all be run concurrently.
 
 ### Command Line
 
