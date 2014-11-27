@@ -42,6 +42,23 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
       end
 
+      context "#stop" do
+
+        setup do
+          ::MIDIEye::Listener.any_instance.unstub(:run)
+          refute @input.listener.running?
+          @input.start
+          assert @input.listener.running?
+        end
+
+        should "stop listener" do
+          assert @input.stop
+          sleep(0.5) # wait until listener thread is killed
+          refute @input.listener.running?
+        end
+
+      end
+
       context "#handle_event_received" do
 
         setup do
