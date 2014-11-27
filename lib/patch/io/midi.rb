@@ -169,6 +169,17 @@ module Patch
           end
         end
 
+        # Stop the MIDI listener
+        # @return [Boolean]
+        def stop
+          if !@listener.nil?
+            @listener.stop
+            true
+          else
+            false
+          end
+        end
+
         # Specify a patch context and handler callback to use when messages are received
         # @param [::Patch::Patch] patch
         # @param [Proc] callback
