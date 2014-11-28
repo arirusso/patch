@@ -47,7 +47,7 @@ osc = Patch::IO::OSC::Server.new(3, 8000)
 
 A *node map* defines where messages should flow to and from.  
 
-In this case, when the MIDI and OSC nodes that we defined earlier receive messages, those messages will then be echoed to the Websocket node.
+In this example, when our MIDI and OSC nodes receive messages, those messages will then be echoed to the Websocket node.
 
 ```ruby
 map = { [midi, osc] => websocket }
@@ -76,7 +76,7 @@ action = {
 }
 ```
 
-Given these actions,
+Given these example actions,
 
 1. When a MIDI control change message is received on channel 0 with index 1, send a JSON over websocket message with the key `zoom`.  The value of the MIDI message should be scaled to a float between 10 and 200.
 
