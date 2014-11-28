@@ -169,6 +169,12 @@ module Patch
           end
         end
 
+        # Is the input active?
+        # @return [Boolean]
+        def active?
+          @listener.running?
+        end
+
         # Stop the MIDI listener
         # @return [Boolean]
         def stop

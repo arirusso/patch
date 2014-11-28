@@ -127,11 +127,24 @@ module Patch
           configure_echo(options[:echo][:host], options[:echo][:port]) if !options[:echo].nil?
         end
 
+        # Is the server active?
+        # @return [Boolean]
+        def active?
+          @active
+        end
+
         # Start the server
         # @return [Boolean] Whether the server was started
         def start
           @active = true
-          @server.run
+          @connection = @server.run
+          true
+        end
+
+        # Stop the server
+        # @return [Boolean]
+        def stop
+          @active = false
           true
         end
 

@@ -78,9 +78,10 @@ module Patch
 
       # Is the server active?
       # @return [Boolean]
-      def running?
+      def active?
         !@socket.nil?
       end
+      alias_method :running?, :active?
 
       private
 
