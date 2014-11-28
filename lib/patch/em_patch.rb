@@ -11,6 +11,12 @@ module OSC
       EM::open_datagram_socket("0.0.0.0", @port, Connection)
     end
 
+    def remove_method(address_pattern)
+      matcher = AddressPattern.new( address_pattern )
+
+      @tuples.delete_if { |pattern, proc| pattern == matcher }
+    end
+
   end
 end
 
