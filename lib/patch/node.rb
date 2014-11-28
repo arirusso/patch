@@ -39,15 +39,17 @@ module Patch
       # @param [Patch::Node] node
       # @return [Boolean]
       def enable_node(node)
-        thread = Thread.new do
-          begin
-            node.start if node.respond_to?(:start)
-          rescue Exception => exception
-            Thread.main.raise(exception)
+        if node.respond_to?(:start) && !node.active?
+          thread = Thread.new do
+            begin
+              node.start
+            rescue Exception => exception
+              Thread.main.raise(exception)
+            end
           end
+          thread.abort_on_exception = true
+          @threads << thread
         end
-        thread.abort_on_exception = true
-        @threads << thread
         true
       end
 
