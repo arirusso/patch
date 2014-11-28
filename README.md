@@ -47,15 +47,13 @@ osc = Patch::IO::OSC::Server.new(3, 8000)
 
 A *node map* defines where messages should flow to and from.  
 
-In this example, when our MIDI and OSC nodes receive messages, those messages will then be echoed to the Websocket node.
+In this example, when our MIDI and OSC nodes receive messages, those messages are then echoed to the Websocket node.
 
 ```ruby
 map = { [midi, osc] => websocket }
 ```
 
-The message protocols used by Patch have no implicit way to translate between each other.  
-
-Therefore, describe how to do that with *actions*:
+The message protocols used by Patch have no implicit way to translate between each other.  Therefore *actions* are used to describe how to do that.
 
 ```ruby
 
