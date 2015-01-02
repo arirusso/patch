@@ -62,6 +62,24 @@ module Patch
         end
       end
 
+      # Disable the message listener
+      # @return [Boolean]
+      def disable(patch)
+        @socket.onmessage = nil
+        true
+      end
+
+      # Listen for messages with the given patch context
+      # @param [Patch] patch
+      # @param [Proc] callback callback to fire when events are received
+      # @return [Boolean]
+      def listen(patch, &callback)
+        @socket.onmessage do |data|
+          handle_input(patch, data, &callback)
+        end
+        true
+      end
+
       # Start the websocket
       # @return [Boolean]
       def start
@@ -89,7 +107,7 @@ module Patch
       # @param [String] json_message A raw inputted JSON message
       # @param [Proc] callback A callback to fire with the received message
       # @return [Message]
-      def handle_input(json_message, &callback)
+      def handle_input(patch, json_message, &callback)
         message_hash = JSON.parse(json_message, :symbolize_names => true)
         message = Message.new(message_hash)
         @log.puts("Recieved message: #{message_hash.to_json}") if @log
@@ -117,9 +135,6 @@ module Patch
           puts "Connection closed"
         end
 
-        @socket.onmessage do |data|
-          handle_input(data, &block)
-        end
         true
       end
 
