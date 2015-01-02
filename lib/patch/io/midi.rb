@@ -186,7 +186,14 @@ module Patch
           end
         end
 
-        # Specify a patch context and handler callback to use when messages are received
+        # Clear message handlers
+        # @return [Boolean]
+        def disable(patch)
+          @listener.event.clear
+          true
+        end
+
+        # Specify a mpatch context and handler callback to use when messages are received
         # @param [::Patch::Patch] patch
         # @param [Proc] callback
         # @return [Boolean] Whether adding the callback was successful
