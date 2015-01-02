@@ -47,7 +47,7 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
           :timestamp => @timestamp
         }
         @message = hash.to_json
-        @result = @server.send(:handle_input, @message)
+        @result = @server.send(:handle_input, nil, @message)
       end
 
       should "convert from String to Message" do
