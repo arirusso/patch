@@ -67,6 +67,19 @@ module Patch
         @to = to_node_container(to)
       end
 
+      # Disable the map for the given patch context
+      # @return [Boolean]
+      def disable(patch)
+        result = @to.map do |to_node|
+          disabled = @from.map do |from_node|
+            from_node.disable(patch)
+            true
+          end
+          disabled.any?
+        end
+        result.any?
+      end
+
       # Enable this map for the given nodes
       # @param [::Patch::Patch] patch The patch context to enable the map in
       # @return [Boolean] Whether nodes were enabled
