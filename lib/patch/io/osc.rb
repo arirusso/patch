@@ -148,6 +148,14 @@ module Patch
           true
         end
 
+        # Disable the message handlers
+        # @return [Boolean]
+        def disable(patch)
+          actions = patch.actions.find_all_by_type(:osc)
+          addresses = actions.map { |action| action[:osc][:address].dup }.compact.uniq
+          addresses.select { |address| @server.remove_method(address) }.any?
+        end
+
         # Listen for messages
         # @param [::Patch::Patch] patch The patch to use for context
         # @param [Proc] callback A callback to fire when messages are received
