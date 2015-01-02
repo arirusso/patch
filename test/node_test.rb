@@ -1,11 +1,11 @@
 require "helper"
 
-class Patch::NodeTest < Test::Unit::TestCase
+class Patch::NodeTest < Minitest::Test
 
   context "Node" do
 
     setup do
-      @nodes_path = File.join(__dir__,"config/nodes.yml")
+      load_test_data
     end
 
     context "Container" do
@@ -17,21 +17,27 @@ class Patch::NodeTest < Test::Unit::TestCase
       context "#find_all_by_type" do
 
         should "return osc nodes" do
-          assert_not_empty @nodes.find_all_by_type(:osc)
+          refute_empty @nodes.find_all_by_type(:osc)
         end
 
         should "return midi nodes" do
-          assert_not_empty @nodes.find_all_by_type(:midi)
+          refute_empty @nodes.find_all_by_type(:midi)
         end
 
       end
 
       context "#enable" do
 
+        setup do
+          @node_classes = [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket]
+          @node_classes.each { |c| c.any_instance.expects(:start).once }
+        end
+
+        teardown do
+          @node_classes.each { |c| c.any_instance.unstub(:start) }
+        end
+
         should "enable nodes" do
-          Patch::IO::MIDI::Input.any_instance.expects(:start).once
-          Patch::IO::OSC::Server.any_instance.expects(:start).once
-          Patch::IO::Websocket.any_instance.expects(:start).once
           assert @nodes.enable
         end
 
@@ -41,8 +47,8 @@ class Patch::NodeTest < Test::Unit::TestCase
 
         should "return node with id" do
           node = @nodes.find_by_id(2)
-          assert_not_nil node
-          assert_not_nil node.id
+          refute_nil node
+          refute_nil node.id
           assert_equal 2, node.id
         end
 
@@ -60,16 +66,18 @@ class Patch::NodeTest < Test::Unit::TestCase
       context "#enable" do
 
         setup do
-          @patches_path = File.join(__dir__, "config/patches.yml")
           @nodes = Patch::Config.to_nodes(@nodes_path)
           @patches = Patch::Config.to_patches(@nodes, @patches_path)
           @maps = @patches.first.maps
+          @node_classes = [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket]
+          @node_classes.each { |c| c.any_instance.expects(:listen).once }
+        end
+
+        teardown do
+          @node_classes.each { |c| c.any_instance.unstub(:listen) }
         end
 
         should "map nodes together" do
-          Patch::IO::MIDI::Input.any_instance.expects(:listen).once
-          Patch::IO::OSC::Server.any_instance.expects(:listen).once
-          Patch::IO::Websocket.any_instance.expects(:listen).once
           assert @maps.first.enable(@patches.first)
         end
 

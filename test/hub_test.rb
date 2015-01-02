@@ -1,20 +1,19 @@
 require "helper"
 
-class Patch::HubTest < Test::Unit::TestCase
+class Patch::HubTest < Minitest::Test
 
   context "Hub" do
 
     setup do
-      @patches_path = File.join(__dir__, "config/patches.yml")
-      @nodes_path = File.join(__dir__, "config/nodes.yml")
+      load_test_data
       @hub = Patch::Config.to_hub(@nodes_path, :patches => @patches_path)
     end
 
     context "#ips" do
 
       should "have ips array" do
-        assert_not_nil @hub.ips
-        assert_not_empty @hub.ips
+        refute_nil @hub.ips
+        refute_empty @hub.ips
       end
 
     end
@@ -32,11 +31,11 @@ class Patch::HubTest < Test::Unit::TestCase
     context "#nodes" do
 
       should "be populated" do
-        assert_not_nil @hub.nodes
+        refute_nil @hub.nodes
       end
 
       should "have nodes" do
-        assert_not_empty @hub.nodes
+        refute_empty @hub.nodes
       end
 
       should "be node container" do

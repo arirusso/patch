@@ -1,12 +1,11 @@
 require "helper"
 
-class Patch::PatchTest < Test::Unit::TestCase
+class Patch::PatchTest < Minitest::Test
 
   context "Patch" do
 
     setup do
-      @patches_path = File.join(__dir__, "config/patches.yml")
-      @nodes_path = File.join(__dir__,"config/nodes.yml")
+      load_test_data
     end
 
     context "#enable" do
@@ -28,4 +27,3 @@ class Patch::PatchTest < Test::Unit::TestCase
   end
 
 end
-

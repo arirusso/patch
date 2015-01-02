@@ -1,14 +1,11 @@
 require "helper"
 
-class Patch::SpecTest < Test::Unit::TestCase
+class Patch::SpecTest < Minitest::Test
 
   context "Spec" do
 
     setup do
-      @nodes_path = File.join(__dir__,"config/nodes.yml")
-      @nodes_file = File.new(@nodes_path)
-      @patches_path = File.join(__dir__, "config/patches.yml")
-      @patches_file = File.new(@patches_path)
+      load_test_data
     end
 
     context ".to_hub" do
@@ -18,11 +15,11 @@ class Patch::SpecTest < Test::Unit::TestCase
       end
 
       should "have nodes" do
-        assert_not_nil @hub.nodes
+        refute_nil @hub.nodes
       end
 
       should "have patches" do
-        assert_not_nil @hub.patches
+        refute_nil @hub.patches
       end
 
     end
@@ -36,9 +33,9 @@ class Patch::SpecTest < Test::Unit::TestCase
         end
 
         should "populate" do
-          assert_not_nil @nodes
+          refute_nil @nodes
           assert @nodes.kind_of?(Patch::Node::Container)
-          assert_not_empty @nodes
+          refute_empty @nodes
         end
 
       end
@@ -50,9 +47,9 @@ class Patch::SpecTest < Test::Unit::TestCase
         end
 
         should "populate" do
-          assert_not_nil @nodes
+          refute_nil @nodes
           assert @nodes.kind_of?(Patch::Node::Container)
-          assert_not_empty @nodes
+          refute_empty @nodes
         end
 
       end
@@ -64,7 +61,7 @@ class Patch::SpecTest < Test::Unit::TestCase
             :nodes => [{
               :type => "websocket",
               :id => 1,
-              :host => "localhost", 
+              :host => "localhost",
               :port =>9006
             }]
           }
@@ -72,9 +69,9 @@ class Patch::SpecTest < Test::Unit::TestCase
         end
 
         should "populate" do
-          assert_not_nil @nodes
+          refute_nil @nodes
           assert @nodes.kind_of?(Patch::Node::Container)
-          assert_not_empty @nodes
+          refute_empty @nodes
           assert_equal @nodes_hash[:nodes].count, @nodes.count
         end
 
@@ -83,7 +80,6 @@ class Patch::SpecTest < Test::Unit::TestCase
       context ".to_node_maps" do
 
         setup do
-          @patches_path = File.join(__dir__, "config/patches.yml")
           @hash = YAML.load(File.new(@patches_path))
           @nodes = Patch::Config.to_nodes(@nodes_file)
           @map_config = @hash[:patches][:test_patch][:node_map]
@@ -91,8 +87,8 @@ class Patch::SpecTest < Test::Unit::TestCase
 
         should "instantiate maps" do
           @maps = Patch::Config.to_node_maps(@nodes, @map_config)
-          assert_not_nil @maps
-          assert_not_empty @maps
+          refute_nil @maps
+          refute_empty @maps
           assert_equal @map_config.size, @maps.size
           assert @maps.first.kind_of?(Patch::Node::Map)
         end
@@ -107,8 +103,8 @@ class Patch::SpecTest < Test::Unit::TestCase
         end
 
         should "create patches" do
-          assert_not_nil @patches
-          assert_not_empty @patches
+          refute_nil @patches
+          refute_empty @patches
           assert @patches.first.kind_of?(Patch::Patch)
         end
 
@@ -126,10 +122,10 @@ class Patch::SpecTest < Test::Unit::TestCase
         end
 
         should "create patch" do
-          assert_not_nil @patch
+          refute_nil @patch
           assert @patch.kind_of?(Patch::Patch)
-          assert_not_nil @patch.maps
-          assert_not_nil @patch.actions
+          refute_nil @patch.maps
+          refute_nil @patch.actions
         end
 
       end
@@ -154,8 +150,8 @@ class Patch::SpecTest < Test::Unit::TestCase
           end
 
           should "populate" do
-            assert_not_nil @config
-            assert_not_empty @config
+            refute_nil @config
+            refute_empty @config
             assert_equal Hash, @config.class
             assert_equal 1, @config.keys.count
           end
@@ -169,8 +165,8 @@ class Patch::SpecTest < Test::Unit::TestCase
           end
 
           should "populate" do
-            assert_not_nil @config
-            assert_not_empty @config
+            refute_nil @config
+            refute_empty @config
             assert_equal Hash, @config.class
             assert_equal 1, @config.keys.count
           end
@@ -184,8 +180,8 @@ class Patch::SpecTest < Test::Unit::TestCase
           end
 
           should "populate" do
-            assert_not_nil @config
-            assert_not_empty @config
+            refute_nil @config
+            refute_empty @config
             assert_equal Hash, @config.class
             assert_equal 1, @config.keys.count
           end

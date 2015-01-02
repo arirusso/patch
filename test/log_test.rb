@@ -1,6 +1,6 @@
 require "helper"
 
-class Patch::LogTest < Test::Unit::TestCase
+class Patch::LogTest < Minitest::Test
 
   context "Log" do
 
@@ -88,7 +88,6 @@ class Patch::LogTest < Test::Unit::TestCase
           @log.exception(e)
         end
       end
-
 
     end
 

@@ -1,20 +1,27 @@
 require "helper"
 
-class Patch::IO::WebsocketTest < Test::Unit::TestCase
+class Patch::IO::WebsocketTest < Minitest::Test
 
   context "Websocket" do
 
     setup do
-      @nodes_path = File.join(__dir__,"../config/nodes.yml")
+      load_test_data
       @nodes = Patch::Config.to_nodes(@nodes_path)
       @server = @nodes.find_all_by_type(:websocket).first
     end
 
     context "#start" do
 
-      should "start server" do
-        Patch::IO::Websocket.any_instance.unstub(:start)
+      setup do
         EM::WebSocket.expects(:run).once
+      end
+
+      teardown do
+        EM::WebSocket.unstub(:run)
+        #Patch::IO::Websocket.any_instance.unstub(:start)
+      end
+
+      should "start server" do
         assert @server.start
       end
 
@@ -51,14 +58,14 @@ class Patch::IO::WebsocketTest < Test::Unit::TestCase
       end
 
       should "convert from String to Message" do
-        assert_not_nil @result
+        refute_nil @result
         assert_equal ::Patch::Message, @result.class
         assert_equal "blah", @result.value
       end
 
       should "convert timestamp from js time to ruby" do
         time = @result.time
-        assert_not_nil time
+        refute_nil time
         assert_equal Time.at(@timestamp / 1000), time
       end
 

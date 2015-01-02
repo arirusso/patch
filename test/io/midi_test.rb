@@ -1,13 +1,12 @@
 require "helper"
 
-class Patch::IO::MIDITest < Test::Unit::TestCase
+class Patch::IO::MIDITest < Minitest::Test
 
   context "MIDI" do
 
     setup do
-      @nodes_path = File.join(__dir__,"../config/nodes.yml")
+      load_test_data
       @nodes = Patch::Config.to_nodes(@nodes_path)
-      @patches_path = File.join(__dir__, "../config/patches.yml")
       @patches = Patch::Config.to_patches(@nodes, @patches_path)
     end
 
@@ -20,23 +19,30 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
       context "#initialize" do
 
         should "have id" do
-          assert_not_nil @input.id
+          refute_nil @input.id
         end
 
         should "have midi input" do
-          assert_not_nil @input
+          refute_nil @input
         end
 
         should "initialize midi listener" do
-          assert_not_nil @input.instance_variable_get("@listener")
+          refute_nil @input.instance_variable_get("@listener")
         end
 
       end
 
       context "#start" do
 
-        should "start listener" do
+        setup do
           ::MIDIEye::Listener.any_instance.expects(:run)
+        end
+
+        teardown do
+          ::MIDIEye::Listener.any_instance.unstub(:run)
+        end
+
+        should "start listener" do
           @input.start
         end
 
@@ -45,7 +51,6 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
       context "#stop" do
 
         setup do
-          ::MIDIEye::Listener.any_instance.unstub(:run)
           refute @input.listener.running?
           @input.start
           assert @input.listener.running?
@@ -64,28 +69,43 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
         setup do
           @message = MIDIMessage::ControlChange.new(0, 0x00, 0x30)
           @patch = @patches.first
+          @scale = Object.new
+          @scale.expects(:from).once.returns(@scale)
+          @scale.expects(:to).once
         end
 
-        should "perform scaling on value" do
-          scale = Object.new
-          Scale.expects(:transform).once.returns(scale)
-          scale.expects(:from).once.returns(scale)
-          scale.expects(:to).once
-          @result = @input.send(:handle_event_received, @patch, { :message => @message })
+        teardown do
+          @scale.unstub(:from)
+          @scale.unstub(:to)
+        end
+
+        context "test value" do
+
+          setup do
+            Scale.expects(:transform).once.returns(@scale)
+          end
+
+          teardown do
+            Scale.unstub(:transform)
+          end
+
+          should "perform scaling on value" do
+            @result = @input.send(:handle_event_received, @patch, { :message => @message })
+          end
+
         end
 
         should "return array of messages" do
-          Scale.unstub(:transform)
           @result = @input.send(:handle_event_received, @patch, { :message => @message })
-          assert_not_nil @result
+          refute_nil @result
           assert_equal Array, @result.class
-          assert_not_empty @result
+          refute_empty @result
 
           @result.each do |message|
             assert_equal ::Patch::Message, message.class
             assert_equal :test_patch, message.patch_name
-            assert_not_nil message.index
-            assert_not_nil message.value
+            refute_nil message.index
+            refute_nil message.value
           end
         end
 
@@ -93,15 +113,15 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
           Scale.unstub(:transform)
           @input.send(:handle_event_received, @patch, { :message => @message }) do |hash|
             @result = hash
-            assert_not_nil @result
+            refute_nil @result
             assert_equal Array, @result.class
-            assert_not_empty @result
+            refute_empty @result
 
             @result.each do |message|
               assert_equal ::Patch::Message, message.class
               assert_equal :test_patch, message.patch_name
-              assert_not_nil message.index
-              assert_not_nil message.value
+              refute_nil message.index
+              refute_nil message.value
             end
           end
         end
@@ -119,8 +139,8 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
         end
 
         should "have correct properties" do
-          assert_not_nil @result
-          assert_not_empty @result
+          refute_nil @result
+          refute_empty @result
           message = @result.first
 
           assert_equal ::MIDIMessage::ControlChange, message.class
@@ -138,8 +158,8 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
         end
 
         should "have correct values" do
-          assert_not_nil @result
-          assert_not_empty @result
+          refute_nil @result
+          refute_empty @result
           message = @result.first
 
           assert_equal ::Patch::Message, message.class
@@ -155,13 +175,13 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
 
       setup do
         @patch = @patches.first
-        @output = ::Patch::IO::MIDI::Output.new($>, :id => 0)
+        @output = ::Patch::IO::MIDI::Output.new(0, $>)
       end
 
       context "#initialize" do
 
         should "have id" do
-          assert_not_nil @output.id
+          refute_nil @output.id
         end
 
       end
@@ -173,11 +193,14 @@ class Patch::IO::MIDITest < Test::Unit::TestCase
           @message.index = 0
           @message.value = 100
           @message.patch_name = @patch.name
+          @output.device.expects(:puts).once
+        end
+
+        teardown do
+          @output.device.unstub(:puts)
         end
 
         should "send midi message" do
-          @output.instance_variable_set("@device", Object.new)
-          @output.device.expects(:puts).once
           @output.puts(@patch, @message)
         end
 

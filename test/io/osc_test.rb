@@ -1,12 +1,11 @@
 require "helper"
 
-class Patch::IO::OSCTest < Test::Unit::TestCase
+class Patch::IO::OSCTest < Minitest::Test
 
   context "OSC" do
 
     setup do
-      @nodes_path = File.join(__dir__,"../config/nodes.yml")
-      @patches_path = File.join(__dir__,"../config/patches.yml")
+      load_test_data
       @nodes = Patch::Config.to_nodes(@nodes_path)
       @patches = Patch::Config.to_patches(@nodes, @patches_path)
     end
@@ -21,8 +20,8 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
         end
 
         should "have correct properties" do
-          assert_not_nil @result
-          assert_not_empty @result
+          refute_nil @result
+          refute_empty @result
           message = @result.first
 
           assert_equal ::OSC::Message, message.class
@@ -40,8 +39,8 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
         end
 
         should "have correct values" do
-          assert_not_nil @result
-          assert_not_empty @result
+          refute_nil @result
+          refute_empty @result
           message = @result.first
 
           assert_equal ::Patch::Message, message.class
@@ -56,24 +55,27 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
     context "Server" do
 
       setup do
-        @nodes_path = File.join(__dir__,"../config/nodes.yml")
         @nodes = Patch::Config.to_nodes(@nodes_path)
         @server = @nodes.find_all_by_type(:osc).first
         @server.instance_variable_get("@server").stubs(:run).returns(:true)
       end
 
+      teardown do
+        @server.instance_variable_get("@server").unstub(:run)
+      end
+
       context "#initialize" do
 
         should "have id" do
-          assert_not_nil @server.id
+          refute_nil @server.id
         end
 
         should "initialize client" do
-          assert_not_nil @server.instance_variable_get("@client")
+          refute_nil @server.instance_variable_get("@client")
         end
 
         should "initialize server" do
-          assert_not_nil @server.instance_variable_get("@server")
+          refute_nil @server.instance_variable_get("@server")
         end
 
       end
@@ -84,47 +86,50 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
           @client = @server.instance_variable_get("@client").instance_variable_get("@client")
           @message = ::OSC::Message.new( "/1/rotaryA" , 0.5)
           @patch = @patches.first
+          @client.expects(:send).once.with(@message)
+          @scale = Object.new
+          @scale.expects(:from).once.returns(@scale)
+          @scale.expects(:to).once
+        end
+
+        teardown do
+          @client.unstub(:send)
+          @scale.unstub(:from)
+          @scale.unstub(:to)
         end
 
         should "return array of messages" do
-          @client.expects(:send).once.with(@message)
           @results = @server.send(:handle_message_received, @patch, @message)
-          assert_not_nil @results
+          refute_nil @results
           assert_equal Array, @results.class
-          assert_not_empty @results
+          refute_empty @results
 
           @results.each do |message|
             assert_equal Patch::Message, message.class
             assert_equal :test_patch, message.patch_name
-            assert_not_nil message.index
-            assert_not_nil message.value
+            refute_nil message.index
+            refute_nil message.value
           end
         end
 
         should "yield array of messages" do
-          @client.expects(:send).once.with(@message)
           @server.send(:handle_message_received, @patch, @message) do |messages|
             @results = messages
-            assert_not_nil @results
+            refute_nil @results
             assert_equal Array, @results.class
-            assert_not_empty @results
+            refute_empty @results
 
             @results.each do |message|
               assert_equal Patch::Message, message.class
               assert_equal :test_patch, message.patch_name
-              assert_not_nil message.index
-              assert_not_nil message.value
+              refute_nil message.index
+              refute_nil message.value
             end
           end
         end
 
         should "scale value" do
-          @client.expects(:send).once.with(@message)
-          scale = Object.new
-          scale.expects(:from).once.returns(scale)
-          scale.expects(:to).once
           @results = @server.send(:handle_message_received, @patch, @message)
-          Scale.unstub(:transform)
         end
       end
 
@@ -191,7 +196,7 @@ class Patch::IO::OSCTest < Test::Unit::TestCase
           end
 
         end
-        
+
       end
 
     end

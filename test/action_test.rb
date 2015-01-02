@@ -1,14 +1,13 @@
 require "helper"
 
-class Patch::ActionTest < Test::Unit::TestCase
+class Patch::ActionTest < Minitest::Test
 
   context "Action" do
 
     context "Container" do
 
       setup do
-        @nodes_path = File.join(__dir__,"/config/nodes.yml")
-        @patches_path = File.join(__dir__,"config/patches.yml")
+        load_test_data
         @nodes = Patch::Config.to_nodes(@nodes_path)
       end
 
@@ -22,13 +21,13 @@ class Patch::ActionTest < Test::Unit::TestCase
           end
 
           should "populate" do
-            assert_not_nil @patches
-            assert_not_empty @patches
+            refute_nil @patches
+            refute_empty @patches
           end
 
           should "store the actions" do
-            assert_not_nil @patches.first.actions
-            assert_not_empty @patches.first.actions
+            refute_nil @patches.first.actions
+            refute_empty @patches.first.actions
             assert_equal Hash, @patches.first.actions.first.class
           end
 
@@ -45,14 +44,14 @@ class Patch::ActionTest < Test::Unit::TestCase
           end
 
           should "populate" do
-            assert_not_nil @patches
-            assert_not_empty @patches
-            assert_not_nil @patches.first.actions
+            refute_nil @patches
+            refute_empty @patches
+            refute_nil @patches.first.actions
           end
 
           should "store the actions" do
-            assert_not_nil @patches.first.actions
-            assert_not_empty @patches.first.actions
+            refute_nil @patches.first.actions
+            refute_empty @patches.first.actions
             assert_equal Hash, @patches.first.actions.first.class
           end
 
@@ -72,7 +71,7 @@ class Patch::ActionTest < Test::Unit::TestCase
                     { [1,2] => 3 }
                   ],
                   :action => [
-                    { 
+                    {
                       :name => "Zoom",
                       :key => "zoom",
                       :default => {
@@ -80,9 +79,9 @@ class Patch::ActionTest < Test::Unit::TestCase
                       },
                       :midi=> {
                         :channel=>0
-                      }, 
+                      },
                       :osc => {
-                        :address=>"/1/rotaryA", 
+                        :address=>"/1/rotaryA",
                         :scale=> 0..1.0
                       }
                     }
@@ -94,14 +93,14 @@ class Patch::ActionTest < Test::Unit::TestCase
           end
 
           should "populate" do
-            assert_not_nil @patches
-            assert_not_empty @patches
-            assert_not_nil @patches.first.actions
+            refute_nil @patches
+            refute_empty @patches
+            refute_nil @patches.first.actions
           end
 
           should "store the actions" do
-            assert_not_nil @patches.first.actions
-            assert_not_empty @patches.first.actions
+            refute_nil @patches.first.actions
+            refute_empty @patches.first.actions
             assert_equal Hash, @patches.first.actions.first.class
           end
 
@@ -121,9 +120,9 @@ class Patch::ActionTest < Test::Unit::TestCase
         end
 
         should "populate" do
-          assert_not_nil @patches
-          assert_not_empty @patches
-          assert_not_nil @patches.first.actions
+          refute_nil @patches
+          refute_empty @patches
+          refute_nil @patches.first.actions
         end
 
         should "not be empty" do
@@ -132,11 +131,11 @@ class Patch::ActionTest < Test::Unit::TestCase
 
         should "return an index" do
           action = @patches.first.actions.sample
-          assert_not_nil action
+          refute_nil action
 
           index = @patches.first.actions.index(action)
 
-          assert_not_nil index
+          refute_nil index
           assert index.kind_of?(Fixnum)
           assert_equal @patches.first.actions.index(action), index
         end
@@ -154,20 +153,20 @@ class Patch::ActionTest < Test::Unit::TestCase
         context "midi" do
 
           should "be populated" do
-            assert_not_nil @actions.find_all_by_type(:midi)
-            assert_not_empty @actions.find_all_by_type(:midi)
-            assert_not_nil @actions.find_all_by_type(:midi)
-            assert_not_nil @actions.find_all_by_type(:midi).first[:midi][:channel]
+            refute_nil @actions.find_all_by_type(:midi)
+            refute_empty @actions.find_all_by_type(:midi)
+            refute_nil @actions.find_all_by_type(:midi)
+            refute_nil @actions.find_all_by_type(:midi).first[:midi][:channel]
           end
         end
 
         context "osc" do
 
           should "be populated" do
-            assert_not_nil @actions.find_all_by_type(:osc)
-            assert_not_empty @actions.find_all_by_type(:osc)
-            assert_not_nil @actions.find_all_by_type(:osc)
-            assert_not_nil @actions.find_all_by_type(:osc).first[:osc][:address]
+            refute_nil @actions.find_all_by_type(:osc)
+            refute_empty @actions.find_all_by_type(:osc)
+            refute_nil @actions.find_all_by_type(:osc)
+            refute_nil @actions.find_all_by_type(:osc).first[:osc][:address]
           end
 
         end
