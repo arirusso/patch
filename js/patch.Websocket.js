@@ -14,7 +14,7 @@ Patch.Websocket = function(network, options) {
 Patch.Websocket.eventToControllerMessages = function(event) {
   var messages = []
   var rawMessages = JSON.parse(event.data);
-  for (var i in rawMessages) {
+  for (var i = 0; i < rawMessages.length; i++) {
     var rawMessage = rawMessages[i];
     var message = Patch.Websocket.processMessage(rawMessage);
     messages.push(message);
@@ -38,11 +38,11 @@ Patch.Websocket.prototype.initialize = function() {
   {
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
-      console.log("patch ready")  
+      console.log("patch ready")
     };
     var controller = this;
-    this.webSocket.onclose = function() {  
-      console.log("patch closed"); 
+    this.webSocket.onclose = function() {
+      console.log("patch closed");
       if (controller.onClose !== undefined && controller.onClose !== null) {
         controller.onClose();
       }
@@ -72,8 +72,8 @@ Patch.Websocket.prototype.handleEvent = function(event, callback) {
 // Initialize controller events
 Patch.Websocket.prototype.setInputCallback = function(callback) {
   var controller = this;
-  this.webSocket.onmessage = function(event) { 
-    controller.handleEvent(event, callback); 
+  this.webSocket.onmessage = function(event) {
+    controller.handleEvent(event, callback);
   };
   return true;
 }
