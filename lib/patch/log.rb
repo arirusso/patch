@@ -12,6 +12,10 @@ module Patch
       populate_level(options)
     end
 
+    def path
+      @out.path
+    end
+
     # The current time since startup
     # @return [Time]
     def time
@@ -84,11 +88,10 @@ module Patch
     def parse_caller(at)
       if /^(.+?):(\d+)(?::in `(.*)')?/ =~ at
         file   = Regexp.last_match[1]
-        file.scan(/.+\/(\w+)\.rb/)[0][0]  
+        file.scan(/.+\/(\w+)\.rb/)[0][0]
       end
     end
 
   end
 
 end
-

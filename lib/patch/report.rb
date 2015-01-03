@@ -64,7 +64,7 @@ module Patch
       report[:ips] = @hub.ips
       report[:nodes] = @hub.nodes.sort_by(&:id).map { |node| node_report(node) }
       report[:patches] = @hub.patches.map { |patch| patch_report(patch) }
-      report[:log] = @hub.log.inspect
+      report[:log] = @hub.log.path unless @hub.log.nil?
       report
     end
 
