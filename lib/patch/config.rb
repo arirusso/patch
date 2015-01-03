@@ -10,7 +10,7 @@ module Patch
     # @option options [IO] :log
     # @return [Hub]
     def to_hub(nodes_config, options = {})
-      log = Log.new(options.fetch(:log, $>))
+      log = Log.new(options.fetch(:log, $>)) unless options[:log].nil?
       nodes = to_nodes(nodes_config, :log => log)
       patches = to_patches(nodes, options[:patches]) unless options[:patches].nil?
       Hub.new(:log => log, :patches => patches)
