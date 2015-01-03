@@ -52,8 +52,10 @@ module Patch
       else
         puts
       end
-      puts "Logging to #{report[:log]}" unless report[:log].nil?
-      puts
+      unless report[:log].nil?
+        puts "Logging to #{report[:log]}"
+        puts
+      end
       self
     end
 
