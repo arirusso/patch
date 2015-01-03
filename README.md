@@ -12,7 +12,7 @@ Other possibilities:
 
 * [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp)
 * HTTP
-* [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC) 
+* [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC)
 
 ## Usage
 
@@ -57,7 +57,7 @@ The message protocols used by Patch have no implicit way to translate between ea
 
 ```ruby
 
-action = { 
+action = {
   :name => "Zoom",
   :key => "zoom",
   :default => {
@@ -66,9 +66,9 @@ action = {
   :midi => {
     :channel => 0,
     :index => 1
-  }, 
+  },
   :osc => {
-    :address=>"/1/rotaryA", 
+    :address=>"/1/rotaryA",
     :scale => 0..1.0
   }
 }
@@ -152,7 +152,7 @@ The `patches.yml` file can contain any number of patches, they will all be run c
 
 ### Command Line
 
-You can run Patch at the command line by executing `patch nodes.yml patches.yml`. 
+You can run Patch at the command line by executing `patch nodes.yml patches.yml`.
 
 ## Author
 
@@ -161,4 +161,4 @@ You can run Patch at the command line by executing `patch nodes.yml patches.yml`
 ## License
 
 This version under Apache 2.0, See the file LICENSE
-Copyright (c) 2014 [Ari Russo](http://arirusso.com) 
+Copyright (c) 2014-2015 [Ari Russo](http://arirusso.com) 
