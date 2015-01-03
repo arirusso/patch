@@ -11,8 +11,8 @@ options = {}
 args = OptionParser.new do |opts|
   opts.banner = "Usage: patch [nodes config file] [patches config file] [options]"
 
-  opts.on("-l", "--log [FILE]", "Specify log file") do |file|
-    options[:log] = file
+  opts.on("-l", "--log [FILE]", "Enable logging with optional file name") do |file|
+    options[:log] = file || true
   end
 end
 
@@ -26,8 +26,10 @@ else
   patches_config_file = File.new(patches_config_path)
 end
 
-log_filename = options[:log] || "patch_#{Time.now.to_i}.log"
-log_file = File.open(log_filename, "w")
+if !!options[:log]
+  log_filename = options[:log] === true ? "patch_#{Time.now.to_i}.log" : options[:log]
+  log_file = File.open(log_filename, "w")
+end
 
 hub = Patch::Config.to_hub(nodes_config_file, :log => log_file, :patches => patches_config_file)
 Patch::Report.print(hub)
