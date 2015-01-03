@@ -14,6 +14,9 @@ args = OptionParser.new do |opts|
   opts.on("-l", "--log [FILE]", "Enable logging with optional file name") do |file|
     options[:log] = file || true
   end
+  opts.on("-q", "--quiet", "Quiet mode for no console output") do
+    options[:quiet] = true
+  end
 end
 
 args.parse!
@@ -32,5 +35,5 @@ if !!options[:log]
 end
 
 hub = Patch::Config.to_hub(nodes_config_file, :log => log_file, :patches => patches_config_file)
-Patch::Report.print(hub)
+Patch::Report.print(hub) unless options[:quiet]
 hub.listen
