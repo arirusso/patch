@@ -1,8 +1,8 @@
 # Patch
 
-Patch is a universal hub for controlling [things](http://en.wikipedia.org/wiki/Internet_of_Things).  
+Patch is a universal hub for controller messages
 
-These message protocols are supported
+These message protocols are currently supported
 
 * [MIDI](http://en.wikipedia.org/wiki/MIDI)
 * [OSC](http://en.wikipedia.org/wiki/Open_Sound_Control)
