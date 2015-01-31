@@ -31,7 +31,7 @@ Patch.Websocket.processMessage = function(message) {
   return message;
 }
 
-// initialize the socket
+// Initialize the socket
 Patch.Websocket.prototype.initialize = function() {
   var address = "ws://" + this.network.host + ":" + this.network.port + "/echo";
   if ("WebSocket" in window)
