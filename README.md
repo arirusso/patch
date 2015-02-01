@@ -22,7 +22,7 @@ For example:
 
 Patch can receive messages from a MIDI drum machine and relay them to a web API.  The web API can then respond with JSON which Patch converts to MIDI and sends back to the drum machine.
 
-While this particular example can probably be accomplished using other utilities or scripts, Patch makes it possible to receive and send different types of messages freely in one session. By doing so, Patch creates an interface that functions as though these devices with different control messaging protocols had been designed to work together.
+While this particular example can probably be accomplished using other utilities or scripts, Patch makes it possible to receive and send different types of messages like this freely in one session. By doing so, Patch creates an interface that functions as though devices like that with different control messaging protocols had been designed to control each other.
 
 ## Usage
 
