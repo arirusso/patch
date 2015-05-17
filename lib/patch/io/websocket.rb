@@ -1,4 +1,5 @@
 require "patch/io/websocket/node"
+require "patch/io/websocket/socket"
 
 module Patch
 

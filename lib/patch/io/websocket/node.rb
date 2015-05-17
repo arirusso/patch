@@ -32,7 +32,7 @@ module Patch
               json = messages.to_json
               @log.puts("Sending messages: #{json}") if @log
               begin
-                @socket.send(json)
+                @socket.puts(json)
               rescue Exception => exception # failsafe
                 @log.exception(exception) if @log
                 ::Thread.main.raise(exception)
@@ -48,8 +48,7 @@ module Patch
         # Disable the message listener
         # @return [Boolean]
         def disable(patch)
-          @socket.onmessage = nil
-          true
+          @socket.disable
         end
 
         # Listen for messages with the given patch context
@@ -57,7 +56,7 @@ module Patch
         # @param [Proc] callback callback to fire when events are received
         # @return [Boolean]
         def listen(patch, &callback)
-          @socket.onmessage do |data|
+          @socket.on_message do |data|
             handle_input(patch, data, &callback)
           end
           true
@@ -66,21 +65,13 @@ module Patch
         # Start the websocket
         # @return [Boolean]
         def start
-          EM::WebSocket.run(@config) do |websocket|
-            ::Thread.current.abort_on_exception = true
-            begin
-              enable(websocket)
-            rescue Exception => exception
-              ::Thread.main.raise(exception)
-            end
-          end
-          true
+          @socket = ::Patch::IO::Websocket::Socket.start(@config)
         end
 
         # Is the server active?
         # @return [Boolean]
         def active?
-          !@socket.nil?
+          !@socket.nil? && @socket.active?
         end
         alias_method :running?, :active?
 
@@ -96,29 +87,6 @@ module Patch
           @log.puts("Recieved message: #{message_hash.to_json}") if @log
           yield(message) if block_given?
           message
-        end
-
-        # Enable this server after initializing an EM::Websocket
-        # @param [EM::Websocket] websocket
-        # @return [Boolean]
-        def enable(websocket)
-          @socket = websocket
-          configure
-          true
-        end
-
-        # Configure the server actions
-        # @return [Boolean]
-        def configure
-          @socket.onopen do |handshake|
-            puts "Connection open"
-          end
-
-          @socket.onclose do
-            puts "Connection closed"
-          end
-
-          true
         end
 
       end

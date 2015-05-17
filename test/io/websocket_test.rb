@@ -39,7 +39,7 @@ class Patch::IO::WebsocketTest < Minitest::Test
       should "convert message to json" do
         @server.stubs(:running?).returns(true)
         @server.instance_variable_set("@socket", Object.new)
-        @server.instance_variable_get("@socket").expects(:send).once
+        @server.instance_variable_get("@socket").expects(:puts).once
         assert @server.puts(@message)
       end
 
