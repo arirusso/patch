@@ -15,10 +15,13 @@ class Patch::PatchTest < Minitest::Test
         @patches = Patch::Config.to_patches(@nodes, @patches_path)
       end
 
+      teardown do
+        Patch::IO::MIDI::Input.any_instance.unstub(:listen)
+        Patch::IO::OSC::Server.any_instance.unstub(:listen)
+        Patch::IO::Websocket.any_instance.unstub(:listen)
+      end
+
       should "map nodes together" do
-        Patch::IO::MIDI::Input.any_instance.expects(:listen).once
-        Patch::IO::OSC::Server.any_instance.expects(:listen).once
-        Patch::IO::Websocket.any_instance.expects(:listen).once
         assert @patches.first.enable
       end
 
