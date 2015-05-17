@@ -26,18 +26,12 @@ Patch.Websocket.prototype.setInputCallback = function(callback) {
   return true;
 }
 
-// Private methods
-
-// Handle a single event
-Patch.Websocket.prototype._handleEvent = function(event, callback) {
-  var messages = Patch.Websocket._eventToControllerMessages(event);
-  if (this.debug) {
-    this.logger.log("Patch: Messages received");
-    this.logger.log(messages);
-  }
-  callback(messages);
-  return messages;
+// Is the client able to use websockets?
+Patch.Websocket.prototype.isCompatible = function() {
+  return ("WebSocket" in window);
 }
+
+// Private methods
 
 // Convert the raw websocket event to an array of message objects
 Patch.Websocket._eventToControllerMessages = function(event) {
@@ -60,11 +54,27 @@ Patch.Websocket._processMessage = function(message) {
   return message;
 }
 
+// Handle a single event
+Patch.Websocket.prototype._handleEvent = function(event, callback) {
+  var messages = Patch.Websocket._eventToControllerMessages(event);
+  if (this.debug) {
+    this.logger.log("Patch: Messages received");
+    this.logger.log(messages);
+  }
+  callback(messages);
+  return messages;
+}
+
+// The websocket address
+Patch.Websocket.prototype._getAddress = function() {
+  return "ws://" + this.network.host + ":" + this.network.port + "/echo";
+}
+
 // Initialize the socket
 Patch.Websocket.prototype._initialize = function() {
   this.logger.log("Patch: Initializing")
-  var address = "ws://" + this.network.host + ":" + this.network.port + "/echo";
-  if ("WebSocket" in window)
+  var address = this._getAddress();
+  if (this.isCompatible())
   {
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
