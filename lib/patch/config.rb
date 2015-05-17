@@ -52,16 +52,22 @@ module Patch
     # @param [Hash] config
     # @return [Array<Node::Map>]
     def to_node_maps(nodes, config)
-      config.map do |from, to|
-        from_ids = [from].flatten
-        to_ids = [to].flatten
-        from_nodes = from_ids.map { |id| nodes.find_by_id(id) }
-        to_nodes = to_ids.map { |id| nodes.find_by_id(id) }
-        Node::Map.new(from_nodes, to_nodes)
-      end
+      config.map { |from, to| get_node_map(nodes, from, to) }
     end
 
     private
+
+    # @param [NodeContainer] nodes
+    # @param [Object] from (id)
+    # @param [Object] to (id)
+    # @return [Patch::IO::MIDI, Patch::IO::OSC, Patch::IO::Websocket]
+    def get_node_map(nodes, from, to)
+      from_ids = [from].flatten
+      to_ids = [to].flatten
+      from_nodes = from_ids.map { |id| nodes.find_by_id(id) }
+      to_nodes = to_ids.map { |id| nodes.find_by_id(id) }
+      Node::Map.new(from_nodes, to_nodes)
+    end
 
     # Instantiate a node from the given node config
     # @param [Hash] config
