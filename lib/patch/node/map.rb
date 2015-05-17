@@ -46,7 +46,7 @@ module Patch
       # The nodes for this map, collected
       # @return [NodeContainer]
       def nodes
-        (@from | @to)
+        @from | @to
       end
 
       private
