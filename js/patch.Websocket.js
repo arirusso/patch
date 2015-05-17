@@ -72,23 +72,25 @@ Patch.Websocket.prototype._getAddress = function() {
 
 // Initialize the socket
 Patch.Websocket.prototype._initialize = function() {
-  this.logger.log("Patch: Initializing")
+  var logger = this.logger;
+
+  logger.log("Patch: Initializing")
   var address = this._getAddress();
   if (this.isCompatible())
   {
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
-      this.logger.log("Patch: Ready")
+      logger.log("Patch: Ready")
     };
     var controller = this;
     this.webSocket.onclose = function() {
-      this.logger.log("Patch: Closed");
+      logger.log("Patch: Closed");
       if (controller.onClose !== undefined && controller.onClose !== null) {
         controller.onClose();
       }
     };
   } else {
-    this.logger.log("Websocket not supoorted");
+    logger.log("Websocket not supoorted");
     return false;
   }
   return true;
