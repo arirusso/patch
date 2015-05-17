@@ -20,6 +20,7 @@ module Patch
           @active = false
           @id = id
           @is_failsafe = true
+          
           configure_server(port)
           configure_echo(options[:echo][:host], options[:echo][:port]) if !options[:echo].nil?
         end
