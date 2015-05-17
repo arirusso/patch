@@ -4,6 +4,7 @@ Patch = function() {}
 Patch.Websocket = function(network, options) {
   options = options || {};
   this.debug = options.debug || false;
+  this.logger = options.logger || console;
   this.webSocket;
   this.network = network;
   this.onClose = options.onClose;
@@ -33,23 +34,23 @@ Patch.Websocket.processMessage = function(message) {
 
 // Initialize the socket
 Patch.Websocket.prototype.initialize = function() {
-  console.log("Patch: Initializing")
+  this.logger.log("Patch: Initializing")
   var address = "ws://" + this.network.host + ":" + this.network.port + "/echo";
   if ("WebSocket" in window)
   {
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
-      console.log("Patch: Ready")
+      this.logger.log("Patch: Ready")
     };
     var controller = this;
     this.webSocket.onclose = function() {
-      console.log("Patch: Closed");
+      this.logger.log("Patch: Closed");
       if (controller.onClose !== undefined && controller.onClose !== null) {
         controller.onClose();
       }
     };
   } else {
-    console.log("Websocket not supoorted");
+    this.logger.log("Websocket not supoorted");
   }
 }
 
@@ -63,8 +64,8 @@ Patch.Websocket.prototype.disable = function() {
 Patch.Websocket.prototype.handleEvent = function(event, callback) {
   var messages = Patch.Websocket.eventToControllerMessages(event);
   if (this.debug) {
-    console.log("Patch: Messages received");
-    console.log(messages);
+    this.logger.log("Patch: Messages received");
+    this.logger.log(messages);
   }
   callback(messages);
   return messages;
