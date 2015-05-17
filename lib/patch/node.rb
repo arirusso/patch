@@ -40,15 +40,7 @@ module Patch
       # @return [Boolean]
       def enable_node(node)
         if node.respond_to?(:start) && !node.active?
-          thread = Thread.new do
-            begin
-              node.start
-            rescue Exception => exception
-              Thread.main.raise(exception)
-            end
-          end
-          thread.abort_on_exception = true
-          @threads << thread
+          @threads << ::Patch::Thread.new { node.start }
         end
         true
       end

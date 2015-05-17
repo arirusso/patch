@@ -6,7 +6,7 @@
 # Licensed under Apache 2.0
 #
 
-# libs
+# Libs
 require "forwardable"
 require "json"
 require "socket"
@@ -19,12 +19,13 @@ require "osc-ruby/em_server"
 require "rainbow"
 require "scale"
 
-# modules
+# Modules
 require "patch/config"
 require "patch/io"
 require "patch/node"
+require "patch/thread"
 
-# classes
+# Classes
 require "patch/action"
 require "patch/hub"
 require "patch/log"
@@ -32,7 +33,7 @@ require "patch/message"
 require "patch/patch"
 require "patch/report"
 
-# patches
+# Patches
 require "patch/em_patch"
 
 module Patch

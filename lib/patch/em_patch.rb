@@ -35,6 +35,7 @@ module EventMachine
     def self.run(options)
       host, port = options.values_at(:host, :port)
       EM.start_server(host, port, Connection, options) do |c|
+        Thread.current.abort_on_exception = true
         begin
           yield c
         rescue Exception => exception

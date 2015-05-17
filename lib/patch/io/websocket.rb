@@ -78,8 +78,8 @@ module Patch
       # Start the websocket
       # @return [Boolean]
       def start
-        Thread.abort_on_exception = true
         EM::WebSocket.run(@config) do |websocket|
+          Thread.current.abort_on_exception = true
           begin
             enable(websocket)
           rescue Exception => exception

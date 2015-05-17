@@ -29,7 +29,7 @@ module Patch
     def listen(options = {})
       @patches.each(&:enable)
       begin
-        enable_nodes_in_background
+        enable_nodes
         @thread.join unless !!options[:background]
         self
       rescue SystemExit, Interrupt => exception
@@ -46,26 +46,14 @@ module Patch
 
     private
 
-    # Enable the nodes in a background thread
-    # @return [Thread]
-    def enable_nodes_in_background
-      @thread = Thread.new do
-        begin
-          enable_nodes
-        rescue Exception => exception
-          Thread.main.raise(exception)
-        end
-      end
-      @thread.abort_on_exception = true
-      @thread
-    end
-
     # Enable the nodes
-    # @return [Boolean] Whether nodes were enabled
+    # @return [Thread]
     def enable_nodes
-      EM.epoll
-      EM.run { nodes.enable }
-      !nodes.empty?
+      @thread = ::Patch::Thread.new do
+        EM.epoll
+        EM.run { nodes.enable }
+        !nodes.empty?
+      end
     end
 
     # Populate the patches given various arg formats
