@@ -135,12 +135,6 @@ class Patch::SpecTest < Minitest::Test
         setup do
           @path = File.join(__dir__, "config/patches.yml")
           @file = File.new(@path)
-          @hash = {
-            :test => {
-              :node_map => [{ [1,2] => 3 }],
-              :action => []
-            }
-          }
         end
 
         context "path" do
@@ -156,8 +150,11 @@ class Patch::SpecTest < Minitest::Test
             assert_equal 1, @config.keys.count
           end
 
-          should "freeze" do
+          should "deep freeze" do
             assert @config.frozen?
+            assert @config[:patches].frozen?
+            assert @config[:patches][:test_patch].frozen?
+            assert @config[:patches][:test_patch][:node_map].frozen?
           end
 
         end
@@ -175,8 +172,11 @@ class Patch::SpecTest < Minitest::Test
             assert_equal 1, @config.keys.count
           end
 
-          should "freeze" do
+          should "deep freeze" do
             assert @config.frozen?
+            assert @config[:patches].frozen?
+            assert @config[:patches][:test_patch].frozen?
+            assert @config[:patches][:test_patch][:node_map].frozen?
           end
 
         end
@@ -184,6 +184,12 @@ class Patch::SpecTest < Minitest::Test
         context "hash" do
 
           setup do
+            @hash = {
+              :test => {
+                :node_map => [{ [1,2] => 3 }],
+                :action => []
+              }
+            }
             @config = Patch::Config.send(:ensure_hash, @hash)
           end
 
@@ -194,8 +200,11 @@ class Patch::SpecTest < Minitest::Test
             assert_equal 1, @config.keys.count
           end
 
-          should "freeze" do
+          should "deep freeze" do
             assert @config.frozen?
+            assert @config[:test].frozen?
+            assert @config[:test][:node_map].frozen?
+            assert @config[:test][:action].frozen?
           end
 
         end

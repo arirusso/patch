@@ -103,7 +103,17 @@ module Patch
       else
         YAML.load_file(config_file)
       end
-      hash.freeze unless hash.nil?
+      deep_freeze_config(hash) unless hash.nil?
+    end
+
+    # @param [Enumerable] container
+    # @return [Enumerable]
+    def deep_freeze_config(container)
+      container.freeze
+      values = container.respond_to?(:values) ? container.values : container
+      enums = values.select { |item| item.kind_of?(Array) || item.kind_of?(Hash) }
+      enums.each { |item| deep_freeze_config(item) }
+      container
     end
 
   end
