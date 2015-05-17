@@ -5,14 +5,9 @@ module Patch
     # Websocket IO
     class Websocket
 
+      # Key that will be used by Patch to identify the module
+      KEY = :websocket
       ::Patch::IO::Module.add(self)
-
-      class << self
-        # Key that will be used by Patch to identify the module
-        def key
-          :websocket
-        end
-      end
 
       attr_reader :id
 

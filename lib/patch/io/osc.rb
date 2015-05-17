@@ -5,16 +5,10 @@ module Patch
     # Receive OSC messages and do something with them
     module OSC
 
-      ::Patch::IO::Module.add(self)
-
-      class << self
-        # Key that will be used by Patch to identify the module
-        def key
-          :osc
-        end
-      end
-
+      # Key that will be used by Patch to identify the module
+      KEY = :osc
       extend self
+      ::Patch::IO::Module.add(self)
 
       # Instantiate an OSC server and/or client using the given config
       # @param [Hash] config

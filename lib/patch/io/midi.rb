@@ -5,22 +5,17 @@ module Patch
     # MIDI IO
     module MIDI
 
+      # Key that will be used by Patch to identify the module
+      KEY = :midi
+      extend self
       ::Patch::IO::Module.add(self)
-
-      class << self
-
-        # Key that will be used by Patch to identify the module
-        def key
-          :midi
-        end
-      end
 
       # Instantiate a MIDI device based on the given config
       # @param [Hash] config
       # @param [Hash] options
       # @option options [Log] :log
       # @return [MIDI::Input, MIDI::Output]
-      def self.new_from_config(config, options = {})
+      def new_from_config(config, options = {})
         klass = case config[:direction].to_sym
                 when :input then Input
                 when :output then Output

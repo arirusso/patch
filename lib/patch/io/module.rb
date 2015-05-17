@@ -11,7 +11,7 @@ module Patch
       # @param [Symbol] key
       # @return [Module]
       def find_by_key(key)
-        all.find { |mod| mod.key == key }
+        all.find { |mod| mod::KEY === key }
       end
 
       # Add an IO module to the list of modules available to Patch
