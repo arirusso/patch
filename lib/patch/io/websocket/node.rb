@@ -65,7 +65,7 @@ module Patch
         # Start the websocket
         # @return [Boolean]
         def start
-          @socket = ::Patch::IO::Websocket::Socket.start(@config)
+          @socket ||= ::Patch::IO::Websocket::Socket.start(@config)
         end
 
         # Is the server active?
