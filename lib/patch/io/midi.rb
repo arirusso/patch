@@ -23,11 +23,20 @@ module Patch
       # @option options [Log] :log
       # @return [MIDI::Input, MIDI::Output]
       def new_from_config(config, options = {})
-        klass = case config[:direction].to_sym
-                when :input then Input
-                when :output then Output
-                end
+        klass = get_direction_class(config[:direction])
         klass.new(config[:id], config[:name], :log => options[:log])
+      end
+
+      private
+
+      # Get the direction class for the given key
+      # @param [Symbol] key
+      # @return [Class]
+      def get_direction_class(key)
+        case key.to_sym
+        when :input then Input
+        when :output then Output
+        end
       end
 
     end
