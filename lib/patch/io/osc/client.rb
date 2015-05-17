@@ -25,13 +25,20 @@ module Patch
         # @param [Array<Patch::Message, ::OSC::Message>, ::OSC::Message, Patch::Message] messages Message(s) to send
         # @return [Array<::OSC::Message>]]
         def puts(patch, messages)
-          messages = [messages].flatten
-          osc_messages = messages.map { |message| ensure_osc_message(patch, message) }
+          osc_messages = get_osc_messages(patch, messages)
           osc_messages.each { |osc_message| @client.send(osc_message) }
           osc_messages
         end
 
         private
+
+        # @param [::Patch::Patch] patch
+        # @param [Array<Patch::Message, ::OSC::Message>, ::OSC::Message, Patch::Message] messages Message(s) to send
+        # @return [Array<::OSC::Message>]]
+        def get_osc_messages(patch, messages)
+          messages = [messages].flatten
+          messages.map { |message| ensure_osc_message(patch, message) }
+        end
 
         # @param [::Patch::Patch] patch
         # @param [::OSC::Message, Patch::Message] message
