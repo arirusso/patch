@@ -28,7 +28,7 @@ module Patch
     # @param [File, Hash, String] config
     # @return [Array<Patch>]
     def to_patches(nodes, config)
-      config = to_h(config)
+      config = ensure_hash(config)
       patches = []
       config[:patches].each do |name, patch|
         patches << to_patch(nodes, name, patch)
@@ -42,7 +42,7 @@ module Patch
     # @option options [Log] :log
     # @return [Node::Container]
     def to_nodes(config, options = {})
-      config = to_h(config)
+      config = ensure_hash(config)
       node_array = config[:nodes].map { |node_config| to_node(node_config, options) }
       Node::Container.new(node_array)
     end
@@ -86,17 +86,24 @@ module Patch
       Patch.new(name, maps, actions)
     end
 
-    # Given a file name, file or hash, populate a config hash
+    # @param [File, Hash, String] object
+    # @return [File, String]
+    def get_config_file(object)
+      case object
+      when File, String then object
+      end
+    end
+
+    # Given a file name, file or hash, populate a config hash and freeze it
     # @param [File, Hash, String] object
     # @return [Hash]
-    def to_h(object)
-      config_file = case object
-                  when File, String then object
-                  end
-      case config_file
-      when nil then object
-      else YAML.load_file(config_file)
+    def ensure_hash(object)
+      hash = if (config_file = get_config_file(object)).nil?
+        object
+      else
+        YAML.load_file(config_file)
       end
+      hash.freeze unless hash.nil?
     end
 
   end

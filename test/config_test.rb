@@ -130,7 +130,7 @@ class Patch::SpecTest < Minitest::Test
 
       end
 
-      context ".to_h" do
+      context ".ensure_hash" do
 
         setup do
           @path = File.join(__dir__, "config/patches.yml")
@@ -146,7 +146,7 @@ class Patch::SpecTest < Minitest::Test
         context "path" do
 
           setup do
-            @config = Patch::Config.send(:to_h, @path)
+            @config = Patch::Config.send(:ensure_hash, @path)
           end
 
           should "populate" do
@@ -154,6 +154,10 @@ class Patch::SpecTest < Minitest::Test
             refute_empty @config
             assert_equal Hash, @config.class
             assert_equal 1, @config.keys.count
+          end
+
+          should "freeze" do
+            assert @config.frozen?
           end
 
         end
@@ -161,7 +165,7 @@ class Patch::SpecTest < Minitest::Test
         context "file" do
 
           setup do
-            @config = Patch::Config.send(:to_h, @file)
+            @config = Patch::Config.send(:ensure_hash, @file)
           end
 
           should "populate" do
@@ -169,6 +173,10 @@ class Patch::SpecTest < Minitest::Test
             refute_empty @config
             assert_equal Hash, @config.class
             assert_equal 1, @config.keys.count
+          end
+
+          should "freeze" do
+            assert @config.frozen?
           end
 
         end
@@ -176,7 +184,7 @@ class Patch::SpecTest < Minitest::Test
         context "hash" do
 
           setup do
-            @config = Patch::Config.send(:to_h, @hash)
+            @config = Patch::Config.send(:ensure_hash, @hash)
           end
 
           should "populate" do
@@ -184,6 +192,10 @@ class Patch::SpecTest < Minitest::Test
             refute_empty @config
             assert_equal Hash, @config.class
             assert_equal 1, @config.keys.count
+          end
+
+          should "freeze" do
+            assert @config.frozen?
           end
 
         end
