@@ -20,7 +20,7 @@ module Patch
           @active = false
           @id = id
           @is_failsafe = true
-          
+
           configure_server(port)
           configure_echo(options[:echo][:host], options[:echo][:port]) if !options[:echo].nil?
         end
@@ -49,8 +49,7 @@ module Patch
         # Disable the message handlers
         # @return [Boolean]
         def disable(patch)
-          actions = patch.actions.find_all_by_type(:osc)
-          addresses = actions.map { |action| action[:osc][:address].dup }.compact.uniq
+          addresses = get_addresses(patch)
           addresses.select { |address| @server.remove_method(address) }.any?
         end
 
@@ -59,12 +58,18 @@ module Patch
         # @param [Proc] callback A callback to fire when messages are received
         # @return [Boolean] Whether any actions were configured
         def listen(patch, &callback)
-          actions = patch.actions.find_all_by_type(:osc)
-          addresses = actions.map { |action| action[:osc][:address].dup }.compact.uniq
+          addresses = get_addresses(patch)
           addresses.select { |address| listen_for(address, patch, &callback) }.any?
         end
 
         protected
+
+        # @param [::Patch::Patch] patch The patch to use for context
+        # @return [Array<String, Regexp>]
+        def get_addresses(patch)
+          actions = patch.actions.find_all_by_type(:osc)
+          actions.map { |action| action[:osc][:address].dup }.compact.uniq
+        end
 
         # Handle a new message
         # @param [::Patch::Patch] patch A patch for context
