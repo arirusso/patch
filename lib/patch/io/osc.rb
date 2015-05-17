@@ -24,10 +24,17 @@ module Patch
       # @option options [Log] :log
       # @return [::Patch::IO::OSC::Server]
       def new_from_config(config, options = {})
+        instance_options = {
+          :log => options[:log]
+        }
         if config[:server].nil?
-          Client.new(config[:client], :id => config[:id], :log => options[:log]) if !config[:client].nil?
+          unless config[:client].nil?
+            instance_options[:id] = config[:id]
+            Client.new(config[:client], instance_options)
+          end
         else
-          Server.new(config[:id], config[:server][:port], :echo => config[:client], :log => options[:log])
+          instance_options[:echo] = config[:client]
+          Server.new(config[:id], config[:server][:port], instance_options)
         end
       end
 
