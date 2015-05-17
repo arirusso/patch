@@ -39,6 +39,26 @@ module Patch
 
         private
 
+        # @param [Hash] action An action to contextualize the conversion
+        # @param [::Patch::Message] patch_message
+        def get_midi_value_from_action(action, patch_message)
+          to = action[:midi][:scale]
+          to ||= 0..127
+          from = action[:default][:scale] unless action[:default].nil?
+          from ||= to
+          get_value(patch_message.value, from, to)
+        end
+
+        # @param [Hash] action An action to contextualize the conversion
+        # @param [MIDIMessage] midi_message
+        def get_patch_values_from_action(action, midi_message)
+          from = action[:midi][:scale]
+          from ||= 0..127
+          to = action[:default][:scale] unless action[:default].nil?
+          to ||= from
+          get_value(midi_message.value, from, to)
+        end
+
         # Convert a patch message to a MIDI message
         # @param [Hash] action An action to contextualize the conversion
         # @param [::Patch::Message] patch_message
@@ -47,11 +67,7 @@ module Patch
           if !action[:midi].nil?
             index = action[:midi][:index] || patch_message.index
             channel = action[:midi][:channel] || 0
-            to = action[:midi][:scale]
-            to ||= 0..127
-            from = action[:default][:scale] unless action[:default].nil?
-            from ||= to
-            value = get_value(patch_message.value, from, to)
+            value = get_midi_value_from_action(action, patch_message)
             MIDIMessage::ControlChange.new(channel, index, value)
           end
         end
@@ -64,11 +80,7 @@ module Patch
         # @return [::Patch::Message, nil]
         def to_patch_message(action, index, patch_name, midi_message)
           if action[:midi][:channel].nil? || action[:midi][:channel] == midi_message.channel
-            from = action[:midi][:scale]
-            from ||= 0..127
-            to = action[:default][:scale] unless action[:default].nil?
-            to ||= from
-            value = get_value(midi_message.value, from, to)
+            value = get_patch_values_from_action(action, midi_message)
             properties = {
               :index => index,
               :patch_name => patch_name,
