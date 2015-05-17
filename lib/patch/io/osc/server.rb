@@ -21,10 +21,7 @@ module Patch
           @id = id
           @is_failsafe = true
 
-          configure_server(port)
-          unless options[:echo].nil?
-            configure_echo(options[:echo][:host], options[:echo][:port])
-          end
+          configure(port, options)
         end
 
         # Is the server active?
@@ -87,6 +84,18 @@ module Patch
         end
 
         private
+
+        # @param [Fixnum] port
+        # @param [Hash] options
+        # @option options [Hash] :echo
+        # @return [Boolean]
+        def configure(port, options = {})
+          configure_server(port)
+          unless options[:echo].nil?
+            configure_echo(options[:echo][:host], options[:echo][:port])
+          end
+          true
+        end
 
         # Listen for messages on the given address
         # @param [::Patch::Patch] patch The patch to use for context
