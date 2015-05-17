@@ -18,11 +18,11 @@ Patch receives messages in these formats and converts them to a generic `Patch::
 
 At that point, these generic objects can be converted to another one of these formats and sent accordingly.
 
-For example: 
+For example:
 
 Patch can receive messages from a MIDI drum machine and relay them to a web API.  The web API can then respond with JSON which Patch converts to MIDI and sends back to the drum machine.
 
-While this particular example can probably be accomplished using other utilities or scripts, Patch makes it possible to receive, merge, split and send different types of messages like this freely in one session. 
+While this particular example can probably be accomplished using other utilities or scripts, Patch makes it possible to receive, merge, split and send different types of messages like this freely in one session.
 
 By doing so, Patch creates an interface that functions as though devices like that with different control messaging protocols had been designed to control each other.
 
@@ -164,7 +164,7 @@ The `patches.yml` file can contain any number of patches, they will all be run c
 
 ### Command Line
 
-You can run Patch at the command line by executing `patch nodes.yml patches.yml`.
+You can run Patch at the command line by executing `patchrb nodes.yml patches.yml`.
 
 ## Author
 
@@ -173,4 +173,4 @@ You can run Patch at the command line by executing `patch nodes.yml patches.yml`
 ## License
 
 This version under Apache 2.0, See the file LICENSE
-Copyright (c) 2014-2015 [Ari Russo](http://arirusso.com) 
+Copyright (c) 2014-2015 [Ari Russo](http://arirusso.com)

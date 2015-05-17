@@ -1,2 +1,2 @@
 #!/bin/sh
-../../bin/patch nodes.yml patches.yml "$@"
+./patchrb nodes.yml patches.yml "$@"
