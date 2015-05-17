@@ -14,7 +14,8 @@ module Patch
         # @param [String] address
         # @return [Hash]
         def find_by_address(actions, address)
-          actions.find_all_by_type(:osc).find { |action| action[:osc][:address] == address }
+          osc_actions = actions.find_all_by_type(:osc)
+          osc_actions.find { |action| action[:osc][:address] == address }
         end
 
       end
