@@ -79,5 +79,7 @@ Patch.Websocket.prototype._initialize = function() {
     };
   } else {
     this.logger.log("Websocket not supoorted");
+    return false;
   }
+  return true;
 }
