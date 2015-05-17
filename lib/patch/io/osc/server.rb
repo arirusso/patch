@@ -22,7 +22,9 @@ module Patch
           @is_failsafe = true
 
           configure_server(port)
-          configure_echo(options[:echo][:host], options[:echo][:port]) if !options[:echo].nil?
+          unless options[:echo].nil?
+            configure_echo(options[:echo][:host], options[:echo][:port])
+          end
         end
 
         # Is the server active?
@@ -68,7 +70,7 @@ module Patch
         # @return [Array<String, Regexp>]
         def get_addresses(patch)
           actions = patch.actions.find_all_by_type(:osc)
-          actions.map { |action| action[:osc][:address].dup }.compact.uniq
+          actions.map { |action| action[:osc][:address] }.compact.uniq
         end
 
         # Handle a new message
