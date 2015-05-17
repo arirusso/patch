@@ -27,13 +27,10 @@ module Patch
     # @option options [Boolean] :background Run in a background thread (default: false)
     # @return [Hub] self
     def listen(options = {})
-      @patches.each { |patch| patch.enable }
+      @patches.each(&:enable)
       begin
-        if !!options[:background]
-          enable_nodes_in_background
-        else
-          enable_nodes
-        end
+        enable_nodes_in_background
+        @thread.join unless !!options[:background]
         self
       rescue SystemExit, Interrupt => exception
         exit 0
