@@ -5,9 +5,9 @@ Patch.Websocket = function(network, options) {
   options = options || {};
   this.debug = options.debug || false;
   this.logger = options.logger || console;
-  this.webSocket;
   this.network = network;
   this.onClose = options.onClose;
+  this.webSocket;
   this._initialize();
 }
 
