@@ -29,7 +29,7 @@ class Patch::NodeTest < Minitest::Test
       context "#enable" do
 
         setup do
-          @node_classes = [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket]
+          @node_classes = [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket::Node]
           @node_classes.each { |c| c.any_instance.expects(:start).once }
         end
 
@@ -69,7 +69,7 @@ class Patch::NodeTest < Minitest::Test
           @nodes = Patch::Config.to_nodes(@nodes_path)
           @patches = Patch::Config.to_patches(@nodes, @patches_path)
           @maps = @patches.first.maps
-          @node_classes = [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket]
+          @node_classes = [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket::Node]
           @node_classes.each { |c| c.any_instance.expects(:listen).once }
         end
 
