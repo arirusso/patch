@@ -11,7 +11,6 @@ module Patch
     def initialize(options = {})
       @log = Log.new(options[:log]) unless options[:log].nil?
       populate_patches(options[:patches] || options[:patch])
-      @threads = []
     end
 
     # Collected IP addresses for the nodes
