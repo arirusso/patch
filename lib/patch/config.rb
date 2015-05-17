@@ -58,15 +58,21 @@ module Patch
     private
 
     # @param [NodeContainer] nodes
-    # @param [Object] from (id)
-    # @param [Object] to (id)
-    # @return [Patch::IO::MIDI, Patch::IO::OSC, Patch::IO::Websocket]
+    # @param [Array<Object>, Object] from (id)
+    # @param [Array<Object>, Object] to (id)
+    # @return [Node::Map]
     def get_node_map(nodes, from, to)
-      from_ids = [from].flatten
-      to_ids = [to].flatten
-      from_nodes = from_ids.map { |id| nodes.find_by_id(id) }
-      to_nodes = to_ids.map { |id| nodes.find_by_id(id) }
+      from_nodes = get_nodes(nodes, from)
+      to_nodes = get_nodes(nodes, to)
       Node::Map.new(from_nodes, to_nodes)
+    end
+
+    # @param [NodeContainer] nodes
+    # @param [Array<Object>, Object] from (id)
+    # @return [Array<Patch::IO::MIDI, Patch::IO::OSC, Patch::IO::Websocket>]
+    def get_nodes(nodes, ids)
+      ids = [ids].flatten
+      ids.map { |id| nodes.find_by_id(id) }
     end
 
     # Instantiate a node from the given node config
