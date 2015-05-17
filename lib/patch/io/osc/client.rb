@@ -15,9 +15,9 @@ module Patch
         # @option options [Fixnum] :id
         # @option options [Log] :log
         def initialize(host, port, options = {})
+          @id = options[:id]
           @log = options[:log]
           @client = ::OSC::Client.new(host, port)
-          @id = options[:id]
         end
 
         # Convert message objects to OSC and send
