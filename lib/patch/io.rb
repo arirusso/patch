@@ -1,4 +1,4 @@
-# Module helper
+# Classes
 require "patch/io/module"
 
 # Implementations
