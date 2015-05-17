@@ -47,7 +47,7 @@ module Patch
               @socket.send(json)
             rescue Exception => exception # failsafe
               @log.exception(exception) if @log
-              Thread.main.raise(exception)
+              ::Thread.main.raise(exception)
             end
             json
           end
@@ -79,11 +79,11 @@ module Patch
       # @return [Boolean]
       def start
         EM::WebSocket.run(@config) do |websocket|
-          Thread.current.abort_on_exception = true
+          ::Thread.current.abort_on_exception = true
           begin
             enable(websocket)
           rescue Exception => exception
-            Thread.main.raise(exception)
+            ::Thread.main.raise(exception)
           end
         end
         true

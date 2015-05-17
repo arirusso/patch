@@ -215,7 +215,7 @@ module Patch
             true
           rescue Exception => exception # failsafe
             @log.exception(exception) if @log
-            Thread.main.raise(exception) unless @is_failsafe
+            ::Thread.main.raise(exception) unless @is_failsafe
             false
           end
         end
