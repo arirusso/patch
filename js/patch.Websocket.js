@@ -8,23 +8,51 @@ Patch.Websocket = function(network, options) {
   this.webSocket;
   this.network = network;
   this.onClose = options.onClose;
-  this.initialize();
+  this._initialize();
+}
+
+// Disable the controller
+Patch.Websocket.prototype.disable = function() {
+  this.webSocket.onmessage = function(event) {};
+  return false;
+}
+
+// Initialize controller events
+Patch.Websocket.prototype.setInputCallback = function(callback) {
+  var controller = this;
+  this.webSocket.onmessage = function(event) {
+    controller._handleEvent(event, callback);
+  };
+  return true;
+}
+
+// Private methods
+
+// Handle a single event
+Patch.Websocket.prototype._handleEvent = function(event, callback) {
+  var messages = Patch.Websocket._eventToControllerMessages(event);
+  if (this.debug) {
+    this.logger.log("Patch: Messages received");
+    this.logger.log(messages);
+  }
+  callback(messages);
+  return messages;
 }
 
 // Convert the raw websocket event to an array of message objects
-Patch.Websocket.eventToControllerMessages = function(event) {
+Patch.Websocket._eventToControllerMessages = function(event) {
   var messages = []
   var rawMessages = JSON.parse(event.data);
   for (var i = 0; i < rawMessages.length; i++) {
     var rawMessage = rawMessages[i];
-    var message = Patch.Websocket.processMessage(rawMessage);
+    var message = Patch.Websocket._processMessage(rawMessage);
     messages.push(message);
   }
   return messages;
 }
 
 // Convert a raw message's properties into more meaningful types, etc
-Patch.Websocket.processMessage = function(message) {
+Patch.Websocket._processMessage = function(message) {
   var timestamp = Number(message.timestamp);
   message.time = new Date(timestamp);
   message.index = Number(message.index);
@@ -33,7 +61,7 @@ Patch.Websocket.processMessage = function(message) {
 }
 
 // Initialize the socket
-Patch.Websocket.prototype.initialize = function() {
+Patch.Websocket.prototype._initialize = function() {
   this.logger.log("Patch: Initializing")
   var address = "ws://" + this.network.host + ":" + this.network.port + "/echo";
   if ("WebSocket" in window)
@@ -52,30 +80,4 @@ Patch.Websocket.prototype.initialize = function() {
   } else {
     this.logger.log("Websocket not supoorted");
   }
-}
-
-// Disable the controller
-Patch.Websocket.prototype.disable = function() {
-  this.webSocket.onmessage = function(event) {};
-  return false;
-}
-
-// Handle a single event
-Patch.Websocket.prototype.handleEvent = function(event, callback) {
-  var messages = Patch.Websocket.eventToControllerMessages(event);
-  if (this.debug) {
-    this.logger.log("Patch: Messages received");
-    this.logger.log(messages);
-  }
-  callback(messages);
-  return messages;
-}
-
-// Initialize controller events
-Patch.Websocket.prototype.setInputCallback = function(callback) {
-  var controller = this;
-  this.webSocket.onmessage = function(event) {
-    controller.handleEvent(event, callback);
-  };
-  return true;
 }
