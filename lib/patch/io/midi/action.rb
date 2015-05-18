@@ -16,15 +16,21 @@ module Patch
           !action[:midi].nil? && !action[:midi][:index].nil?
         end
 
-        # Find an action in the given patch for the given index
+        # Filter the given actions only to return MIDI actions
+        # @param [Array<Hash>] actions
+        # @return [Array<Hash>]
+        def midi_actions(actions)
+          actions.select { |action| midi?(action) }
+        end
+
+        # Find an action in the given patch for the given cc index
         # @param [Array<Hash>] actions
         # @param [Fixnum] index
         # @return [Hash]
         def find_by_index(actions, index)
-          midi_actions = actions.select { |action| midi?(action) }
-          action = midi_actions.find { |action| action[:midi][:index] == index }
-          action ||= actions.at(index)
-          action
+          midi_actions(actions).find do |action|
+            action[:midi][:index] == index
+          end
         end
 
       end

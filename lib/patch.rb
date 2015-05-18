@@ -26,7 +26,6 @@ require "patch/node"
 require "patch/thread"
 
 # Classes
-require "patch/action"
 require "patch/hub"
 require "patch/log"
 require "patch/message"
