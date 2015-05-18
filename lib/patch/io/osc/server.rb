@@ -66,7 +66,7 @@ module Patch
         # @param [::Patch::Patch] patch The patch to use for context
         # @return [Array<String, Regexp>]
         def get_addresses(patch)
-          actions = patch.actions.find_all_by_type(:osc)
+          actions = ::Patch::IO::OSC::Action.osc_actions(patch.actions)
           actions.map { |action| action[:osc][:address] }.compact.uniq
         end
 
