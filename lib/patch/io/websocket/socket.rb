@@ -9,6 +9,7 @@ module Patch
         def self.start(config)
           socket = new
           socket.start(config)
+          socket
         end
 
         def puts(data)

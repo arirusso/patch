@@ -20,7 +20,6 @@ module Patch
           }
           @id = id
           @log = options[:log]
-          @socket = nil
         end
 
         # Send a message over the socket
