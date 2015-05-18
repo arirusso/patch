@@ -30,7 +30,7 @@ module Patch
         if config[:server].nil?
           unless config[:client].nil?
             instance_options[:id] = config[:id]
-            Client.new(config[:client], instance_options)
+            Client.new(config[:client][:host], config[:client][:port], instance_options)
           end
         else
           instance_options[:echo] = config[:client]
