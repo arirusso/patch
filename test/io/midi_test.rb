@@ -4,209 +4,91 @@ class Patch::IO::MIDITest < Minitest::Test
 
   context "MIDI" do
 
-    setup do
-      load_test_data
-      @nodes = Patch::Config.to_nodes(@nodes_path)
-      @patches = Patch::Config.to_patches(@nodes, @patches_path)
-    end
+    context "#get_direction_class" do
 
-    context "Input" do
-
-      setup do
-        @input = @nodes.find_all_by_type(:midi).first
+      should "return input class" do
+        assert_equal Patch::IO::MIDI::Input, Patch::IO::MIDI.send(:get_direction_class, "input")
+        assert_equal Patch::IO::MIDI::Input, Patch::IO::MIDI.send(:get_direction_class, :input)
       end
 
-      context "#initialize" do
+      should "return output class" do
+        assert_equal Patch::IO::MIDI::Output, Patch::IO::MIDI.send(:get_direction_class, "output")
+        assert_equal Patch::IO::MIDI::Output, Patch::IO::MIDI.send(:get_direction_class, :output)
+      end
+
+      should "return nil" do
+        assert_nil Patch::IO::MIDI.send(:get_direction_class, "blah")
+        assert_nil Patch::IO::MIDI.send(:get_direction_class, :blah)
+      end
+
+    end
+
+    context "#new_from_config" do
+
+      context "input" do
+
+        setup do
+          @config = {
+            :id=>2,
+            :type=>"midi",
+            :direction=>"input",
+            :name=>"Apple Inc. IAC Driver"
+          }
+          @input = Patch::IO::MIDI.new_from_config(@config)
+        end
+
+        should "be input" do
+          refute_nil @input
+          assert_equal Patch::IO::MIDI::Input, @input.class
+        end
 
         should "have id" do
           refute_nil @input.id
+          assert_equal 2, @input.id
         end
 
-        should "have midi input" do
-          refute_nil @input
+        should "have underlying midi input" do
+          refute_nil @input.device
+          assert_equal @config[:name], @input.device.name
         end
 
         should "initialize midi listener" do
           refute_nil @input.instance_variable_get("@listener")
         end
 
+
       end
 
-      context "#start" do
+      context "output" do
 
         setup do
-          ::MIDIEye::Listener.any_instance.expects(:run)
+          @config = {
+            :id=>3,
+            :type=>"midi",
+            :direction=>"output",
+            :name=>"Apple Inc. IAC Driver"
+          }
+          @output = ::Patch::IO::MIDI.new_from_config(@config)
         end
 
-        teardown do
-          ::MIDIEye::Listener.any_instance.unstub(:run)
+        should "be output" do
+          refute_nil @output
+          assert_equal Patch::IO::MIDI::Output, @output.class
         end
-
-        should "start listener" do
-          @input.start
-        end
-
-      end
-
-      context "#stop" do
-
-        setup do
-          refute @input.listener.running?
-          @input.start
-          assert @input.listener.running?
-        end
-
-        should "stop listener" do
-          assert @input.stop
-          sleep(0.5) # wait until listener thread is killed
-          refute @input.listener.running?
-        end
-
-      end
-
-      context "#handle_event_received" do
-
-        setup do
-          @message = MIDIMessage::ControlChange.new(0, 0x00, 0x30)
-          @patch = @patches.first
-          @scale = Object.new
-          @scale.expects(:from).once.returns(@scale)
-          @scale.expects(:to).once
-        end
-
-        teardown do
-          @scale.unstub(:from)
-          @scale.unstub(:to)
-        end
-
-        context "test value" do
-
-          setup do
-            Scale.expects(:transform).once.returns(@scale)
-          end
-
-          teardown do
-            Scale.unstub(:transform)
-          end
-
-          should "perform scaling on value" do
-            @result = @input.send(:handle_event_received, @patch, { :message => @message })
-          end
-
-        end
-
-        should "return array of messages" do
-          @result = @input.send(:handle_event_received, @patch, { :message => @message })
-          refute_nil @result
-          assert_equal Array, @result.class
-          refute_empty @result
-
-          @result.each do |message|
-            assert_equal ::Patch::Message, message.class
-            assert_equal :test_patch, message.patch_name
-            refute_nil message.index
-            refute_nil message.value
-          end
-        end
-
-        should "yield array of messages" do
-          Scale.unstub(:transform)
-          @input.send(:handle_event_received, @patch, { :message => @message }) do |hash|
-            @result = hash
-            refute_nil @result
-            assert_equal Array, @result.class
-            refute_empty @result
-
-            @result.each do |message|
-              assert_equal ::Patch::Message, message.class
-              assert_equal :test_patch, message.patch_name
-              refute_nil message.index
-              refute_nil message.value
-            end
-          end
-        end
-
-      end
-    end
-
-    context "Message" do
-
-      context ".to_midi_messages" do
-
-        setup do
-          @message = Patch::Message.new(:index => 0, :patch_name => @patches.first.name, :value => 3.0)
-          @result = ::Patch::IO::MIDI::Message.to_midi_messages(@patches.first, @message)
-        end
-
-        should "have correct properties" do
-          refute_nil @result
-          refute_empty @result
-          message = @result.first
-
-          assert_equal ::MIDIMessage::ControlChange, message.class
-          assert_equal 0, message.index
-          assert_equal 75, message.value
-        end
-
-      end
-
-      context ".to_patch_messages" do
-
-        setup do
-          @message = MIDIMessage::ControlChange.new(0, 0, 127)
-          @result = ::Patch::IO::MIDI::Message.to_patch_messages(@patches.first, @message)
-        end
-
-        should "have correct values" do
-          refute_nil @result
-          refute_empty @result
-          message = @result.first
-
-          assert_equal ::Patch::Message, message.class
-          assert_equal 0, message.index
-          assert_equal 5, message.value
-        end
-
-      end
-
-    end
-
-    context "Output" do
-
-      setup do
-        @patch = @patches.first
-        @output = ::Patch::IO::MIDI::Output.new(0, $>)
-      end
-
-      context "#initialize" do
 
         should "have id" do
           refute_nil @output.id
+          assert_equal 3, @output.id
         end
 
-      end
-
-      context "#puts" do
-
-        setup do
-          @message = Patch::Message.new
-          @message.index = 0
-          @message.value = 100
-          @message.patch_name = @patch.name
-          @output.device.expects(:puts).once
-        end
-
-        teardown do
-          @output.device.unstub(:puts)
-        end
-
-        should "send midi message" do
-          @output.puts(@patch, @message)
+        should "have underlying midi output" do
+          refute_nil @output.device
+          assert_equal @config[:name], @output.device.name
         end
 
       end
 
     end
-
   end
+
 end
