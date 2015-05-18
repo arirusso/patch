@@ -16,13 +16,6 @@ module Patch
       Hub.new(:log => log, :patches => patches)
     end
 
-    # Instantiate actions from an action config
-    # @param [Array<Hash>] config
-    # @return [::Patch::Action::Container]
-    def to_actions(config)
-      Action::Container.new(config)
-    end
-
     # Instantiate patch objects from the given patch config file, filename or hash
     # @param [NodeContainer] nodes
     # @param [File, Hash, String] config
@@ -92,8 +85,7 @@ module Patch
     # @param [Hash] config
     # @return [Patch]
     def to_patch(nodes, name, config)
-      action_config = config[:actions] || config[:action]
-      actions = to_actions(action_config)
+      actions = config[:actions] || config[:action]
       maps = to_node_maps(nodes, config[:node_map])
       Patch.new(name, maps, actions)
     end
