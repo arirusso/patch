@@ -21,8 +21,11 @@ module Patch
       # @param [Symbol] :type The type of node (eg :midi)
       # @return [Array<IO::MIDI, IO::OSC, IO::Websocket>]
       def find_all_by_type(type)
-        klass = IO::Module.find_by_key(type)
-        select { |node| node.class.name.match(/\A#{klass}.*/) }
+        if (mod = IO::Module.find_by_key(type)).nil?
+          []
+        else
+          select { |node| node.class.name.match(/\A#{mod.name}/) }
+        end
       end
 
       # Find the node with the given id
