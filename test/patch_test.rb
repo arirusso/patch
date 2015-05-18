@@ -6,13 +6,35 @@ class Patch::PatchTest < Minitest::Test
 
     setup do
       load_test_data
+      @nodes = Patch::Config.to_nodes(@nodes_path)
+      @patches = Patch::Config.to_patches(@nodes, @patches_path)
+    end
+
+    context "#populate_actions" do
+
+      should "populate actions" do
+        patch = @patches.first
+        refute_nil patch.actions
+        refute_empty patch.actions
+        assert patch.actions.all? { |action| action.kind_of?(Hash) }
+      end
+
+    end
+
+    context "#populate_maps" do
+
+      should "populate node maps" do
+        patch = @patches.first
+        refute_nil patch.maps
+        refute_empty patch.maps
+        assert patch.maps.all? { |map| map.kind_of?(Patch::Node::Map) }
+      end
+
     end
 
     context "#enable" do
 
       setup do
-        @nodes = Patch::Config.to_nodes(@nodes_path)
-        @patches = Patch::Config.to_patches(@nodes, @patches_path)
         Patch::IO::MIDI::Input.any_instance.expects(:listen).once
         Patch::IO::OSC::Server.any_instance.expects(:listen).once
         Patch::IO::Websocket::Node.any_instance.expects(:listen).once
