@@ -118,7 +118,7 @@ class Patch::SpecTest < Minitest::Test
             :node_map => [{ [1,2] => 3 }],
             :action => []
           }
-          @patch = Patch::Config.send(:to_patch, @nodes, :test, config)
+          @patch = Patch::Config.send(:to_patch, :test, @nodes, config)
         end
 
         should "create patch" do

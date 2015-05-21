@@ -23,8 +23,8 @@ module Patch
     def to_patches(nodes, config)
       config = ensure_hash(config)
       patches = []
-      config[:patches].each do |name, patch|
-        patches << to_patch(nodes, name, patch)
+      config[:patches].each do |name, patch_config|
+        patches << to_patch(name, nodes, patch_config)
       end
       patches
     end
@@ -80,11 +80,11 @@ module Patch
     end
 
     # Instantiate a patch object for the given config hash
-    # @param [NodeContainer] nodes
     # @param [Symbol, String] name
+    # @param [NodeContainer] nodes
     # @param [Hash] config
     # @return [Patch]
-    def to_patch(nodes, name, config)
+    def to_patch(name, nodes, config)
       actions = config[:actions] || config[:action]
       maps = to_node_maps(nodes, config[:node_map])
       Patch.new(name, maps, actions)
