@@ -1,6 +1,6 @@
 Patch = function() {}
 
-// Initialize a websocket
+// Use Patch over websocket
 Patch.Websocket = function(network, options) {
   options = options || {};
   this.debug = options.debug || false;
@@ -52,7 +52,7 @@ Patch.Websocket.prototype.sendMessage = function(message) {
   message = this._prepareMessageForSend(message);
   if (this.debug) {
     this._log(Patch.Websocket.LOGMESSAGE.sending)
-    this.logger.log(message);
+    this._logObject(message);
   }
   var json = JSON.stringify(message);
   this.webSocket.send(json);
@@ -98,8 +98,8 @@ Patch.Websocket._parseEvent = function(event, logger) {
 
 Patch.Websocket._handleNonPatchMessage = function(logger) {
   if (logger !== undefined && logger !== null) {
-    this._log(Patch.Websocket.LOGMESSAGE.receivedUnformatted)
-    logger.log(event.data);
+    this._log(Patch.Websocket.LOGMESSAGE.receivedUnformatted);
+    this._logObject(event.data);
   }
   return null;
 }
@@ -158,6 +158,10 @@ Patch.Websocket.prototype._initializeSocket = function(network) {
 
 Patch.Websocket.prototype._log = function(message) {
   this.logger.log(Patch.Websocket.LOGMESSAGE.prefix + message);
+}
+
+Patch.Websocket.prototype._logObject = function(object) {
+  this.logger.log(object);
 }
 
 // Initialize the socket
