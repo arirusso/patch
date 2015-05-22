@@ -54,26 +54,39 @@ Patch.Websocket.prototype.sendMessage = function(message) {
 
 // Convert the raw websocket event to an array of message objects
 Patch.Websocket._eventToControllerMessages = function(event, logger) {
-  var messages = [];
+  var messages = null;
+  var rawMessages = Patch.Websocket._parseEvent(event, logger);
+  if (rawMessages !== undefined && rawMessages !== null) {
+    messages = [];
+    for (var i = 0; i < rawMessages.length; i++) {
+      var rawMessage = rawMessages[i];
+      var message = Patch.Websocket._processMessage(rawMessage);
+      messages.push(message);
+    }
+  }
+  return messages;
+}
+
+Patch.Websocket._parseEvent = function(event, logger) {
+  var rawMessages;
   try {
-    var rawMessages = JSON.parse(event.data);
+    rawMessages = JSON.parse(event.data);
   } catch (err) {
     if (err.name == "SyntaxError") {
-      if (logger !== undefined && logger !== null) {
-        logger.log("Patch: Data received");
-        logger.log(event.data);
-      }
-      return null;
+      Patch.Websocket._handleNonPatchMessage(logger);
     } else {
       throw(err);
     }
   }
-  for (var i = 0; i < rawMessages.length; i++) {
-    var rawMessage = rawMessages[i];
-    var message = Patch.Websocket._processMessage(rawMessage);
-    messages.push(message);
+  return rawMessages;
+}
+
+Patch.Websocket._handleNonPatchMessage = function(logger) {
+  if (logger !== undefined && logger !== null) {
+    logger.log("Patch: Unformated data received");
+    logger.log(event.data);
   }
-  return messages;
+  return null;
 }
 
 // Convert a raw message's properties into more meaningful types, etc
