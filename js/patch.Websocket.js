@@ -38,19 +38,23 @@ Patch.Websocket.prototype.echoMessage = function(message) {
 }
 
 Patch.Websocket.prototype.sendMessage = function(message) {
-  message.time = new Date();
-  message.timestamp = message.time.getTime();
+  message = this._prepareMessageForSend(message);
   if (this.debug) {
     this.logger.log("Patch: Sending message");
     this.logger.log(message);
   }
   var json = JSON.stringify(message);
-
   this.webSocket.send(json);
   return true;
 }
 
 // Private methods
+
+Patch.Websocket._prepareMessageForSend = function(message) {
+  message.time = new Date();
+  message.timestamp = message.time.getTime();
+  return message;
+}
 
 // Convert the raw websocket event to an array of message objects
 Patch.Websocket._eventToControllerMessages = function(event, logger) {
