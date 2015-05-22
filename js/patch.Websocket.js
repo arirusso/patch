@@ -5,10 +5,9 @@ Patch.Websocket = function(network, options) {
   options = options || {};
   this.debug = options.debug || false;
   this.logger = options.logger || console;
-  this.network = network;
   this.onClose = options.onClose;
   this.webSocket;
-  this._initialize();
+  this._initialize(network);
 }
 
 // Disable the controller
@@ -113,16 +112,16 @@ Patch.Websocket.prototype._handleEvent = function(event, callback) {
 }
 
 // The websocket address
-Patch.Websocket.prototype._getAddress = function() {
-  return "ws://" + this.network.host + ":" + this.network.port + "/echo";
+Patch.Websocket.prototype._getAddress = function(network) {
+  return "ws://" + network.host + ":" + network.port + "/echo";
 }
 
 // Initialize the socket
-Patch.Websocket.prototype._initialize = function() {
+Patch.Websocket.prototype._initialize = function(network) {
   var logger = this.logger;
 
   logger.log("Patch: Initializing")
-  var address = this._getAddress();
+  var address = this._getAddress(network);
   if (this.isCompatible())
   {
     this.webSocket = new WebSocket(address);
