@@ -38,7 +38,8 @@ Patch.Websocket.prototype.echoMessage = function(message) {
 }
 
 Patch.Websocket.prototype.sendMessage = function(message) {
-  message.time = Date.now();
+  message.time = new Date();
+  message.timestamp = message.time.getTime();
   if (this.debug) {
     this.logger.log("Patch: Sending message");
     this.logger.log(message);
