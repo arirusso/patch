@@ -9,9 +9,14 @@
       var hub;
       window.onload = function() {
         var body = document.getElementById("body");
-        hub = new Patch.Websocket({host: "localhost", port: 9006}, {debug:true});
-        hub.setInputCallback(function(messages) {
+        var network = {
+          host: "localhost",
+          port: 9006
+        };
+        hub = new Patch.Websocket(network, { debug:true });
+        hub.onInput(function(messages) {
           body.style.fontSize = messages[0].value + "px";
+          //hub.echoMessage(messages[0]);
         });
       }
     </script>
