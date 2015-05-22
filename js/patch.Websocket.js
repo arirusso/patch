@@ -10,6 +10,17 @@ Patch.Websocket = function(network, options) {
   this._initialize(network);
 }
 
+Patch.Websocket.LOGMESSAGE = {
+  closed: "Closed",
+  initialize: "Initializing",
+  notSupported: "Websockets not supported",
+  ready: "Ready",
+  receivedMessages: "Messages received",
+  receivedUnformatted: "Unformated data received",
+  prefix: "Patch: ",
+  sending: "Sending message"
+}
+
 // Disable the controller
 Patch.Websocket.prototype.disable = function() {
   this.webSocket.onmessage = function(event) {};
@@ -40,7 +51,7 @@ Patch.Websocket.prototype.echoMessage = function(message) {
 Patch.Websocket.prototype.sendMessage = function(message) {
   message = this._prepareMessageForSend(message);
   if (this.debug) {
-    this.logger.log("Patch: Sending message");
+    this._log(Patch.Websocket.LOGMESSAGE.sending)
     this.logger.log(message);
   }
   var json = JSON.stringify(message);
@@ -87,7 +98,7 @@ Patch.Websocket._parseEvent = function(event, logger) {
 
 Patch.Websocket._handleNonPatchMessage = function(logger) {
   if (logger !== undefined && logger !== null) {
-    logger.log("Patch: Unformated data received");
+    this._log(Patch.Websocket.LOGMESSAGE.receivedUnformatted)
     logger.log(event.data);
   }
   return null;
@@ -108,7 +119,7 @@ Patch.Websocket.prototype._handleEvent = function(event, callback) {
   var messages = Patch.Websocket._eventToControllerMessages(event, messageLogger);
   if (messages !== undefined && messages !== null) {
     if (this.debug) {
-      this.logger.log("Patch: Messages received");
+      this._log(Patch.Websocket.LOGMESSAGE.receivedMessages);
       this.logger.log(messages);
     }
     callback(messages);
@@ -122,11 +133,11 @@ Patch.Websocket.prototype._getAddress = function(network) {
 }
 
 Patch.Websocket.prototype._handleOpen = function() {
-  this.logger.log("Patch: Ready");
+  this._log(Patch.Websocket.LOGMESSAGE.ready)
 }
 
 Patch.Websocket.prototype._handleClose = function() {
-  this.logger.log("Patch: Closed");
+  this._log(Patch.Websocket.LOGMESSAGE.closed)
   if (this.onClose !== undefined && this.onClose !== null) {
     this.onClose();
   }
@@ -134,7 +145,7 @@ Patch.Websocket.prototype._handleClose = function() {
 
 Patch.Websocket.prototype._initializeSocket = function(network) {
   var controller = this;
-  
+
   var address = this._getAddress(network);
   this.webSocket = new WebSocket(address);
   this.webSocket.onopen = function() {
@@ -145,16 +156,20 @@ Patch.Websocket.prototype._initializeSocket = function(network) {
   };
 }
 
+Patch.Websocket.prototype._log = function(message) {
+  this.logger.log(Patch.Websocket.LOGMESSAGE.prefix + message);
+}
+
 // Initialize the socket
 Patch.Websocket.prototype._initialize = function(network) {
-  this.logger.log("Patch: Initializing")
+  this._log(Patch.Websocket.LOGMESSAGE.initialize)
 
   if (this.isCompatible())
   {
     this._initializeSocket(network);
     return true;
   } else {
-    this.logger.log("Patch: Websockets not supported");
+    this._log(Patch.Websocket.LOGMESSAGE.notSupported)
     return false;
   }
 }
