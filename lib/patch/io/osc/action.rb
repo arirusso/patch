@@ -29,7 +29,8 @@ module Patch
         # @return [Hash]
         def find_by_address(actions, address)
           osc_actions(actions).find do |action|
-            action[:osc][:address] == address
+            regex = Regexp.new(action[:osc][:address])
+            address.match(regex)
           end
         end
 
