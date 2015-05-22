@@ -24,7 +24,7 @@ class Patch::IO::OSC::ActionTest < Minitest::Test
             :scale=>0..1000
           },
           :osc=>{
-            :address=>"/1/faderA",
+            :address=>"\\A/1/faderA\\z",
             :scale=> {
               :osc=>0..1.0
             }
@@ -63,7 +63,7 @@ class Patch::IO::OSC::ActionTest < Minitest::Test
         addy = "/1/faderA"
         action = Patch::IO::OSC::Action.find_by_address(@actions, addy)
         refute_nil action
-        assert_equal addy, action[:osc][:address]
+        assert_match addy, action[:osc][:address]
       end
 
       should "return nil if not found" do
