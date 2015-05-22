@@ -18,12 +18,15 @@ Patch.Websocket.prototype.disable = function() {
 }
 
 // Initialize controller events
-Patch.Websocket.prototype.setInputCallback = function(callback) {
+Patch.Websocket.prototype.onInput = function(callback) {
   var controller = this;
   this.webSocket.onmessage = function(event) {
     controller._handleEvent(event, callback);
   };
   return true;
+}
+Patch.Websocket.prototype.setInputCallback = function(callback) {
+  return this.onInput(callback);
 }
 
 // Is the client able to use websockets?
@@ -31,12 +34,40 @@ Patch.Websocket.prototype.isCompatible = function() {
   return ("WebSocket" in window);
 }
 
+Patch.Websocket.prototype.echoMessage = function(message) {
+  return this.sendMessage(message);
+}
+
+Patch.Websocket.prototype.sendMessage = function(message) {
+  message.time = Date.now();
+  if (this.debug) {
+    this.logger.log("Patch: Sending message");
+    this.logger.log(message);
+  }
+  var json = JSON.stringify(message);
+
+  this.webSocket.send(json);
+  return true;
+}
+
 // Private methods
 
 // Convert the raw websocket event to an array of message objects
-Patch.Websocket._eventToControllerMessages = function(event) {
-  var messages = []
-  var rawMessages = JSON.parse(event.data);
+Patch.Websocket._eventToControllerMessages = function(event, logger) {
+  var messages = [];
+  try {
+    var rawMessages = JSON.parse(event.data);
+  } catch (err) {
+    if (err.name == "SyntaxError") {
+      if (logger !== undefined && logger !== null) {
+        logger.log("Patch: Data received");
+        logger.log(event.data);
+      }
+      return null;
+    } else {
+      throw(err);
+    }
+  }
   for (var i = 0; i < rawMessages.length; i++) {
     var rawMessage = rawMessages[i];
     var message = Patch.Websocket._processMessage(rawMessage);
@@ -56,12 +87,15 @@ Patch.Websocket._processMessage = function(message) {
 
 // Handle a single event
 Patch.Websocket.prototype._handleEvent = function(event, callback) {
-  var messages = Patch.Websocket._eventToControllerMessages(event);
-  if (this.debug) {
-    this.logger.log("Patch: Messages received");
-    this.logger.log(messages);
+  var messageLogger = (this.debug) ? this.logger : null;
+  var messages = Patch.Websocket._eventToControllerMessages(event, messageLogger);
+  if (messages !== undefined && messages !== null) {
+    if (this.debug) {
+      this.logger.log("Patch: Messages received");
+      this.logger.log(messages);
+    }
+    callback(messages);
   }
-  callback(messages);
   return messages;
 }
 
@@ -80,7 +114,7 @@ Patch.Websocket.prototype._initialize = function() {
   {
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
-      logger.log("Patch: Ready")
+      logger.log("Patch: Ready");
     };
     var controller = this;
     this.webSocket.onclose = function() {
@@ -90,7 +124,7 @@ Patch.Websocket.prototype._initialize = function() {
       }
     };
   } else {
-    logger.log("Websocket not supoorted");
+    logger.log("Patch: Websockets not supported");
     return false;
   }
   return true;
