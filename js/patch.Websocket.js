@@ -121,23 +121,31 @@ Patch.Websocket.prototype._getAddress = function(network) {
   return "ws://" + network.host + ":" + network.port + "/echo";
 }
 
+Patch.Websocket.prototype._handleOpen = function() {
+  this.logger.log("Patch: Ready");
+}
+
+Patch.Websocket.prototype._handleClose = function() {
+  this.logger.log("Patch: Closed");
+  if (this.onClose !== undefined && this.onClose !== null) {
+    this.onClose();
+  }
+}
+
 // Initialize the socket
 Patch.Websocket.prototype._initialize = function(network) {
+  this.logger.log("Patch: Initializing")
   var controller = this;
 
-  this.logger.log("Patch: Initializing")
-  var address = this._getAddress(network);
   if (this.isCompatible())
   {
+    var address = this._getAddress(network);
     this.webSocket = new WebSocket(address);
     this.webSocket.onopen = function() {
-      controller.logger.log("Patch: Ready");
+      controller._handleOpen();
     };
     this.webSocket.onclose = function() {
-      controller.logger.log("Patch: Closed");
-      if (controller.onClose !== undefined && controller.onClose !== null) {
-        controller.onClose();
-      }
+      controller._handleClose();
     };
   } else {
     this.logger.log("Patch: Websockets not supported");
