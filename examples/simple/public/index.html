@@ -16,7 +16,7 @@
         hub = new Patch.Websocket(network, { debug:true });
         hub.onInput(function(messages) {
           body.style.fontSize = messages[0].value + "px";
-          //hub.echoMessage(messages[0]);
+          hub.echoMessage(messages[0]);
         });
       }
     </script>
