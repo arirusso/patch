@@ -11,30 +11,35 @@ Patch.Logger = function(dictionary, logger, shouldDebug) {
 // Log an error
 Patch.Logger.prototype.error = function(message) {
   this.logger.error(message);
+  return true;
 }
 
 // Log a debug message
 Patch.Logger.prototype.debug = function(message) {
   if (this.shouldDebug) {
-    this.info(message);
+    return this.info(message);
   }
+  return false;
 }
 
 // Log an object for debug
 Patch.Logger.prototype.debugObject = function(message) {
   if (this.shouldDebug) {
-    this.object(message);
+    return this.object(message);
   }
+  return false;
 }
 
 // Log a message
 Patch.Logger.prototype.info = function(message) {
   this.logger.log(this.dictionary.prefix + message);
+  return true;
 }
 
 // Log an object
 Patch.Logger.prototype.object = function(object) {
   this.logger.log(object);
+  return true;
 }
 
 // A patch message
@@ -61,7 +66,6 @@ Patch.Websocket = function(network, options) {
   options = options || {};
   this.logger = new Patch.Logger(Patch.Websocket.LOGMESSAGE, options.logger, options.debug);
   this.onClose = options.onClose;
-  this.webSocket;
   this._initialize(network);
 }
 
@@ -76,6 +80,7 @@ Patch.Websocket.LOGMESSAGE = {
   prefix: "Patch: ",
   sending: "Sending message"
 }
+Patch.Websocket.prototype.isActive = false;
 
 // Convert the raw websocket event to an array of message objects
 Patch.Websocket.eventToControllerMessages = function(event, logger) {
@@ -183,9 +188,11 @@ Patch.Websocket.prototype._initializeSocket = function(network) {
   this.webSocket = new WebSocket(address);
   this.webSocket.onopen = function() {
     controller._handleOpen();
+    controller.isActive = true;
   };
   this.webSocket.onclose = function() {
     controller._handleClose();
+    controller.isActive = false;
   };
 }
 
