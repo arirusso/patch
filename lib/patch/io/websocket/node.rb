@@ -55,7 +55,7 @@ module Patch
         # @param [Proc] callback callback to fire when events are received
         # @return [Boolean]
         def listen(patch, &callback)
-          @socket.on_message do |data|
+          socket.on_message do |data|
             handle_input(patch, data, &callback)
           end
           true
@@ -63,9 +63,10 @@ module Patch
 
         # Start the websocket
         # @return [Boolean]
-        def start
+        def socket
           @socket ||= ::Patch::IO::Websocket::Socket.start(@config)
         end
+        alias_method :start, :socket
 
         # Is the server active?
         # @return [Boolean]
