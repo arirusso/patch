@@ -55,7 +55,7 @@ module Patch
         # @param [Proc] callback callback to fire when events are received
         # @return [Boolean]
         def listen(patch, &callback)
-          socket.on_message do |data|
+          ensure_socket.on_message do |data|
             handle_input(patch, data, &callback)
           end
           true
@@ -64,7 +64,7 @@ module Patch
         # Start the websocket
         # @return [Boolean]
         def socket
-          @socket ||= ::Patch::IO::Websocket::Socket.start(@config)
+          ensure_socket
         end
         alias_method :start, :socket
 
@@ -76,6 +76,10 @@ module Patch
         alias_method :running?, :active?
 
         private
+
+        def ensure_socket
+          @socket ||= ::Patch::IO::Websocket::Socket.start(@config)
+        end
 
         # Handle a received message
         # @param [String] json_message A raw inputted JSON message

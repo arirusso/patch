@@ -12,6 +12,10 @@ module Patch
           socket
         end
 
+        def initialize
+          @onmessage = []
+        end
+
         def puts(data)
           @socket.send(data)
         end
@@ -19,13 +23,18 @@ module Patch
         # @return [Boolean]
         def disable
           @socket.onmessage = nil
+          @onmessage.clear
           true
         end
 
         # @param [Proc] callback callback to fire when events are received
         # @return [Boolean]
         def on_message(&callback)
-          @socket.onmessage { |data| yield(data) }
+          if @socket.nil?
+            @onmessage << callback
+          else
+            @socket.onmessage { |data| yield(data) }
+          end
           true
         end
 
@@ -52,6 +61,14 @@ module Patch
 
         private
 
+        # If callbacks were added before the socket was active, assign them to the socket event handler
+        def configure_message_callbacks
+          @onmessage.each do |callback|
+            on_message(&callback)
+          end
+          @onmessage.clear
+        end
+
         # Enable this node after initializing an EM::Websocket
         # @param [EM::Websocket] websocket
         # @return [Boolean]
@@ -71,6 +88,8 @@ module Patch
           @socket.onclose do
             puts "Connection closed"
           end
+
+          configure_message_callbacks unless @onmessage.empty?
 
           true
         end
