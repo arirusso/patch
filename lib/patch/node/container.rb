@@ -3,17 +3,32 @@ module Patch
   module Node
 
     # A container for Patch::Node
-    class Container < Array
+    class Container
 
-      def initialize(*args)
+      include Enumerable
+      extend Forwardable
+
+      attr_reader :nodes
+      def_delegators :@nodes, :all?, :any?, :count, :empty?
+
+      # @param [Array<Object>] nodes
+      def initialize(nodes)
         @threads = []
-        super
+        @nodes = nodes
+      end
+
+      def |(other)
+        @nodes | other.nodes
+      end
+
+      def each(&block)
+        @nodes.each(&block)
       end
 
       # Enable the nodes in this container
       # @return [Boolean]
       def enable
-        result = map { |node| enable_node(node) }
+        result = @nodes.map { |node| enable_node(node) }
         result.any?
       end
 
@@ -24,7 +39,7 @@ module Patch
         if (mod = IO::Module.find_by_key(type)).nil?
           []
         else
-          select { |node| node.class.name.match(/\A#{mod.name}/) }
+          @nodes.select { |node| node.class.name.match(/\A#{mod.name}/) }
         end
       end
 
@@ -32,7 +47,7 @@ module Patch
       # @param [Fixnum] id
       # @return [IO::MIDI, IO::OSC, IO::Websocket]
       def find_by_id(id)
-        find { |node| node.id == id }
+        @nodes.find { |node| node.id == id }
       end
 
       private
