@@ -7,7 +7,27 @@ class Patch::IO::Websocket::NodeTest < Minitest::Test
     setup do
       load_test_data
       @nodes = Patch::Config.to_nodes(@nodes_path)
+      @patches = Patch::Config.to_patches(@nodes, @patches_path)
       @server = @nodes.find_all_by_type(:websocket).first
+    end
+
+    context "#listen" do
+
+      setup do
+        EM::WebSocket.expects(:run).once
+      end
+
+      teardown do
+        EM::WebSocket.unstub(:run)
+        #Patch::IO::Websocket.any_instance.unstub(:start)
+      end
+
+      should "start server" do
+        assert @server.listen(@patches.first) do
+          @val = "something"
+        end
+      end
+
     end
 
     context "#start" do
