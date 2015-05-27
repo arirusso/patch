@@ -26,7 +26,6 @@ module Patch
     # @option options [Boolean] :background Run in a background thread (default: false)
     # @return [Hub] self
     def listen(options = {})
-      @patches.each(&:enable)
       begin
         enable_nodes
         @thread.join unless !!options[:background]
@@ -50,7 +49,10 @@ module Patch
     def enable_nodes
       @thread = ::Patch::Thread.new do
         EM.epoll
-        EM.run { nodes.enable }
+        EM.run {
+          @patches.each(&:enable)
+          nodes.enable
+        }
         !nodes.empty?
       end
     end
