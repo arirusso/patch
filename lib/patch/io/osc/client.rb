@@ -21,7 +21,7 @@ module Patch
         end
 
         # Convert message objects to OSC and send
-        # @param [::Patch::Patch] patch
+        # @param [Patch::Patch] patch Context
         # @param [Array<Patch::Message, ::OSC::Message>, ::OSC::Message, Patch::Message] messages Message(s) to send
         # @return [Array<::OSC::Message>]]
         def puts(patch, messages)
