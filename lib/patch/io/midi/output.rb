@@ -20,6 +20,7 @@ module Patch
         end
 
         # Convert Patch::Message objects to MIDI and send
+        # @param [Patch::Patch] patch Context
         # @param [Array<Patch::Message>, Patch::Message] messages Message(s) to send via MIDI
         # @return [Array<MIDIMessage>]
         def puts(patch, patch_messages)
