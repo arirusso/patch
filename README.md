@@ -14,17 +14,13 @@ Other possibilities:
 * HTTP
 * [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC)
 
-Patch receives messages in these formats and converts them to a generic `Patch::Message` object.  
-
-At that point, these generic objects can be converted to another one of these formats and sent accordingly.
+Patch can receive messages in these formats and instantly translate and send them to another format.
 
 For example:
 
-Patch can receive messages from a MIDI drum machine and relay them to a web API.  The web API can then respond with JSON which Patch converts to MIDI and sends back to the drum machine.
+Patch receive messages from an OSC controller, and relays them to a web API. The web API in turn responds with JSON that Patch relays to a MIDI synthesizer
 
-While this particular example can probably be accomplished using other utilities or scripts, Patch makes it possible to receive, merge, split and send different types of messages like this freely in one session.
-
-By doing so, Patch creates an interface that functions as though devices like that with different control messaging protocols had been designed to control each other.
+While this particular example can probably be accomplished using other specialized utilities or scripts, Patch makes it possible to receive, merge, split and send different types of messages like this in a general way, with much less configuration
 
 ## Usage
 
