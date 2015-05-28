@@ -91,6 +91,26 @@ class Patch::IO::Websocket::NodeTest < Minitest::Test
 
     end
 
+    context "#ensure_socket" do
+
+      setup do
+        socket = Object.new
+        socket.expects(:on_message).once
+        socket.expects(:start).once
+        Patch::IO::Websocket::Socket.expects(:new).once.returns(socket)
+        assert_nil @server.instance_variable_get("@socket")
+      end
+
+      teardown do
+        Patch::IO::Websocket::Socket.unstub(:new)
+      end
+
+      should "convert message to json" do
+        assert @server.listen(@patches.first) { puts "hello" }
+      end
+
+    end
+
   end
 
 end
