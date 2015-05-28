@@ -34,7 +34,7 @@ module Patch
         result = @to.map do |to_node|
           enabled = @from.map do |from_node|
             from_node.listen(patch) do |messages|
-              to_node.puts(messages)
+              to_node.puts(patch, messages)
             end
             true
           end

@@ -23,9 +23,10 @@ module Patch
         end
 
         # Send a message over the socket
+        # @param [Patch::Patch] patch Context
         # @param [Array<::Patch::Message>] messages A message or messages to send
         # @return [String, nil] If a message was sent, its JSON string; otherwise nil
-        def puts(messages)
+        def puts(patch, messages)
           if running?
             unless (messages = [messages].flatten.compact).empty?
               json = messages.to_json
