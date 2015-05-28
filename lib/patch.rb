@@ -37,6 +37,6 @@ require "patch/em_patch"
 
 module Patch
 
-  VERSION = "0.4.10"
+  VERSION = "0.4.13"
 
 end
