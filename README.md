@@ -14,7 +14,7 @@ Other possibilities:
 * HTTP
 * [JSON RPC 2.0](http://en.wikipedia.org/wiki/JSON-RPC)
 
-Patch can receive messages in these formats and instantly translate and send them to another format.
+Patch receives messages in these formats and instantly translates and sends them to others
 
 For example:
 
