@@ -46,7 +46,7 @@ require "patch"
 A *node* is a single source and/or destination of control messages. Here, we define three nodes:
 
 ```ruby
-websocket = Patch::IO::Websocket.new(1, "localhost", 9006)
+websocket = Patch::IO::Websocket::Node.new(1, "localhost", 9006)
 
 midi = Patch::IO::MIDI::Input.new(2, "Apple Inc. IAC Driver")
 
