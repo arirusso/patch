@@ -168,5 +168,6 @@ You can run Patch at the command line by executing `patchrb nodes.yml patches.ym
 
 ## License
 
-This version under Apache 2.0, See the file LICENSE
+Apache 2.0, See the file LICENSE
+
 Copyright (c) 2014-2015 [Ari Russo](http://arirusso.com)
