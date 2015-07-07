@@ -7,6 +7,7 @@
       :key: zoom
       :default:
         :scale: !ruby/range 0.1..5.0
+        :value: 1
       :midi:
         :channel: 0
         :index: 0
@@ -18,6 +19,7 @@
       :key: contrast
       :default:
         :scale: !ruby/range 0..5.0
+        :value: 0.5
       :osc:
         :address: /1/rotaryD
         :scale: !ruby/range 0..1.0
@@ -26,16 +28,18 @@
       :key: saturation
       :default:
         :scale: !ruby/range 0..2.0
+        :value: 1
       :osc:
         :address: /faderM
-        :scale: 
+        :scale:
           :osc: !ruby/range 0..1.0
 
     - :name: Z Depth
       :key: zDepth
       :default:
         :scale: !ruby/range 0..1000
+        :value: 200
       :osc:
         :address: /1/faderA
-        :scale: 
+        :scale:
           :osc: !ruby/range 0..1.0
