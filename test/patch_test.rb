@@ -32,6 +32,25 @@ class Patch::PatchTest < Minitest::Test
 
     end
 
+    context "#default_messages" do
+
+      setup do
+        @patch = @patches.first
+        @messages = @patch.default_messages
+        @actions_with_default = @patch.actions.select { |action| !action[:default].nil? }
+      end
+
+      should "populate messages from defaults" do
+        refute_nil @messages
+        refute_empty @messages
+        assert_equal @actions_with_default.count, @messages.count
+        @actions_with_default.each_with_index do |action, i|
+          refute_nil @messages.find { |message| message.index == i }
+        end
+      end
+
+    end
+
     context "#enable" do
 
       setup do
