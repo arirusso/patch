@@ -13,6 +13,19 @@ module Patch
       populate(maps, actions)
     end
 
+    # Patch messages for the default values in the patch
+    # @return [Array<Patch::Message>]
+    def default_messages
+      actions_with_default = @actions.select do |action|
+        !action[:default][:value].nil?
+      end
+      actions_with_default.map do |action|
+        value = action[:default][:value]
+        index = @actions.index(action)
+        Message.new(:index => index, :patch_name => @name, :value => value)
+      end
+    end
+
     # Enable the given nodes to implement this patch
     # @param [Node::Container] nodes
     # @return [Boolean]
