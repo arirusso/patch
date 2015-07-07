@@ -32,6 +32,7 @@ module Patch
       # @return [Boolean] Whether nodes were enabled
       def enable(patch)
         result = @to.map do |to_node|
+          to_node.puts(patch, patch.default_messages)
           enabled = @from.map do |from_node|
             from_node.listen(patch) do |messages|
               to_node.puts(patch, messages)
