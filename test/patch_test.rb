@@ -37,7 +37,9 @@ class Patch::PatchTest < Minitest::Test
       setup do
         @patch = @patches.first
         @messages = @patch.default_messages
-        @actions_with_default = @patch.actions.select { |action| !action[:default].nil? }
+        @actions_with_default = @patch.actions.select do |action|
+          !action[:default].nil? && !action[:default][:value].nil?
+        end
       end
 
       should "populate messages from defaults" do

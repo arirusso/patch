@@ -17,7 +17,7 @@ module Patch
     # @return [Array<Patch::Message>]
     def default_messages
       actions_with_default = @actions.select do |action|
-        !action[:default][:value].nil?
+        !action[:default].nil? && !action[:default][:value].nil?
       end
       actions_with_default.map do |action|
         value = action[:default][:value]
