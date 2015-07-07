@@ -29,18 +29,23 @@ class Patch::Node::MapTest < Minitest::Test
     context "#enable" do
 
       setup do
-        @maps = @patches.first.maps
+        @patch = @patches.first
+        @maps = @patch.maps
         refute_empty @nodes
         assert [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket::Node].all? { |klass| @nodes.map(&:class).include?(klass) }
         ::Patch::Thread.expects(:new).times(@nodes.count)
+        @maps.each do |map|
+          map.to.expects(:puts).at_least_once.with(@patch, @patch.default_messages)
+        end
       end
 
       teardown do
         ::Patch::Thread.unstub(:new)
+        @maps.each { |map| map.to.unstub(:puts) }
       end
 
       should "create node start threads" do
-        assert @maps.first.enable(@patches.first)
+        assert @maps.first.enable(@patch)
       end
 
     end
