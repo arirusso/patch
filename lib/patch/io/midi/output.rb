@@ -27,7 +27,7 @@ module Patch
           patch_messages = [patch_messages].flatten
           messages = ::Patch::IO::MIDI::Message.to_midi_messages(patch, patch_messages)
           unless messages.empty?
-            bytes = messages.map(&:to_a)
+            bytes = messages.map(&:to_a).flatten
             @device.puts(*bytes)
           end
           messages
