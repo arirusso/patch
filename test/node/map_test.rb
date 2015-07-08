@@ -1,6 +1,7 @@
 require "helper"
 
 class Patch::Node::MapTest < Minitest::Test
+  include Mocha::ParameterMatchers
 
   context "Map" do
 
@@ -34,14 +35,20 @@ class Patch::Node::MapTest < Minitest::Test
         refute_empty @nodes
         assert [Patch::IO::MIDI::Input, Patch::IO::OSC::Server, Patch::IO::Websocket::Node].all? { |klass| @nodes.map(&:class).include?(klass) }
         ::Patch::Thread.expects(:new).times(@nodes.count)
+        refute_empty @maps
         @maps.each do |map|
-          map.to.expects(:puts).at_least_once.with(@patch, @patch.default_messages)
+          refute_empty map.to.nodes
+          map.to.nodes.each do |node|
+            node.expects(:puts).at_least_once.with(is_a(Patch::Patch), is_a(Array))
+          end
         end
       end
 
       teardown do
         ::Patch::Thread.unstub(:new)
-        @maps.each { |map| map.to.unstub(:puts) }
+        @maps.each do |map|
+          map.to.nodes.each { |node| node.unstub(:puts) }
+        end
       end
 
       should "create node start threads" do
