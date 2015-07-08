@@ -20,6 +20,9 @@
       :default:
         :scale: !ruby/range 0..5.0
         :value: 0.5
+      :midi:
+        :channel: 0
+        :index: 1
       :osc:
         :address: /1/rotaryD
         :scale: !ruby/range 0..1.0
@@ -29,6 +32,9 @@
       :default:
         :scale: !ruby/range 0..2.0
         :value: 1
+      :midi:
+        :channel: 0
+        :index: 2
       :osc:
         :address: /faderM
         :scale:
@@ -39,6 +45,9 @@
       :default:
         :scale: !ruby/range 0..1000
         :value: 200
+      :midi:
+        :channel: 0
+        :index: 3
       :osc:
         :address: /1/faderA
         :scale:
