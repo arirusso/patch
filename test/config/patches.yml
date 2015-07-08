@@ -1,7 +1,7 @@
 :patches:
   :test_patch:
     :node_map:
-      [2, 3]: 1
+      [2, 4]: [1, 3]
     :actions:
     - :name: Zoom
       :key: zoom

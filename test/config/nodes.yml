@@ -8,6 +8,10 @@
     :direction: input
     :name: Apple Inc. IAC Driver
   - :id: 3
+    :type: midi
+    :direction: output
+    :name: Apple Inc. IAC Driver
+  - :id: 4
     :type: osc
     :server:
       :port: 8000
