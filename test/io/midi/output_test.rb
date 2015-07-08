@@ -25,9 +25,9 @@ class Patch::IO::MIDI::OutputTest < Minitest::Test
       setup do
         @message = Patch::Message.new
         @message.index = 0
-        @message.value = 100
+        @message.value = 5
         @message.patch_name = @patch.name
-        @output.device.expects(:puts).once
+        @output.device.expects(:puts).once.with(0xB0, 0x00, 0x7F)
       end
 
       teardown do
