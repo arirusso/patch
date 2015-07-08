@@ -36,10 +36,10 @@ class Patch::PatchTest < Minitest::Test
 
       setup do
         @patch = @patches.first
-        @messages = @patch.default_messages
         @actions_with_default = @patch.actions.select do |action|
           !action[:default].nil? && !action[:default][:value].nil?
         end
+        @messages = @patch.default_messages
       end
 
       should "populate messages from defaults" do
@@ -56,9 +56,12 @@ class Patch::PatchTest < Minitest::Test
     context "#enable" do
 
       setup do
-        Patch::IO::MIDI::Input.any_instance.expects(:listen).once
-        Patch::IO::OSC::Server.any_instance.expects(:listen).once
-        Patch::IO::Websocket::Node.any_instance.expects(:listen).once
+        @patch = @patches.first
+        outputs = @patch.maps.map(&:to).map(&:nodes).flatten
+        @num_outputs = outputs.count
+        Patch::IO::MIDI::Input.any_instance.expects(:listen).times(@num_outputs)
+        Patch::IO::OSC::Server.any_instance.expects(:listen).times(@num_outputs)
+        Patch::IO::Websocket::Node.any_instance.expects(:listen).times(@num_outputs)
       end
 
       teardown do
@@ -68,7 +71,7 @@ class Patch::PatchTest < Minitest::Test
       end
 
       should "map nodes together" do
-        assert @patches.first.enable
+        assert @patch.enable
       end
 
     end
