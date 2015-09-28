@@ -64,11 +64,12 @@ module Patch
         # @param [::Patch::Message] patch_message
         # @return [::MIDIMessage::ControlChange, nil]
         def to_midi_message(action, patch_message)
-          if !action[:midi].nil?
+          unless action[:midi].nil?
             index = action[:midi][:index] || patch_message.index
             channel = action[:midi][:channel] || 0
-            value = get_midi_value_from_action(action, patch_message)
-            MIDIMessage::ControlChange.new(channel, index, value)
+            unless (value = get_midi_value_from_action(action, patch_message)).nil?
+              MIDIMessage::ControlChange.new(channel, index, value)
+            end
           end
         end
 
@@ -80,13 +81,14 @@ module Patch
         # @return [::Patch::Message, nil]
         def to_patch_message(action, index, patch_name, midi_message)
           if action[:midi][:channel].nil? || action[:midi][:channel] == midi_message.channel
-            value = get_patch_values_from_action(action, midi_message)
-            properties = {
-              :index => index,
-              :patch_name => patch_name,
-              :value => value
-            }
-            ::Patch::Message.new(properties)
+            unless (value = get_patch_values_from_action(action, midi_message)).nil?
+              properties = {
+                :index => index,
+                :patch_name => patch_name,
+                :value => value
+              }
+              ::Patch::Message.new(properties)
+            end
           end
         end
 
@@ -96,7 +98,9 @@ module Patch
         # @param [Range] to
         # @return [Fixnum]
         def get_value(value, from, to)
-          if from == to
+          if !from.member?(value) # filter out values that are out of scale
+            nil
+          elsif from == to
             value
           else
             Scale.transform(value).from(from).to(to)
