@@ -23,6 +23,7 @@
       :midi:
         :channel: 0
         :index: 1
+        :scale: !ruby/range 1..127
       :osc:
         :address: /1/rotaryD
         :scale: !ruby/range 0..1.0
